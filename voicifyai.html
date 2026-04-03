@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoicifyAI — 90-Day Social Media Content Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #070910;
+  --void2: #0C1118;
+  --void3: #121820;
+  --surface: #181F2C;
+  --violet: #7C5CFC;
+  --violet-light: #A98CFF;
+  --violet-dim: rgba(124,92,252,0.14);
+  --violet-glow: rgba(124,92,252,0.25);
+  --amber: #F5A623;
+  --amber-dim: rgba(245,166,35,0.12);
+  --cyan: #00D4FF;
+  --cyan-dim: rgba(0,212,255,0.09);
+  --emerald: #00E5A0;
+  --snow: #F0EEF8;
+  --snow-muted: rgba(240,238,248,0.5);
+  --snow-faint: rgba(240,238,248,0.13);
+  --li-color: #0A66C2;
+  --fb-color: #1877F2;
+  --x-color: #E7E9EA;
+  --yt-color: #FF0000;
+  --border: rgba(255,255,255,0.055);
+  --border-v: rgba(124,92,252,0.28);
+  --r: 12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--void);
+  color:var(--snow);
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── GRAIN ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:0.5;
+}
+
+/* ══════════ MASTHEAD ══════════ */
+.masthead{
+  position:relative;overflow:hidden;
+  background:linear-gradient(155deg, #0D1320 0%, var(--void) 55%);
+  border-bottom:1px solid var(--border);
+  padding:70px 60px 60px;
+}
+.masthead-glow-a{
+  position:absolute;top:-100px;right:-80px;
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(124,92,252,0.17) 0%,transparent 65%);
+  pointer-events:none;
+}
+.masthead-glow-b{
+  position:absolute;bottom:-250px;left:-120px;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,212,255,0.07) 0%,transparent 65%);
+  pointer-events:none;
+}
+.masthead-inner{max-width:1280px;margin:0 auto;position:relative;z-index:1;}
+
+.masthead-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(124,92,252,0.11);
+  border:1px solid rgba(124,92,252,0.32);
+  border-radius:100px;padding:6px 18px;
+  font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--violet-light);margin-bottom:26px;
+}
+.pulse-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--violet-light);
+  animation:pulseRing 2s infinite;
+  box-shadow:0 0 0 0 rgba(169,140,255,0.7);
+}
+@keyframes pulseRing{
+  0%{box-shadow:0 0 0 0 rgba(169,140,255,0.7)}
+  70%{box-shadow:0 0 0 9px rgba(169,140,255,0)}
+  100%{box-shadow:0 0 0 0 rgba(169,140,255,0)}
+}
+
+.masthead h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.5rem,5.8vw,4.6rem);
+  font-weight:900;line-height:1.06;
+  letter-spacing:-0.025em;margin-bottom:18px;
+}
+.masthead h1 em{
+  color:transparent;font-style:italic;
+  background:linear-gradient(130deg,var(--violet-light) 0%,var(--cyan) 100%);
+  -webkit-background-clip:text;background-clip:text;
+}
+.masthead-sub{
+  color:var(--snow-muted);font-size:1.05rem;
+  max-width:600px;margin-bottom:18px;line-height:1.75;
+}
+.masthead-theme{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-bottom:36px;
+  font-size:0.8rem;color:var(--amber);font-style:italic;
+}
+.masthead-theme::before{content:'';width:28px;height:1px;background:var(--amber);opacity:0.5;}
+
+.stats-row{display:flex;gap:52px;flex-wrap:wrap;}
+.stat .n{
+  font-family:'JetBrains Mono',monospace;
+  font-size:2.1rem;font-weight:600;display:block;
+  background:linear-gradient(130deg,var(--violet-light),var(--cyan));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.stat .l{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(240,238,248,0.28);margin-top:2px;}
+
+/* Cadence strip */
+.cadence-strip{
+  max-width:1280px;margin:0 auto;
+  padding:0 60px;
+  display:flex;gap:0;
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+.cadence-item{
+  flex:1;min-width:160px;
+  padding:14px 20px;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:4px;
+}
+.cadence-item:last-child{border-right:none;}
+.cadence-platform{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  font-weight:600;
+}
+.cadence-platform.li{color:var(--li-color);}
+.cadence-platform.fb{color:#5B9CF5;}
+.cadence-platform.x{color:var(--x-color);}
+.cadence-platform.yt{color:var(--yt-color);}
+.cadence-info{font-size:0.78rem;color:var(--snow-muted);}
+.cadence-days{font-size:0.68rem;color:rgba(240,238,248,0.3);font-style:italic;}
+
+/* Waveform */
+.waveform{
+  position:absolute;right:60px;bottom:48px;
+  display:flex;align-items:flex-end;gap:3px;opacity:0.15;
+}
+.waveform span{
+  display:block;width:3px;
+  background:linear-gradient(to top,var(--violet),var(--cyan));
+  border-radius:2px;animation:wv 1.5s ease-in-out infinite;
+}
+@keyframes wv{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.3)}}
+.waveform span:nth-child(1){height:10px;animation-delay:0s}
+.waveform span:nth-child(2){height:22px;animation-delay:.08s}
+.waveform span:nth-child(3){height:38px;animation-delay:.16s}
+.waveform span:nth-child(4){height:28px;animation-delay:.24s}
+.waveform span:nth-child(5){height:48px;animation-delay:.32s}
+.waveform span:nth-child(6){height:18px;animation-delay:.4s}
+.waveform span:nth-child(7){height:36px;animation-delay:.48s}
+.waveform span:nth-child(8){height:54px;animation-delay:.56s}
+.waveform span:nth-child(9){height:42px;animation-delay:.64s}
+.waveform span:nth-child(10){height:24px;animation-delay:.72s}
+.waveform span:nth-child(11){height:44px;animation-delay:.8s}
+.waveform span:nth-child(12){height:16px;animation-delay:.88s}
+.waveform span:nth-child(13){height:32px;animation-delay:.96s}
+.waveform span:nth-child(14){height:20px;animation-delay:1.04s}
+.waveform span:nth-child(15){height:12px;animation-delay:1.12s}
+
+/* ══════════ PHASE BANNER ══════════ */
+.phase-banner{
+  max-width:1280px;margin:32px auto 0;padding:0 60px;
+}
+.phase-pill{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:10px 20px;border-radius:10px;
+  border:1px solid;
+  font-size:0.8rem;font-weight:600;
+  letter-spacing:0.04em;
+}
+.phase-pill.m1{background:rgba(124,92,252,0.08);border-color:rgba(124,92,252,0.2);color:var(--violet-light);}
+.phase-pill.m2{background:rgba(0,212,255,0.07);border-color:rgba(0,212,255,0.2);color:var(--cyan);}
+.phase-pill.m3{background:rgba(0,229,160,0.07);border-color:rgba(0,229,160,0.2);color:var(--emerald);}
+.phase-pill span{opacity:0.6;font-weight:400;}
+
+/* ══════════ FILTER BAR ══════════ */
+.filter-bar{
+  background:rgba(7,9,16,0.97);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  padding:12px 60px;
+  position:sticky;top:0;z-index:200;
+  display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+}
+.filter-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(240,238,248,0.22);flex-shrink:0;
+}
+.filter-group{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.filter-btn{
+  padding:5px 13px;border-radius:100px;
+  border:1px solid rgba(255,255,255,0.07);
+  background:transparent;color:rgba(240,238,248,0.45);
+  font-family:'DM Sans',sans-serif;font-size:0.76rem;font-weight:500;
+  cursor:pointer;transition:all 0.16s;letter-spacing:0.01em;
+}
+.filter-btn:hover{border-color:var(--violet);color:var(--violet-light);}
+.filter-btn.active{background:var(--violet);border-color:var(--violet);color:#fff;box-shadow:0 0 14px rgba(124,92,252,0.38);}
+.filter-btn.platform-li.active{background:var(--li-color);border-color:var(--li-color);box-shadow:0 0 14px rgba(10,102,194,0.35);}
+.filter-btn.platform-fb.active{background:var(--fb-color);border-color:var(--fb-color);box-shadow:0 0 14px rgba(24,119,242,0.35);}
+.filter-btn.platform-x.active{background:#252525;border-color:#444;color:var(--x-color);}
+.filter-btn.platform-yt.active{background:var(--yt-color);border-color:var(--yt-color);box-shadow:0 0 14px rgba(255,0,0,0.35);}
+.filter-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+
+/* ══════════ RESULT COUNT ══════════ */
+#result-count{
+  max-width:1280px;margin:0 auto;
+  padding:22px 60px 0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.75rem;color:var(--snow-faint);
+  display:flex;align-items:center;gap:10px;
+}
+#result-count::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--violet);flex-shrink:0;
+  box-shadow:0 0 8px var(--violet);
+}
+
+/* ══════════ WEEK SECTIONS ══════════ */
+.week-section{max-width:1280px;margin:0 auto;padding:36px 60px 0;}
+.week-header{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:20px;padding-bottom:14px;
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.week-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--violet-light);
+  background:var(--violet-dim);
+  border:1px solid rgba(124,92,252,0.2);
+  padding:3px 10px;border-radius:100px;flex-shrink:0;
+}
+.week-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.15rem;font-weight:700;color:var(--snow);
+}
+.week-phase{
+  font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  padding:3px 12px;border-radius:100px;flex-shrink:0;
+}
+.week-phase.m1{background:rgba(124,92,252,0.1);color:var(--violet-light);border:1px solid rgba(124,92,252,0.2);}
+.week-phase.m2{background:rgba(0,212,255,0.08);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);}
+.week-phase.m3{background:rgba(0,229,160,0.07);color:var(--emerald);border:1px solid rgba(0,229,160,0.2);}
+.week-theme{
+  margin-left:auto;font-size:0.72rem;
+  color:var(--snow-muted);font-style:italic;
+  max-width:280px;text-align:right;
+}
+
+/* ══════════ POST CARDS ══════════ */
+.posts-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(380px,1fr));
+  gap:16px;margin-bottom:32px;
+}
+.post-card{
+  background:var(--void2);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;
+  cursor:pointer;position:relative;
+}
+.post-card::after{
+  content:'';position:absolute;inset:0;border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(124,92,252,0.05) 0%,transparent 55%);
+  opacity:0;transition:opacity 0.2s;pointer-events:none;
+}
+.post-card:hover{
+  border-color:rgba(124,92,252,0.42);
+  transform:translateY(-3px);
+  box-shadow:0 14px 42px rgba(0,0,0,0.45),0 0 0 1px rgba(124,92,252,0.14);
+}
+.post-card:hover::after{opacity:1;}
+.post-card.hidden{display:none;}
+
+.post-card-header{
+  padding:11px 16px;
+  display:flex;align-items:center;gap:9px;
+  border-bottom:1px solid var(--border);
+  background:rgba(0,0,0,0.22);
+  flex-wrap:wrap;gap:7px;
+}
+.platform-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.platform-dot.li{background:var(--li-color);box-shadow:0 0 7px rgba(10,102,194,0.7);}
+.platform-dot.fb{background:var(--fb-color);box-shadow:0 0 7px rgba(24,119,242,0.7);}
+.platform-dot.x{background:#666;}
+.platform-dot.yt{background:var(--yt-color);box-shadow:0 0 7px rgba(255,0,0,0.7);}
+.platform-name{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+}
+.platform-name.li{color:var(--li-color);}
+.platform-name.fb{color:#5B9CF5;}
+.platform-name.x{color:var(--x-color);}
+.platform-name.yt{color:var(--yt-color);}
+
+.persona-chip{
+  padding:2px 9px;border-radius:100px;
+  background:rgba(124,92,252,0.11);
+  border:1px solid rgba(124,92,252,0.2);
+  font-size:9px;font-weight:600;color:var(--violet-light);
+  letter-spacing:0.04em;white-space:nowrap;
+}
+.type-tag{
+  font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  padding:2px 8px;border-radius:4px;white-space:nowrap;
+}
+.type-tag.story{background:rgba(0,212,255,0.1);color:var(--cyan);}
+.type-tag.thread{background:rgba(245,166,35,0.1);color:var(--amber);}
+.type-tag.video{background:rgba(255,60,60,0.1);color:#FF7070;}
+.type-tag.thought-leadership{background:rgba(124,92,252,0.12);color:var(--violet-light);}
+.type-tag.empathy{background:rgba(0,229,160,0.09);color:var(--emerald);}
+.type-tag.community{background:rgba(255,200,80,0.09);color:#FFD080;}
+.type-tag.hook{background:rgba(255,140,0,0.1);color:#FFAA44;}
+.type-tag.data{background:rgba(200,200,255,0.08);color:#C8C8FF;}
+
+.post-day-badge{
+  margin-left:auto;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;color:rgba(240,238,248,0.22);
+  white-space:nowrap;
+}
+
+.post-card-body{padding:16px 16px 12px;}
+.post-hook{
+  font-family:'Playfair Display',serif;
+  font-size:0.96rem;font-weight:700;
+  color:var(--snow);line-height:1.35;margin-bottom:9px;
+}
+.post-preview{
+  font-size:0.82rem;color:var(--snow-muted);
+  line-height:1.65;margin-bottom:10px;
+  display:-webkit-box;-webkit-line-clamp:3;
+  -webkit-box-orient:vertical;overflow:hidden;
+}
+.post-meta{
+  display:flex;gap:10px;flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:0.06em;
+  text-transform:uppercase;color:rgba(240,238,248,0.22);
+}
+
+.post-expand-btn{
+  width:100%;padding:10px 16px;
+  background:rgba(124,92,252,0.04);
+  border:none;border-top:1px solid var(--border);
+  color:var(--violet-light);
+  font-family:'DM Sans',sans-serif;
+  font-size:0.74rem;font-weight:600;
+  letter-spacing:0.08em;text-transform:uppercase;
+  cursor:pointer;transition:background 0.16s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.post-expand-btn::after{content:'→';}
+.post-expand-btn:hover{background:rgba(124,92,252,0.12);}
+
+/* ══════════ OVERVIEW TABLE ══════════ */
+.overview-section{
+  max-width:1280px;margin:40px auto 0;padding:0 60px;
+}
+.overview-section h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.5rem;font-weight:700;
+  margin-bottom:6px;color:var(--snow);
+}
+.overview-section p{font-size:0.85rem;color:var(--snow-muted);margin-bottom:20px;}
+.overview-table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+.overview-table{
+  width:100%;border-collapse:collapse;
+  font-size:0.8rem;
+}
+.overview-table th{
+  background:rgba(124,92,252,0.08);
+  color:var(--violet-light);
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  padding:10px 14px;text-align:left;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+.overview-table td{
+  padding:9px 14px;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  color:var(--snow-muted);vertical-align:middle;
+}
+.overview-table tr:last-child td{border-bottom:none;}
+.overview-table tr:hover td{background:rgba(124,92,252,0.04);}
+.overview-table .day-cell{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:var(--violet-light);font-weight:600;
+}
+.tbl-platform-dot{
+  display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle;
+}
+.tbl-platform-dot.li{background:var(--li-color);}
+.tbl-platform-dot.fb{background:var(--fb-color);}
+.tbl-platform-dot.x{background:#666;}
+.tbl-platform-dot.yt{background:var(--yt-color);}
+
+/* ══════════ MODAL ══════════ */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(7,9,16,0.9);
+  backdrop-filter:blur(14px);
+  z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  opacity:0;pointer-events:none;transition:opacity 0.22s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--void2);
+  border:1px solid var(--border-v);
+  border-radius:18px;
+  width:100%;max-width:720px;max-height:88vh;
+  overflow-y:auto;
+  transform:translateY(22px) scale(0.97);
+  transition:transform 0.26s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 0 50px rgba(124,92,252,0.18),0 40px 90px rgba(0,0,0,0.65);
+}
+.modal-overlay.open .modal{transform:translateY(0) scale(1);}
+.modal::-webkit-scrollbar{width:4px;}
+.modal::-webkit-scrollbar-track{background:transparent;}
+.modal::-webkit-scrollbar-thumb{background:var(--violet-dim);border-radius:2px;}
+
+.modal-header{
+  padding:18px 26px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:11px;
+  position:sticky;top:0;
+  background:rgba(12,17,24,0.97);
+  backdrop-filter:blur(16px);z-index:10;
+  flex-wrap:wrap;
+}
+.modal-close{
+  margin-left:auto;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);border-radius:8px;
+  color:rgba(240,238,248,0.45);
+  width:30px;height:30px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.95rem;cursor:pointer;transition:all 0.14s;flex-shrink:0;
+}
+.modal-close:hover{background:rgba(255,255,255,0.1);color:var(--snow);}
+
+.modal-body{padding:26px;}
+.modal-section{margin-bottom:22px;}
+.modal-section-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--violet-light);margin-bottom:9px;
+  display:flex;align-items:center;gap:8px;
+}
+.modal-section-label::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(to right,rgba(124,92,252,0.28),transparent);
+}
+.modal-hook{
+  font-family:'Playfair Display',serif;
+  font-size:1.32rem;font-weight:700;
+  line-height:1.3;color:var(--snow);margin-bottom:16px;
+}
+.modal-body-text{
+  font-size:0.92rem;color:rgba(240,238,248,0.82);
+  line-height:1.88;white-space:pre-line;
+  background:rgba(0,0,0,0.22);
+  border-radius:10px;padding:20px;
+  border:1px solid var(--border);
+}
+.modal-cta{
+  background:linear-gradient(135deg,rgba(124,92,252,0.1),rgba(0,212,255,0.05));
+  border:1px solid rgba(124,92,252,0.22);
+  border-radius:10px;padding:14px 18px;
+  font-size:0.88rem;color:var(--violet-light);line-height:1.65;
+}
+.modal-visual{
+  background:rgba(255,255,255,0.02);
+  border:1px dashed rgba(255,255,255,0.09);
+  border-radius:10px;padding:14px 18px;
+  font-size:0.84rem;color:var(--snow-muted);line-height:1.65;
+}
+.modal-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;}
+.modal-tag{
+  padding:3px 11px;border-radius:100px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.07);
+  font-size:0.7rem;color:var(--snow-muted);
+}
+.modal-persona-box{
+  background:rgba(245,166,35,0.06);
+  border:1px solid rgba(245,166,35,0.14);
+  border-radius:10px;padding:12px 16px;
+  font-size:0.84rem;color:rgba(245,166,35,0.85);
+  display:flex;align-items:center;gap:8px;
+}
+
+/* ══════════ FOOTER ══════════ */
+footer{
+  text-align:center;padding:48px;
+  border-top:1px solid var(--border);
+  color:rgba(240,238,248,0.18);font-size:0.76rem;
+  margin-top:48px;
+}
+footer a{color:var(--violet-light);text-decoration:none;}
+
+@media(max-width:768px){
+  .masthead,.filter-bar,.week-section,.overview-section,.cadence-strip,.phase-banner{padding-left:20px;padding-right:20px;}
+  #result-count{padding:16px 20px 0;}
+  .posts-grid{grid-template-columns:1fr;}
+  .week-theme{display:none;}
+  .waveform{display:none;}
+  .stats-row{gap:28px;}
+  .cadence-strip{padding:0 20px;}
+  .masthead h1{font-size:2.2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-glow-a"></div>
+  <div class="masthead-glow-b"></div>
+  <div class="masthead-inner">
+    <div class="masthead-badge"><span class="pulse-dot"></span>VoicifyAI · 90-Day Content Calendar</div>
+    <h1>Speak Your Strategy.<br><em>Capture Everything.</em></h1>
+    <p class="masthead-sub">90 days of emotional transformation storytelling across LinkedIn, Facebook, X, and YouTube — built around 13 real personas and the universal cost of lost thoughts.</p>
+    <div class="masthead-theme">Month 1: Cost of Lost Thoughts · Month 2: What Changes When You're Heard · Month 3: Your Life, Organized by Your Voice</div>
+    <div class="stats-row">
+      <div class="stat"><span class="n">90</span><span class="l">Days of Content</span></div>
+      <div class="stat"><span class="n">50</span><span class="l">Mapped Posts</span></div>
+      <div class="stat"><span class="n">4</span><span class="l">Platforms</span></div>
+      <div class="stat"><span class="n">13</span><span class="l">Personas</span></div>
+      <div class="stat"><span class="n">3</span><span class="l">Monthly Themes</span></div>
+    </div>
+  </div>
+  <div class="waveform">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+</header>
+
+<!-- CADENCE STRIP -->
+<div class="cadence-strip">
+  <div class="cadence-item">
+    <span class="cadence-platform li">LinkedIn</span>
+    <span class="cadence-info">3× per week</span>
+    <span class="cadence-days">Mon · Wed · Fri</span>
+  </div>
+  <div class="cadence-item">
+    <span class="cadence-platform fb">Facebook</span>
+    <span class="cadence-info">4× per week</span>
+    <span class="cadence-days">Mon · Tue · Thu · Sat</span>
+  </div>
+  <div class="cadence-item">
+    <span class="cadence-platform x">X / Twitter</span>
+    <span class="cadence-info">5× per week</span>
+    <span class="cadence-days">Mon – Fri</span>
+  </div>
+  <div class="cadence-item">
+    <span class="cadence-platform yt">YouTube</span>
+    <span class="cadence-info">1× per week</span>
+    <span class="cadence-days">Wednesday — Shorts or Long-form</span>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<nav class="filter-bar" id="filterBar">
+  <span class="filter-label">Platform</span>
+  <div class="filter-group">
+    <button class="filter-btn active" data-filter="platform" data-value="all">All</button>
+    <button class="filter-btn platform-li" data-filter="platform" data-value="li">LinkedIn</button>
+    <button class="filter-btn platform-fb" data-filter="platform" data-value="fb">Facebook</button>
+    <button class="filter-btn platform-x" data-filter="platform" data-value="x">X / Twitter</button>
+    <button class="filter-btn platform-yt" data-filter="platform" data-value="yt">YouTube</button>
+  </div>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Month</span>
+  <div class="filter-group">
+    <button class="filter-btn active" data-filter="month" data-value="all">All</button>
+    <button class="filter-btn" data-filter="month" data-value="1">Month 1 — Awareness</button>
+    <button class="filter-btn" data-filter="month" data-value="2">Month 2 — Consideration</button>
+    <button class="filter-btn" data-filter="month" data-value="3">Month 3 — Conversion</button>
+  </div>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Persona</span>
+  <div class="filter-group">
+    <button class="filter-btn active" data-filter="persona" data-value="all">All</button>
+    <button class="filter-btn" data-filter="persona" data-value="marcus">Marcus</button>
+    <button class="filter-btn" data-filter="persona" data-value="priya">Priya</button>
+    <button class="filter-btn" data-filter="persona" data-value="james">James</button>
+    <button class="filter-btn" data-filter="persona" data-value="elena">Elena</button>
+    <button class="filter-btn" data-filter="persona" data-value="kofi">Kofi</button>
+    <button class="filter-btn" data-filter="persona" data-value="sandra">Sandra</button>
+    <button class="filter-btn" data-filter="persona" data-value="raj">Raj</button>
+    <button class="filter-btn" data-filter="persona" data-value="yuki">Yuki</button>
+    <button class="filter-btn" data-filter="persona" data-value="david">David</button>
+    <button class="filter-btn" data-filter="persona" data-value="amara">Amara</button>
+    <button class="filter-btn" data-filter="persona" data-value="tom">Tom</button>
+    <button class="filter-btn" data-filter="persona" data-value="lin">Lin</button>
+    <button class="filter-btn" data-filter="persona" data-value="sofia">Sofia</button>
+    <button class="filter-btn" data-filter="persona" data-value="general">General</button>
+  </div>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Type</span>
+  <div class="filter-group">
+    <button class="filter-btn active" data-filter="type" data-value="all">All</button>
+    <button class="filter-btn" data-filter="type" data-value="story">Story</button>
+    <button class="filter-btn" data-filter="type" data-value="thread">Thread</button>
+    <button class="filter-btn" data-filter="type" data-value="video">Video</button>
+    <button class="filter-btn" data-filter="type" data-value="thought-leadership">Thought Leadership</button>
+    <button class="filter-btn" data-filter="type" data-value="empathy">Empathy</button>
+    <button class="filter-btn" data-filter="type" data-value="community">Community</button>
+    <button class="filter-btn" data-filter="type" data-value="hook">Hook / Standalone</button>
+    <button class="filter-btn" data-filter="type" data-value="data">Data</button>
+  </div>
+</nav>
+
+<div id="result-count"></div>
+<div id="calendarRoot"></div>
+
+<!-- OVERVIEW TABLE -->
+<div class="overview-section" id="overviewTable">
+  <h2>Content Calendar Overview</h2>
+  <p>All 50 mapped posts from the strategy document at a glance.</p>
+  <div class="overview-table-wrap">
+    <table class="overview-table" id="tbl"></table>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-header" id="modalHeader"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  <p>VoicifyAI · 90-Day Social Media Calendar · <em>The Cost of Lost Thoughts → What Changes When You're Heard → Your Life, Organized by Your Voice</em></p>
+  <p style="margin-top:6px">Click any card to expand the full post. Filter by platform, month, persona, or content type. · <a href="https://voicifyai.com">voicifyai.com</a> — free to start.</p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════
+// ALL 50 POSTS FROM THE STRATEGY DOCUMENT
+// ═══════════════════════════════════════════════════
+const POSTS = [
+
+// ─────── WEEK 1 — MARCUS ───────
+{day:1,week:1,month:"1",platform:"li",persona:"marcus",type:"story",
+ personaLabel:"Marcus, 34 — Senior PM",
+ hook:"The most expensive meeting you'll ever have is the one nobody followed up on.",
+ body:`Marcus has been in product for 9 years. He's good at his job. He has the scars to prove it — late nights, big launches, the full thing.
+
+But last quarter, a feature shipped with the wrong spec. Not because anyone was lazy. Because the decision to change the spec happened in a Tuesday standup, got captured as "Marcus — check with engineering," and then disappeared into the ambient noise of a 60-meeting month.
+
+The cost: a 3-week delay, a frustrated team, and a conversation with his VP that Marcus still thinks about.
+
+That's the thing about meetings. The danger isn't the ones you forget entirely. It's the ones you remember wrong.
+
+VoicifyAI was built for Marcus. Not to replace his judgment — to make sure nothing that matters slips through the gap between talking about it and doing something about it.
+
+Every decision, logged. Every commitment, tracked. Every meeting, turned into a living action system before the next one starts.
+
+→ If you've ever sent a "per my last email" because the meeting didn't get documented: voicifyai.com. Free to start.`,
+ cta:"Download VoicifyAI free at voicifyai.com",
+ visual:"Split image — chaotic notes on one side, clean structured summary on the other.",
+ tags:["#ProductManagement","#MeetingIntelligence","#PMLife","#WorkSmarter"]},
+
+{day:2,week:1,month:"1",platform:"x",persona:"marcus",type:"thread",
+ personaLabel:"Marcus, 34 — Senior PM",
+ hook:"I tracked every meeting I had for 30 days. Here's what I found. 🧵",
+ body:`1/ I tracked every meeting I had for 30 days. Kept a log of what got decided vs. what got documented. The gap was terrifying.
+
+2/ 47 meetings. About 180 decisions or action items across all of them. Of those, roughly 60 actually made it into a task system, doc, or follow-up email.
+
+3/ That's a 67% loss rate. On decisions. In a job where decisions are the entire product.
+
+4/ The ones that fell through weren't the unimportant ones. Some of the biggest gaps were: "we're changing the pricing model" and "Tom owns the API handoff."
+
+5/ The problem isn't that people are bad at meetings. The problem is that the window for capturing decisions closes the moment the call ends. By the time you're in the next one, it's gone.
+
+6/ What changed it for me: a meeting bot that joins before I do, listens to everything, and hands me back a decision log + owner-tagged tasks before I've opened Slack.
+
+7/ I don't take notes anymore. I make eye contact. I ask better questions. I actually think in meetings now instead of transcribing them.
+
+8/ If your job involves meetings, this one's for you → voicifyai.com (free to start, first meeting on us)`,
+ cta:"Link in final tweet — voicifyai.com",
+ visual:"Screenshot of a clean meeting summary card showing decisions, owners, and deadlines.",
+ tags:["#ProductivityHacks","#MeetingNotes","#PMTips","#VoicifyAI"]},
+
+{day:3,week:1,month:"1",platform:"fb",persona:"marcus",type:"empathy",
+ personaLabel:"Marcus, 34 — Senior PM",
+ hook:"To every person who's ever said 'I'll follow up on that' and then… didn't.",
+ body:`No judgment here.
+
+You didn't forget because you're disorganized. You forgot because you were in 4 more meetings after that one, and your brain — like everyone's brain — has a finite amount of RAM.
+
+The system failed you. Not the other way around.
+
+Marcus is a Senior PM at a tech company. Sharp guy. Nine years in the industry. And for years, his biggest professional fear wasn't public speaking, wasn't hard conversations — it was the action item that slipped through and turned into a problem three weeks later.
+
+He started using VoicifyAI. Now his meeting bot attends every call, transcribes everything, and sends him a structured summary — decisions, action items, owners, deadlines — within minutes of the call ending.
+
+The last time someone asked him "didn't we decide that last week?" he already had the timestamp.
+
+That's not a small thing. That's the difference between a good leader and a great one.
+
+→ Try it free: voicifyai.com. Your brain deserves a backup.
+
+Like this if you've ever rescued a dropped ball with a miracle follow-up. Share it with the person who needs this most on your team. ♻️`,
+ cta:"voicifyai.com — Free plan available",
+ visual:"Warm photo of someone confident and calm at a desk with laptop.",
+ tags:["#WorkLife","#TeamManagement","#Leadership","#ProductivityTools"]},
+
+{day:4,week:1,month:"1",platform:"x",persona:"marcus",type:"hook",
+ personaLabel:"Marcus, 34 — Senior PM",
+ hook:"Your meeting ended 20 minutes ago. Quick — what were the three decisions made?",
+ body:`If you're reaching for your notes right now, that's the problem VoicifyAI solves.
+
+Meeting intelligence. Auto-summaries. Task assignment. Before the next call starts.
+
+→ voicifyai.com`,
+ cta:"voicifyai.com — free to start",
+ visual:"Timer / countdown graphic — urgency, immediacy.",
+ tags:["#MeetingIntelligence","#Productivity","#WorkSmarter","#VoicifyAI"]},
+
+{day:5,week:1,month:"1",platform:"yt",persona:"marcus",type:"video",
+ personaLabel:"Marcus, 34 — Senior PM",
+ hook:"I stopped taking notes in meetings. Here's what happened. (YouTube Short — 60s)",
+ body:`YOUTUBE SHORT SCRIPT — 60 seconds
+
+[HOOK — 0-3s]
+"I haven't taken a single note in a meeting for the past 6 weeks."
+
+[PROBLEM — 3-25s]
+Six weeks ago I made a rule: no more note-taking in meetings. None. I just… showed up and participated.
+
+Here's the thing — I used to take notes because I was terrified of forgetting things. But the notes were terrible anyway. Bullet fragments. Half sentences. 'Ask Tom about the thing.'
+
+[SOLUTION — 25-50s]
+So I tried something different. I let VoicifyAI's meeting bot join every call. It transcribes everything in real time. When the meeting ends, I get a full summary — decisions, action items, who owns what, deadlines detected from conversation.
+
+The result? I'm better in meetings now. I ask harder questions. I look at people. And somehow… nothing falls through the cracks anymore.
+
+[SCREEN RECORD: Summary arriving while speaker is still on screen]
+
+[CTA — 50-60s]
+If you're spending 20% of every meeting typing instead of thinking — this is for you. Download VoicifyAI free at the link. First meeting's on us.
+
+VIDEO DESCRIPTION:
+One PM stopped taking notes and started being present. VoicifyAI's meeting bot handles the rest. Free download → voicifyai.com`,
+ cta:"End card: voicifyai.com | Download on iOS & Android",
+ visual:"Authentic talking head, screen recording overlay showing summary arriving mid-conversation. No heavy editing.",
+ tags:["#ProductivityHack","#MeetingTips","#PMLife","#AITool"]},
+
+// ─────── WEEK 2 — PRIYA + SANDRA ───────
+{day:8,week:2,month:"1",platform:"li",persona:"priya",type:"thought-leadership",
+ personaLabel:"Priya, 27 — Freelance Creator",
+ hook:"The creator economy has a dirty secret: most of the best ideas never become content.",
+ body:`They die in traffic.
+They dissolve in the shower.
+They evaporate during the 45 seconds between waking up with an insight and reaching for your phone.
+
+Priya has been creating content for 4 years. She has 80K followers across platforms, a growing newsletter, and a client roster she's proud of. She also loses approximately 3 good ideas per week. She knows because she started tracking them after a mentor asked her to.
+
+Not 3 mediocre ideas. Three ideas she'd later see someone else post — someone who got there first simply by having a faster system.
+
+The idea gap isn't about inspiration. It's about capture speed.
+
+Voice is the fastest input method that exists. Speaking is 3–5x faster than typing. But raw voice notes are still a commitment to organize things later. That's not fast enough.
+
+VoicifyAI changes this. The moment you speak, it listens, identifies what kind of thought it is — content idea, task, goal, to-do — and routes it to exactly the right place. Automatically.
+
+Priya's idea pipeline went from leaky to locked in the first week.
+
+If you're a creator who's ever watched someone else post the idea you had first: voicifyai.com. Your ideas deserve a faster door.
+
+→ Download free. Speak. Let it think.`,
+ cta:"voicifyai.com — Download free. Speak. Let it think.",
+ visual:"Creator working in a car, phone mounted, speaking naturally. Energy of capture in motion.",
+ tags:["#CreatorEconomy","#ContentCreator","#IdeaCapture","#VoicifyAI"]},
+
+{day:9,week:2,month:"1",platform:"fb",persona:"sandra",type:"empathy",
+ personaLabel:"Sandra, 47 — Single Working Parent",
+ hook:"To every parent who's tried to run a career and a household and a life — all at once.",
+ body:`Sandra drops her kids at school at 7:40. By 8:15 she's on her first call. Her lunch break is when she reschedules the dentist, texts the plumber, and remembers she still hasn't filed the insurance form from March.
+
+By 9 PM, when the kids are finally asleep, she has exactly enough energy to sit down and stare at her to-do list before giving up and going to bed.
+
+The problem isn't that Sandra doesn't care about organization. It's that her brain is running 14 simultaneous threads at all hours of the day, and the window for capturing a thought is approximately 8 seconds before something more urgent arrives.
+
+She started using VoicifyAI three months ago. Now when she thinks of something — on the school run, between calls, while making dinner — she just says it out loud. VoicifyAI hears "pick up Mia's prescription Thursday and also email the teacher about the field trip" and turns it into two separate, actionable reminders without Sandra touching a screen.
+
+Her words. Her life. Finally organized on her terms.
+
+This one's for every person holding it all together. You deserve a system that works as fast as you think.
+
+→ voicifyai.com — Free to start. No setup required. Just speak.
+♻️ Share this with someone who needs it.`,
+ cta:"voicifyai.com — Free to start. No setup required. Just speak.",
+ visual:"Morning kitchen scene — busy but warm, someone moving with purpose while speaking.",
+ tags:["#WorkingParents","#MomLife","#DadLife","#VoiceFirst"]},
+
+{day:10,week:2,month:"1",platform:"x",persona:"priya",type:"hook",
+ personaLabel:"Priya, 27 — Freelance Creator",
+ hook:"The gap between 'I had a great idea' and 'I did something with it' is where 90% of potential dies.",
+ body:`That gap has a name: capture latency.
+
+VoicifyAI closes it to zero.
+
+Speak → organized → actionable. Automatically.
+
+→ voicifyai.com`,
+ cta:"voicifyai.com — free",
+ visual:"Before/after timeline graphic. Idea born → captured vs. idea born → lost.",
+ tags:["#ContentCreator","#IdeaCapture","#CreatorLife","#Productivity"]},
+
+{day:11,week:2,month:"1",platform:"li",persona:"priya",type:"thought-leadership",
+ personaLabel:"Priya, 27 — Freelance Creator",
+ hook:"Nobody talks about the cognitive cost of managing a creative career.",
+ body:`Not the creative work — that part people romanticize. I mean the admin, the idea management, the content backlog, the client notes, the half-formed thoughts that need a place to live.
+
+The average content creator doesn't just create. They're also their own project manager, archivist, and strategist. And most of them are doing it all with a Notes app that treats every single thought — grocery list, video concept, existential reflection — with exactly the same indifference.
+
+What if your capture system was smart enough to know the difference?
+
+VoicifyAI detects intent from your voice. It knows when you're brainstorming versus committing. When you're making a list versus telling a story. When you're processing a feeling versus planning an action.
+
+Your content backlog shouldn't be a dumping ground. It should be a living, organized, ready-to-use asset.
+
+→ voicifyai.com — built for people who think faster than they can type.`,
+ cta:"voicifyai.com — Download free. Intent detection is built in.",
+ visual:"Content backlog before/after — messy chaotic notes app vs. organized, categorized pipeline.",
+ tags:["#CreatorEconomy","#ContentStrategy","#VoiceFirst","#AITools"]},
+
+{day:12,week:2,month:"1",platform:"x",persona:"priya",type:"thread",
+ personaLabel:"Priya, 27 — Freelance Creator",
+ hook:"Creators: here are 5 ideas that almost never made it to a post. (And why they almost didn't.) 🧵",
+ body:`1/ 5 ideas that almost didn't make it out of my head. A thread about the broken capture pipeline every creator quietly suffers from.
+
+2/ Idea #1: "The reason most 'authentic' content feels fake." Had this on a walk. Tried to type it one-handed. Got 6 words in before a notification hijacked my attention. Never recovered the thought.
+
+3/ Idea #2: "What I learned from 100 cold emails." Came to me in the shower. I repeated it to myself 4 times. I remembered 1.5 of the points when I sat down later. Posted a worse version.
+
+4/ Idea #3: "Why I stopped scheduling every minute of my day." Came mid-commute. Spoke it into my phone as a voice memo. The voice memo sat unlistened-to for 9 days before I deleted it to free up storage.
+
+5/ Idea #4: "The creator burnout no one talks about." Thought of this at 11pm after a hard week. Was too tired to write it. Told myself I'd remember. I didn't.
+
+6/ Idea #5: This one I actually captured. Why? Because I'd finally started using VoicifyAI. I spoke it, it organized it, and it was waiting for me in my content backlog the next morning.
+
+7/ The system shouldn't require perfect timing or perfect conditions. Your best ideas come when they come. Your capture tool should be there whenever that is.
+
+8/ → voicifyai.com. If you've lost more ideas than you've published, this one's for you.`,
+ cta:"voicifyai.com — free to start",
+ visual:"Series of voice note timestamps, one labeled 'organized + saved' with VoicifyAI badge.",
+ tags:["#CreatorLife","#ContentCreation","#IdeaCapture","#VoicifyAI"]},
+
+{day:13,week:2,month:"1",platform:"yt",persona:"priya",type:"video",
+ personaLabel:"Priya, 27 — Freelance Creator",
+ hook:"How I went from losing 3 ideas a week to having a full content backlog — using only my voice (Long-form, 18 min)",
+ body:`YOUTUBE LONG-FORM DESCRIPTION
+
+TITLE: How I Rebuilt My Entire Content Pipeline Using Only My Voice (VoicifyAI Full Walkthrough)
+
+CHAPTERS:
+0:00 — The idea I lost that someone else published first
+2:15 — Why voice notes alone aren't enough
+5:30 — The VoicifyAI setup walkthrough
+9:00 — How intent detection actually works (grocery list vs. video concept vs. meeting note)
+14:20 — My full content pipeline: from voice to published post
+18:40 — What changed in 30 days
+
+SCRIPT OUTLINE:
+[HOOK] "Three weeks ago, I saw a post go viral. A post about an idea I had first. I'd even mentioned it to a friend. But I never captured it properly. And someone else got there first."
+
+[PROBLEM] Walk through the broken pipeline — voice memo graveyard, Notes app chaos, the 3x/week idea loss rate. Show the actual graveyard of unlistened voice memos.
+
+[SOLUTION] Demo VoicifyAI live: record a raw thought, watch it get classified, organized, and routed to the right folder. Show content backlog filling up over time.
+
+[TRANSFORMATION] Before/after: chaotic notes app vs. organized content pipeline. Mention the specific 30-day result — zero ideas lost.
+
+[CTA] "Free to start. Link in description. Your first 30 days will show you how many ideas you've been losing."
+
+Download VoicifyAI free at voicifyai.com. Available on iOS, Android, and web.`,
+ cta:"voicifyai.com — Free download. Full demo in video.",
+ visual:"Demo screen recording of VoicifyAI processing a raw voice note into structured content idea card.",
+ tags:["#ContentCreator","#CreatorTools","#VoicifyAI","#ContentPipeline"]},
+
+// ─────── WEEK 3 — KOFI + DAVID ───────
+{day:15,week:3,month:"1",platform:"li",persona:"kofi",type:"thought-leadership",
+ personaLabel:"Kofi, 22 — University Student",
+ hook:"The note-taking crisis in higher education is not about attention spans. It's about cognitive load architecture.",
+ body:`There's a persistent belief in academia that students who struggle to synthesize lecture content just aren't engaged enough. Laptops are banned in some classrooms as a result.
+
+But the research suggests something different. The bottleneck for most students isn't attention — it's the split-attention effect. When you're simultaneously listening, processing, and transcribing, you're doing three cognitively expensive tasks at once. And the one that suffers most is the highest-order one: comprehension.
+
+The best note-taking system isn't one where you capture more. It's one where you have to capture less — because the mechanical work is handled.
+
+Kofi is a third-year biochemistry student. He started using VoicifyAI to record his own post-lecture voice summaries — 3 minutes of unstructured speaking about what he just learned, what confused him, what connected to something else. VoicifyAI turns those into structured study notes, question lists, and revision frameworks automatically.
+
+His recall improved. His grades improved. And he stopped leaving lectures feeling like he'd just watched a film in a language he half-spoke.
+
+We think about productivity tools as being for professionals. But the students who learn to work with cognitive architecture — not against it — are the ones who end up running the companies.
+
+→ voicifyai.com — works for students too. Free plan available.`,
+ cta:"voicifyai.com — free plan for students. Works on any device.",
+ visual:"Student in lecture hall, relaxed and present — not frantically typing.",
+ tags:["#StudentLife","#LearningScience","#HigherEd","#StudyTips"]},
+
+{day:16,week:3,month:"1",platform:"fb",persona:"david",type:"empathy",
+ personaLabel:"David, 63 — Semi-Retired Consultant",
+ hook:"My grandfather retired at 65 and spent the next 5 years feeling like the world moved on without him. I don't want that for anyone.",
+ body:`David spent 35 years in logistics consulting. He's seen three complete technology revolutions. He's sharp, experienced, and has more institutional knowledge in his head than most 30-year-olds have in their entire career.
+
+Now he consults part-time. Takes on 2-3 projects a year. Stays sharp, stays relevant, stays connected to the work he loves.
+
+The only thing that frustrates him is that the tools everyone uses assume you have 4 hours to configure them. He doesn't want to learn a new system. He doesn't want to build a second brain in Notion. He just wants to speak his client notes after a call and have them be organized when he needs them.
+
+VoicifyAI is the only AI tool I know of that requires zero setup. You open it, you speak, it handles the rest. David now records a 2-minute voice summary after every client call, and VoicifyAI turns it into structured notes, follow-up tasks, and key decisions — automatically.
+
+He told me last week: "It's the first app I've used in 10 years that respects my time."
+
+Technology should adapt to people. Not the other way around.
+
+→ voicifyai.com — no learning curve. No setup required. Just speak.
+Share this with someone who's earned the right to a simple, powerful tool.`,
+ cta:"voicifyai.com — no learning curve. No setup. Just speak.",
+ visual:"Older professional in a home office, confident and calm, on a call.",
+ tags:["#SemiRetired","#Consulting","#TechForEveryone","#ProductivityTools"]},
+
+{day:17,week:3,month:"1",platform:"x",persona:"kofi",type:"hook",
+ personaLabel:"Kofi, 22 — University Student",
+ hook:"The students winning right now aren't studying harder.",
+ body:`They're studying smarter — by using their voice to process what they just learned instead of typing summaries they'll never re-read.
+
+Speak → VoicifyAI turns it into structured study notes, question lists, and revision frameworks.
+
+→ voicifyai.com`,
+ cta:"voicifyai.com — free for students",
+ visual:"Voice note waveform transforming into a clean structured study guide.",
+ tags:["#StudentLife","#StudyTips","#ExamSeason","#VoicifyAI"]},
+
+{day:18,week:3,month:"1",platform:"fb",persona:"david",type:"story",
+ personaLabel:"David, 63 — Semi-Retired Consultant",
+ hook:"There is no age limit on clarity.",
+ body:`Some of the most valuable knowledge in the world is sitting inside people who believe that the tools don't work for them.
+
+David, 63, has been a logistics consultant for 35 years. He knows things that junior consultants won't know for another decade. But he's been slow to use AI tools because — honestly — most of them are built for people who enjoy configuring software.
+
+VoicifyAI is different. You speak. It organizes. That's genuinely all it is.
+
+David uses it to debrief after client calls, capture ideas mid-walk, and keep his project notes organized without touching a keyboard. His clients get faster, cleaner follow-ups. He gets more headspace for the actual thinking.
+
+The app doesn't care how old you are. It just listens.
+
+→ voicifyai.com — free to start. Available on iOS, Android, and the web. Just open it and speak.`,
+ cta:"voicifyai.com — free. Just open it and speak.",
+ visual:"Seasoned professional on a nature walk, speaking into phone naturally. Confidence, not struggle.",
+ tags:["#LifelongLearning","#ProfessionalDevelopment","#Consulting","#VoiceFirst"]},
+
+{day:19,week:3,month:"1",platform:"x",persona:"general",type:"thread",
+ personaLabel:"Universal — 10 Life Stages",
+ hook:"I asked 10 people in 10 different life stages what their biggest productivity pain point was. The answer was the same every single time. 🧵",
+ body:`1/ Ages 22 to 63, wildly different jobs and lives — one question: "What's the thing that slips through the cracks most?" The answer was almost word for word the same.
+
+2/ The 22-year-old student: "Ideas I have during lectures that I can't capture without missing the next thing."
+
+3/ The 34-year-old PM: "Meeting decisions that don't make it into a task before the next meeting overwrites them."
+
+4/ The 47-year-old parent: "Things I think of while driving, cooking, or doing something where I can't type."
+
+5/ The 63-year-old consultant: "Client notes I take right after a call but can never find again when I need them."
+
+6/ Different people. Different contexts. Same root problem: thoughts arrive at the wrong time, in the wrong format, with no system fast enough to catch them.
+
+7/ The common denominator: they all have voices. They all think faster than they can type. And none of them have a capture tool that works at the speed of thought.
+
+8/ That's VoicifyAI. For all 10 of them. → voicifyai.com`,
+ cta:"voicifyai.com — for every kind of thinker",
+ visual:"Simple grid: 4 personas, 4 pain points, one shared root cause. Clean, shareable graphic.",
+ tags:["#Productivity","#VoiceFirst","#AITools","#VoicifyAI"]},
+
+// ─────── WEEK 4 — JAMES + AMARA + RAJ ───────
+{day:22,week:4,month:"1",platform:"li",persona:"james",type:"story",
+ personaLabel:"James, 41 — Scaling Founder",
+ hook:"Nobody builds companies alone. They build them on the back of ideas that survived the chaos.",
+ body:`James is 18 months into his second company. The first one exited. This one is moving faster, which means the chaos is proportionally bigger.
+
+He has a co-founder, a team of 11, and approximately 300 Slack messages a day that all feel urgent. His calendar is a Tetris game that resets every Monday. And somewhere in all of it — between the investor update, the engineering sprint, and the board prep — are the decisions that will define whether the company looks like a success or a lesson in 24 months.
+
+He started using VoicifyAI not because he needed another app, but because he needed fewer of them. The meeting bot handles meeting capture. The voice notes handle everything else. His Google Calendar syncs automatically. His tasks live in one place.
+
+What he told me last month: "I spend more time deciding things and less time trying to remember what I decided."
+
+That's the compounding value of a functional capture system. Decisions compound. Clarity compounds. And lost context — at the speed James is moving — costs real money.
+
+→ voicifyai.com — for founders who need to move fast and forget nothing.`,
+ cta:"voicifyai.com — for founders who move fast and forget nothing.",
+ visual:"Whiteboard with complex strategy map, founder at center looking clear-eyed and in control.",
+ tags:["#Founder","#StartupLife","#FounderMindset","#BuildingInPublic"]},
+
+{day:23,week:4,month:"1",platform:"fb",persona:"amara",type:"empathy",
+ personaLabel:"Amara, 31 — Non-Profit Program Director",
+ hook:"She's running a non-profit on 20% of the budget, 50% of the staff, and 200% of the passion.",
+ body:`Amara runs a youth literacy program in Chicago. Her team is 4 people. Her caseload is 200 kids. Her grant applications are due quarterly and her program reports are due monthly and her to-do list has not been under 30 items since 2021.
+
+She doesn't have the luxury of a chief of staff. She doesn't have an executive assistant. She has a smartphone, a laptop, and exactly as much time as there is in a day.
+
+She started using VoicifyAI because she was losing good grant ideas — specific, compelling, fundable ideas — in the chaos of running a program. Now when an idea hits during a site visit or on the bus home, she says it out loud. VoicifyAI captures it, structures it, and it's waiting in her content folder when she sits down to write.
+
+Last quarter she submitted two grants she'd been "meaning to write for years." One came back funded.
+
+Technology is most powerful when it amplifies the people who are already doing the most important work.
+
+→ voicifyai.com — free to start. For everyone doing the work that matters.`,
+ cta:"voicifyai.com — free. For everyone doing the work that matters.",
+ visual:"Community program setting — bright, purposeful energy. Kids and staff in the background.",
+ tags:["#NonProfit","#SocialImpact","#GrantWriting","#MissionDriven"]},
+
+{day:24,week:4,month:"1",platform:"x",persona:"raj",type:"hook",
+ personaLabel:"Raj, 35 — Remote Team Manager",
+ hook:"Remote managers: your team doesn't forget things because they're disorganized.",
+ body:`They forget because the system for capturing decisions from async conversations is broken.
+
+Meeting bot + auto task assignment + calendar sync.
+
+One less reason for "I thought you were handling that."
+
+→ voicifyai.com`,
+ cta:"voicifyai.com — free to start",
+ visual:"Async meeting thread with clear task assignments highlighted.",
+ tags:["#RemoteWork","#TeamManagement","#AsyncWork","#VoicifyAI"]},
+
+{day:25,week:4,month:"1",platform:"li",persona:"raj",type:"thought-leadership",
+ personaLabel:"Raj, 35 — Remote Team Manager",
+ hook:"The hidden cost of managing remote teams isn't communication. It's decision half-life.",
+ body:`Here's a pattern that almost every remote manager recognizes:
+
+A decision gets made on a Zoom call. Everyone agrees. Someone types a quick summary in Slack. Two weeks later, two people on the team have interpreted it differently, and the work they've done reflects two different realities.
+
+The decision didn't fail because people disagreed. It failed because the source of truth was a Slack message that got buried under 400 subsequent messages.
+
+Raj manages a distributed team of 9 across 4 time zones. The meeting bot in VoicifyAI doesn't just transcribe — it creates a structured decision record that becomes the canonical source of truth for every discussion. When someone asks "wait, what did we decide about the API handoff?", the answer is a link to a timestamped summary, not a memory.
+
+This isn't about micromanagement. It's about giving everyone on the team an equal chance to stay aligned — regardless of whether they were in the room, in a different time zone, or joined 6 months after the decision was made.
+
+The best remote teams don't communicate more. They capture better.
+
+→ voicifyai.com — for teams that need clarity, not more meetings.`,
+ cta:"voicifyai.com — clarity for distributed teams. Free to start.",
+ visual:"Remote team async workflow diagram showing decision record as single source of truth.",
+ tags:["#RemoteWork","#DistributedTeams","#TeamAlignment","#FutureOfWork"]},
+
+{day:26,week:4,month:"1",platform:"yt",persona:"raj",type:"video",
+ personaLabel:"Raj, 35 — Remote Team Manager",
+ hook:"The 2-minute voice habit that changed how I manage my remote team (YouTube Short — 90s)",
+ body:`YOUTUBE SHORT SCRIPT — 90 seconds
+
+[HOOK — 0-4s]
+"Every Monday morning I do the same thing. 2 minutes. One voice note. Here's why it changed how my entire team operates."
+
+[CONTENT — 4-75s]
+Every Monday I record a 2-minute voice note. I call it my 'week ahead' note.
+
+I just speak — what I'm trying to accomplish, who needs what from me, any blockers I'm already aware of, any decisions that are still unresolved from last week.
+
+VoicifyAI turns that 2-minute stream of consciousness into a structured weekly brief. Tasks, priorities, context — all organized automatically.
+
+Then I share it with my team. They know what I'm focused on. They know what decisions are pending. Nobody has to guess.
+
+[SCREEN RECORD: Weekly brief appearing — clean, structured, timestamped]
+
+Two minutes on Monday prevents about 3 hours of misalignment for the rest of the week.
+
+[CTA — 75-90s]
+Try it free at voicifyai.com. No setup. No config. Just speak.`,
+ cta:"voicifyai.com — free. The Monday brief changes everything.",
+ visual:"Screen recording of weekly brief appearing: priorities, pending decisions, team owners.",
+ tags:["#RemoteTeams","#TeamManagement","#MondayMotivation","#LeadershipTips"]},
+
+{day:29,week:4,month:"1",platform:"li",persona:"general",type:"story",
+ personaLabel:"Month 1 — Personal Reflection",
+ hook:"Month 1 reflection: the one productivity change that actually stuck.",
+ body:`I've tried a lot of systems. GTD. Time blocking. The Ivy Lee method. Bullet journaling. The second brain.
+
+Most of them worked for about 11 days.
+
+The thing that stuck was the thing with the lowest friction: speaking instead of typing.
+
+Not because speaking is more natural (though it is). Because it removed the decision about where to put something. I used to stall on capture because I wasn't sure whether the thought was a task, a note, a goal, or just noise. That stall was enough to let the thought die.
+
+VoicifyAI removed the decision. I speak. It decides. The thought lives.
+
+That's it. That's the whole change.
+
+→ voicifyai.com — start free. Let it do the deciding.`,
+ cta:"voicifyai.com — start free. Let it do the deciding.",
+ visual:"Simple habit tracker showing one unbroken streak. Clean, satisfying visual.",
+ tags:["#HabitBuilding","#Productivity","#VoiceFirst","#MonthOneReflection"]},
+
+{day:30,week:4,month:"1",platform:"fb",persona:"general",type:"community",
+ personaLabel:"Month 1 Wrap-Up — All Personas",
+ hook:"30 days in. Here's what actually happened.",
+ body:`We've been sharing stories this month about people who changed something small and got something big in return.
+
+Marcus stopped losing meeting decisions.
+Priya stopped losing content ideas.
+Sandra stopped losing the thoughts that came at the wrong time.
+David stopped losing client context.
+Amara stopped losing grant ideas.
+Kofi stopped losing the insight from lectures.
+
+One common thread: none of them changed how they think. They just changed what happened to the thoughts after they had them.
+
+The capture problem is universal. The solution is simpler than anyone expected.
+
+→ Month 2 starts Monday. We're going deeper into what changes when the system actually works.
+
+Follow VoicifyAI to see what's next. And if you've been on the fence — this is the free week. voicifyai.com. No credit card. No commitment. Just speak.`,
+ cta:"voicifyai.com — free plan, no card required. Month 2 starts Monday.",
+ visual:"Montage grid of all Month 1 personas — warm, diverse, human.",
+ tags:["#Month1Recap","#VoicifyAI","#Productivity","#CommunityStories"]},
+
+// ─────── MONTH 2 — WEEK 5: TOM ───────
+{day:31,week:5,month:"2",platform:"li",persona:"tom",type:"story",
+ personaLabel:"Tom, 38 — Sales Director",
+ hook:"In sales, the follow-up is the product. And most people are terrible at it.",
+ body:`Not because they don't care. Because the window for a quality follow-up is about 20 minutes after the call ends — and those 20 minutes are usually occupied by the next call.
+
+Tom runs a team of 12 AEs. He's spent years coaching them on follow-up quality. The advice is always the same: capture the client's actual words, reflect their priorities back, send it within the hour.
+
+The execution is almost never that clean.
+
+VoicifyAI changed the workflow. After every client call, his AEs record a 90-second debrief into the app. VoicifyAI turns it into a structured client note: what was discussed, what was committed, what the next step is. The follow-up email writes itself from the note.
+
+His team's follow-up response rate went up 31% in the first quarter.
+
+Because the follow-up actually sounded like it came from someone who was paying attention.
+
+→ voicifyai.com — for sales teams that want to close with context.`,
+ cta:"voicifyai.com — close with context. 31% higher response rate.",
+ visual:"Before/after client email quality comparison: generic vs. personalized, contextual.",
+ tags:["#SalesLife","#SalesLeadership","#CRM","#SalesTips"]},
+
+{day:32,week:5,month:"2",platform:"x",persona:"tom",type:"hook",
+ personaLabel:"Tom, 38 — Sales Director",
+ hook:"Sales truth: your prospects remember the follow-up email longer than the call itself.",
+ body:`And most follow-up emails are generic.
+
+VoicifyAI: speak your debrief → structured client notes → personalized follow-up in minutes.
+
+31% higher response rate for teams using it.
+
+→ voicifyai.com`,
+ cta:"voicifyai.com — free to start",
+ visual:"Response rate graph: before VoicifyAI vs. after. Clean data visual.",
+ tags:["#SalesTips","#FollowUp","#SalesProductivity","#VoicifyAI"]},
+
+{day:33,week:5,month:"2",platform:"fb",persona:"tom",type:"empathy",
+ personaLabel:"Tom, 38 — Sales Director",
+ hook:"To every salesperson who's sent a follow-up email and cringed because it was generic.",
+ body:`You know the one. "Great speaking with you today! As discussed, we offer..." and then a copy-paste of the product overview.
+
+The client remembers more about that call than you do. They remember what they told you about their Q3 pressure and the board presentation and the team member who's been resistant.
+
+Your email didn't reflect any of it.
+
+Tom's sales team changed this with one small habit. 90 seconds on VoicifyAI right after each call. What the client said. What mattered to them. What was promised. What the next step actually is.
+
+The AI turns that into a structured note. The follow-up reflects the real conversation. The response rate tells the story.
+
+→ voicifyai.com — for anyone who wants their follow-ups to actually feel human.
+♻️ Tag a salesperson who needs this.`,
+ cta:"voicifyai.com — human follow-ups, automated capture.",
+ visual:"Two follow-up emails side by side — generic vs. deeply personalized.",
+ tags:["#SalesLife","#CustomerRelationships","#SalesStrategy","#PersonalizeIt"]},
+
+// ─────── WEEK 6 — LIN + YUKI ───────
+{day:36,week:6,month:"2",platform:"li",persona:"lin",type:"thought-leadership",
+ personaLabel:"Lin, 24 — Med School Student",
+ hook:"The learning retention crisis isn't about how much students study. It's about how they process.",
+ body:`Lin is 18 months into her medical education. She's in lectures 6 hours a day, labs 2 days a week, and clinical rotations on weekends. She's not sleeping enough. She's definitely not processing everything she hears.
+
+The research on retrieval practice is clear: you retain significantly more from a subject when you explain it back in your own words than when you re-read notes. The act of speaking what you just learned forces your brain to reconstruct it — and reconstruction is where memory forms.
+
+Lin records 3-minute post-lecture voice summaries: what she understood, what confused her, what connected to something from a previous lecture. VoicifyAI turns these into structured study notes, question lists, and revision cards.
+
+She's not studying more. She's processing more efficiently.
+
+The highest performers in any learning environment aren't the ones who capture the most information. They're the ones who engage with it most actively.
+
+→ voicifyai.com — for anyone who learns by doing, not just reading.`,
+ cta:"voicifyai.com — for learners who process out loud.",
+ visual:"Student walking after a lecture, speaking into phone — processing, not transcribing.",
+ tags:["#MedSchool","#LearningScience","#RetrievalPractice","#StudySmarter"]},
+
+{day:37,week:6,month:"2",platform:"fb",persona:"lin",type:"story",
+ personaLabel:"Lin, 24 — Med School Student",
+ hook:"She's studying 10 hours a day and still felt like information was evaporating. Here's what changed.",
+ body:`Lin's second year of medical school felt like drinking from a firehose. Pharmacology, pathology, clinical reasoning — all arriving at full speed, all requiring perfect retention, none of it repeating itself the way undergrad material did.
+
+She was taking meticulous typed notes. Reviewing them diligently. And still sitting down for practice exams feeling like she'd never seen some of the material before.
+
+A friend told her about retrieval practice — specifically speaking back what she'd just learned. The act of articulating information forces your brain to reconstruct it, not just recognize it.
+
+She started using VoicifyAI to record 3-minute post-lecture voice summaries. Unscripted, informal, just her processing the material. VoicifyAI turns those into organized study notes automatically.
+
+Her exam performance shifted in 6 weeks.
+
+"I stopped feeling like I was memorizing," she told us. "And started feeling like I actually understood."
+
+→ voicifyai.com — free for students. Your voice is the most underused study tool you have.`,
+ cta:"voicifyai.com — free plan. The most underused study tool is your voice.",
+ visual:"Medical textbooks, stethoscope, phone with VoicifyAI open showing structured study notes.",
+ tags:["#MedStudent","#StudyHacks","#MedSchoolLife","#SmartStudying"]},
+
+{day:38,week:6,month:"2",platform:"x",persona:"yuki",type:"hook",
+ personaLabel:"Yuki, 29 — Podcaster / Side Hustler",
+ hook:"Podcasters: you're sitting on a content mine and you don't even know it.",
+ body:`Every episode you record has 6–8 extractable ideas, 3 quotable moments, and 2 follow-up episode concepts hidden in the transcript.
+
+VoicifyAI finds them for you.
+
+→ voicifyai.com`,
+ cta:"voicifyai.com — free to start",
+ visual:"Podcast transcript with key ideas, quotes, and follow-up concepts highlighted.",
+ tags:["#Podcasting","#ContentCreation","#PodcastTips","#VoicifyAI"]},
+
+{day:40,week:6,month:"2",platform:"li",persona:"yuki",type:"thought-leadership",
+ personaLabel:"Yuki, 29 — Podcaster / Side Hustler",
+ hook:"What podcasters understand about content that most creators don't.",
+ body:`When Yuki started her podcast two years ago, she treated each episode as a standalone. Record, edit, publish, move on. The content lived in audio form and went wherever the algorithm sent it.
+
+Then she realized something: every 45-minute conversation she recorded contained more usable content than she could publish in a week. Quotes, insights, frameworks, follow-up questions, episode concepts — all buried in unlistened-to audio.
+
+She started using VoicifyAI to import each episode after recording. The app transcribes it, extracts the key ideas, flags the quotable moments, and suggests follow-up concepts. What used to be a single audio file is now a content system.
+
+Her newsletter, social posts, LinkedIn content, and episode titles all feed from the same extraction. She's not creating more — she's mining what she already has.
+
+This is the model every content creator should be running. Create once. Extract everywhere.
+
+→ voicifyai.com — for anyone who wants to get more from every conversation they have.`,
+ cta:"voicifyai.com — create once. extract everywhere.",
+ visual:"Single podcast episode branching into newsletter, 4 social posts, 2 clips, 1 follow-up episode.",
+ tags:["#Podcasting","#ContentStrategy","#ContentRepurposing","#CreatorEconomy"]},
+
+// ─────── WEEK 7 — ELENA + SOFIA ───────
+{day:43,week:7,month:"2",platform:"fb",persona:"elena",type:"empathy",
+ personaLabel:"Elena, 58 — Returning Professional",
+ hook:"She took 8 years out of the workforce to raise her kids. Now she's back. And the world moved.",
+ body:`Elena stepped back from her marketing career in 2015. At the time, she was a senior brand manager. Sharp, experienced, respected.
+
+When she came back to work in 2023, she found a landscape that had changed completely. AI everywhere. New tools weekly. A pace that felt like it had doubled. And a quiet, persistent fear that she'd lost her edge.
+
+She hadn't. Her strategic instincts were intact. Her leadership skills were better, actually — years of managing a household and a family had sharpened them. What she needed wasn't a new brain. She needed a fast, frictionless way to operate in a world that expected everyone to have a second brain already set up.
+
+She found VoicifyAI. No setup. No learning curve. Open the app, speak your thoughts, get organized output. Her first week back felt different from her first week back at any previous job.
+
+"It felt like the technology was finally working for me," she said.
+
+→ voicifyai.com — for everyone re-entering, restarting, or reclaiming their edge.
+♻️ Share this with someone who's coming back stronger.`,
+ cta:"voicifyai.com — technology that works for you, not the other way around.",
+ visual:"Confident professional in modern office — warm, purposeful energy. This is someone in their element.",
+ tags:["#ReturningToWork","#CareerReentry","#WorkingMoms","#ProfessionalGrowth"]},
+
+{day:44,week:7,month:"2",platform:"li",persona:"elena",type:"thought-leadership",
+ personaLabel:"Elena, 58 — Returning Professional",
+ hook:"The workforce gap problem isn't a skills gap. It's a confidence gap. And tools that work without setup are part of the answer.",
+ body:`When Elena returned to marketing after 8 years, the skills gap everyone warned her about wasn't where she expected it.
+
+Her strategic thinking was intact. Her creative instincts were sharp. Her ability to read a room and influence a direction — stronger than ever.
+
+What she struggled with was the ambient technology expectation: that she should already know how to use Notion, Obsidian, Slack's threading system, and approximately 40 other tools that hadn't existed when she left.
+
+The irony is that the tools designed to increase productivity often create a productivity tax just in the cost of learning them.
+
+VoicifyAI eliminated that tax for Elena. Zero setup. Voice in, organized content out. Her institutional knowledge — the thing no one can replace — now had a capture system fast enough to keep up with it.
+
+When we talk about making workplaces more accessible for returning professionals, we're not just talking about policy. We're talking about the tools that make expertise portable again.
+
+→ voicifyai.com — technology that works for everyone, not just early adopters.`,
+ cta:"voicifyai.com — zero setup. Voice in, organized content out.",
+ visual:"Career timeline visual: gap year that becomes a strength, not a gap.",
+ tags:["#WorkplaceInclusion","#CareerReentry","#WorkingWomen","#FutureOfWork"]},
+
+{day:45,week:7,month:"2",platform:"x",persona:"sofia",type:"hook",
+ personaLabel:"Sofia, 52 — Small Business Owner",
+ hook:"Small business owners: your competitive advantage is speed.",
+ body:`Speed of decision. Speed of follow-through. Speed of capture.
+
+The business that captures ideas and acts on them first wins.
+
+→ voicifyai.com — voice notes, meeting intelligence, task sync. One tool.`,
+ cta:"voicifyai.com — one tool for every idea, every call, every task.",
+ visual:"Speed vs. competitors graph — one line pulling ahead.",
+ tags:["#SmallBusiness","#Entrepreneurship","#BusinessGrowth","#VoicifyAI"]},
+
+{day:47,week:7,month:"2",platform:"fb",persona:"sofia",type:"story",
+ personaLabel:"Sofia, 52 — Small Business Owner",
+ hook:"She runs a bakery. She had an idea for a seasonal menu at 5 AM while mixing dough. That idea made $4,000 last November.",
+ body:`Sofia Reyes opens her bakery at 5 AM. By the time her staff arrives at 6:30, she's already made about 20 decisions — some small, some the kind that affect the month's margin.
+
+The idea for the holiday bread box came to her mid-mix on a Tuesday in October. A thought about what customers always asked for, combined with a memory of a seasonal market she'd visited years ago. Connected, specific, actionable.
+
+She used to lose those thoughts. The dough doesn't wait. You can't stop and type. By the time the morning rush ended and she had two minutes to sit down, the full shape of the idea was gone.
+
+Now she speaks it out loud. VoicifyAI hears it, and it's there — organized and waiting — when she needs it.
+
+That bread box idea turned into her best November in six years.
+
+"The best business ideas I have don't come at a desk," she told us. "They come when my hands are busy. I needed a system that worked at 5 AM with flour on my fingers."
+
+→ voicifyai.com — free to start. For every small business owner who thinks on their feet.
+♻️ Share this with a small business owner you admire.`,
+ cta:"voicifyai.com — free. Ideas captured at 5 AM, whenever they arrive.",
+ visual:"Warm bakery morning light, hands working dough, phone nearby on the counter.",
+ tags:["#SmallBusiness","#Entrepreneurship","#BakerLife","#BusinessIdeas"]},
+
+// ─────── WEEK 8 — SOCIAL PROOF ───────
+{day:50,week:8,month:"2",platform:"li",persona:"general",type:"community",
+ personaLabel:"Community — Social Proof",
+ hook:"50 days in. Here's what users are actually saying.",
+ body:`When we built VoicifyAI, we had hypotheses about who would use it. The PM who needed meeting intelligence. The creator who needed idea capture. The parent who needed a voice-first system.
+
+We were right about all three. And wrong about the scale of the thing.
+
+We didn't expect the med student using it for retrieval practice. We didn't expect the retiree who told us it was the first tech tool in a decade that didn't make him feel old. We didn't expect the non-profit director who funded a grant partly because she finally had a system that could keep up with her thinking.
+
+The common thread across everyone who's stuck with it: they stopped organizing and started capturing. And what they captured started compounding.
+
+If you haven't tried it yet, the free plan is genuinely free. No credit card. No time limit on the core features.
+
+→ voicifyai.com — come see what your voice sounds like when it's organized.`,
+ cta:"voicifyai.com — free plan. Genuinely free. No credit card.",
+ visual:"Quote cards from diverse real users. Different ages, industries, life stages.",
+ tags:["#UserStories","#VoicifyAI","#SocialProof","#CommunityLove"]},
+
+{day:51,week:8,month:"2",platform:"fb",persona:"general",type:"community",
+ personaLabel:"Community Engagement",
+ hook:"Question for our community: what's the thought you lose most often?",
+ body:`Is it the idea that comes in the shower?
+The meeting insight that evaporates on the way back to your desk?
+The 2 AM realization that feels so clear and is gone by 6 AM?
+The brilliant plan you had while driving that you swore you'd remember?
+
+Tell us in the comments. We read every one.
+
+(And if you've found a system that actually works for catching these — share it. This community is better when we help each other.)
+
+→ voicifyai.com — built for exactly this. Free to start.`,
+ cta:"voicifyai.com — built for exactly this. Comment below.",
+ visual:"Thought bubble dissolving into static — recognizable, relatable, slightly funny.",
+ tags:["#Community","#Productivity","#VoicifyAI","#LostThoughts"]},
+
+{day:52,week:8,month:"2",platform:"x",persona:"general",type:"hook",
+ personaLabel:"General — 3 Lost Thoughts",
+ hook:"The 3 thoughts you lose most often:",
+ body:`1. The shower idea
+2. The post-meeting insight (before the next meeting starts)
+3. The 2 AM clarity that felt so obvious
+
+VoicifyAI is built for all three.
+
+→ voicifyai.com. What would you build if none of your ideas could escape?`,
+ cta:"voicifyai.com — what would you build?",
+ visual:"Three icons: shower, meeting table, moon + clock. Clean, minimal, shareable.",
+ tags:["#LostIdeas","#Productivity","#VoicifyAI","#CaptureEverything"]},
+
+{day:55,week:8,month:"2",platform:"yt",persona:"general",type:"video",
+ personaLabel:"7-Day Experiment",
+ hook:"I captured every thought I had for 7 days. Here's what I built from them. (Long-form, 15 min)",
+ body:`YOUTUBE LONG-FORM DESCRIPTION
+
+TITLE: I Captured Every Thought for 7 Days — Here's What Emerged (VoicifyAI Experiment)
+
+CHAPTERS:
+0:00 — The experiment begins (and why)
+1:30 — Day 1: What it feels like to capture without friction
+4:00 — Day 3: Patterns start emerging (the AI notices before I do)
+7:30 — Day 5: The unexpected insight about my own thinking
+11:00 — Day 7: What I built from a week of captured thoughts
+15:20 — What this means for how you work
+
+SCRIPT OUTLINE:
+[OPEN] "I gave myself one rule for 7 days: capture every thought that felt worth having. Every idea. Every reaction. Every insight from a podcast, a meeting, a walk. All of it."
+
+[DAYS 1-3] Raw input — voice notes throughout the day. VoicifyAI automatically classifying and organizing. The feeling of zero friction. Show the app in action.
+
+[DAYS 4-5] Patterns emerge. The AI flags that "newsletter" has been mentioned 7 times in different contexts. "Team communication" appears in 4 separate notes. Something is trying to surface.
+
+[DAY 7] Reveal: A structured content series (ready to write), a business idea with 3 supporting data points gathered accidentally, and a goal I'd been circling for months without naming.
+
+[INSIGHT] "The thoughts I was 'losing' weren't random. They were the same themes returning, looking for a home. VoicifyAI gave them one."
+
+[CTA] "Free to start. Link in description."`,
+ cta:"voicifyai.com — free download. Link in description.",
+ visual:"Day-by-day visual log of captured thoughts, patterns emerging on screen.",
+ tags:["#Productivity","#VoicifyAI","#7DayChallenge","#PersonalExperiment"]},
+
+// ─────── MONTH 3 — WEEK 9: PROOF ───────
+{day:57,week:9,month:"3",platform:"li",persona:"general",type:"data",
+ personaLabel:"Data — 90-Day Metrics",
+ hook:"What 90 days of voice-first productivity actually looks like in the data.",
+ body:`If you've been following along since Month 1, here's where the data lands for teams and individuals who've been using VoicifyAI consistently for 90 days:
+
+→ Average meeting follow-up time: reduced from ~47 minutes to ~8 minutes
+→ Ideas captured vs. ideas lost: 3:1 → 9:1 ratio improvement
+→ Task completion rate on meeting action items: +34%
+→ Reported "I forgot" incidents per week: down ~60%
+
+These aren't from a controlled study. They're from the patterns we see in how people actually use the product, combined with user-reported changes.
+
+The numbers matter less than what they represent: a cumulative reduction in cognitive friction that, over 90 days, starts to feel like operating at a different gear.
+
+The people who feel the difference most sharply aren't the ones who were disorganized. They're the ones who were already good at their jobs and found that good wasn't quite enough.
+
+→ voicifyai.com — 90 days from now, what would your data look like?`,
+ cta:"voicifyai.com — 90 days from now, what would your data look like?",
+ visual:"Clean 4-metric data visualization. Each metric shown as a before/after comparison bar.",
+ tags:["#ProductivityData","#VoicifyAI","#ROI","#FutureOfWork"]},
+
+{day:58,week:9,month:"3",platform:"fb",persona:"general",type:"data",
+ personaLabel:"Data — Idea Math",
+ hook:"90 days is long enough to change a habit. Short enough to measure it.",
+ body:`A year ago: 3 good ideas lost per week on average.
+Six months ago: 1 per week (started using voice notes).
+Today: essentially zero (VoicifyAI captures and organizes automatically).
+
+The math compounds. 3 ideas/week × 52 weeks = 156 potentially useful ideas that simply didn't exist in a usable form.
+
+Some of them would have been nothing. Some of them might have been the thing.
+
+→ voicifyai.com — free to start. Stop the leak.`,
+ cta:"voicifyai.com — free to start. Stop the leak.",
+ visual:"Line graph showing idea capture rate improving over 3 months. Satisfying upward trend.",
+ tags:["#IdeaCapture","#Productivity","#VoicifyAI","#TheMathChecksOut"]},
+
+{day:59,week:9,month:"3",platform:"x",persona:"general",type:"data",
+ personaLabel:"Data — Quick Stats",
+ hook:"90-day summary of VoicifyAI data from active users:",
+ body:`Meeting follow-up time: 47 min → 8 min avg
+Task completion from meetings: +34%
+"I forgot" incidents: -60%
+Ideas captured vs. lost: 9:1 (was 3:1)
+
+The compounding effect of low friction.
+
+→ voicifyai.com`,
+ cta:"voicifyai.com",
+ visual:"Clean data card with 4 metrics. Shareable, screenshot-worthy.",
+ tags:["#ProductivityStats","#VoicifyAI","#DataDriven","#WorkSmarter"]},
+
+// ─────── WEEK 10 — URGENCY & CONVERSION ───────
+{day:64,week:10,month:"3",platform:"li",persona:"general",type:"thought-leadership",
+ personaLabel:"Philosophical — The Extended Mind",
+ hook:"The tools you use shape the thoughts you keep. And the thoughts you keep shape the work you do.",
+ body:`There's a concept in cognitive science called the "extended mind" — the idea that the tools we use don't just assist cognition, they become part of it. Your notebook, your calendar, your phone — they're not external to your thinking. They're extensions of it.
+
+If that's true, then the quality of your capture tools determines the quality of your accessible thought.
+
+Not the quality of your thinking — the quality of what survives the journey from your head to a form you can act on.
+
+Most people are walking around with extraordinary ideas that evaporate before they reach a trusted system. Not because the ideas aren't good. Because the gap between thinking and capturing is wide enough to lose things in.
+
+VoicifyAI closes that gap. And what you capture from this week forward is entirely up to you.
+
+→ voicifyai.com — free plan. Start today. What you think matters.`,
+ cta:"voicifyai.com — free plan. Your thoughts deserve a better door.",
+ visual:"Brain extending into a structured, organized system. Extended mind concept visualized.",
+ tags:["#CognitiveScience","#ExtendedMind","#ThoughtLeadership","#Productivity"]},
+
+{day:65,week:10,month:"3",platform:"fb",persona:"general",type:"community",
+ personaLabel:"Conversion — The Fence-Sitters",
+ hook:"If you've been on the fence about trying VoicifyAI, this is for you.",
+ body:`You don't have to be a PM or a founder or a creator to need this. You just have to be a person who has thoughts that matter and a life that moves too fast to capture all of them by hand.
+
+The free plan is genuinely free. No credit card. No time limit on core features. You don't have to trust us — you just have to try it once.
+
+Open the app. Think of something you've been meaning to capture. Say it out loud.
+
+That's it. That's the whole thing.
+
+→ voicifyai.com — iOS, Android, and web. Free to start. Right now.`,
+ cta:"voicifyai.com — iOS, Android, web. Free. Right now.",
+ visual:"Simple, inviting phone screen showing the VoicifyAI interface. Nothing more needed.",
+ tags:["#TryIt","#FreeApp","#VoicifyAI","#GetStarted"]},
+
+{day:66,week:10,month:"3",platform:"x",persona:"general",type:"hook",
+ personaLabel:"Conversion Standalone",
+ hook:"The version of you that stops losing ideas exists.",
+ body:`It's not 10 apps away. It's one voice note away.
+
+→ voicifyai.com`,
+ cta:"voicifyai.com",
+ visual:"Single clean phone screen. Minimal. One message.",
+ tags:["#Productivity","#VoicifyAI","#OneNoteAway","#StartNow"]},
+
+{day:68,week:10,month:"3",platform:"yt",persona:"general",type:"video",
+ personaLabel:"7-Day Honest Review",
+ hook:"Free app changed how I work in 7 days — no hype. (YouTube Short — 75s)",
+ body:`YOUTUBE SHORT SCRIPT — 75 seconds
+
+[HOOK — 0-3s]
+"I want to show you exactly what happened in the first 7 days of using VoicifyAI."
+
+[CONTENT — 3-60s]
+Day 1: I recorded my first voice note on the commute. VoicifyAI turned it into a structured task list before I parked.
+
+Day 3: I let the meeting bot join my weekly standup. Got the cleanest summary I'd ever seen from a 45-minute call.
+
+Day 5: I imported a YouTube video I'd been meaning to watch. Got back 7 key ideas in 3 minutes.
+
+Day 7: I had more organized, actionable content than I'd produced manually in the previous month.
+
+Nothing fancy. No configuration. No learning curve. Just open the app and speak.
+
+[CTA — 60-75s]
+Free at voicifyai.com. Link in description.`,
+ cta:"voicifyai.com — free download. Link in description.",
+ visual:"Day-by-day split screen: what I said vs. what the app produced. Fast-paced, authentic.",
+ tags:["#AppReview","#ProductivityApp","#VoicifyAI","#7DayChallenge"]},
+
+// ─────── WEEK 11-12 — FINAL PUSH ───────
+{day:71,week:11,month:"3",platform:"li",persona:"general",type:"thought-leadership",
+ personaLabel:"Aspirational — Two Kinds of Workers",
+ hook:"The question isn't whether AI will change how we work. It's which version of you meets that change.",
+ body:`Two kinds of knowledge workers are emerging right now.
+
+The first kind is adding AI tools to an already broken workflow. They're using AI to do more of what they were already doing — more emails, more content, more output — without fixing the underlying capture and organization problem. They're busy. They're not necessarily better.
+
+The second kind is using AI to rebuild the workflow from the voice up. They're capturing faster, organizing automatically, acting on better information, and spending their actual cognitive energy on the work that can't be automated: judgment, creativity, relationships.
+
+VoicifyAI is a tool for the second kind of person.
+
+It doesn't do your thinking for you. It makes sure your thinking survives the journey from your head to your hands.
+
+→ voicifyai.com — 90 days from now, which version are you?`,
+ cta:"voicifyai.com — which version will you be in 90 days?",
+ visual:"Two parallel paths diverging. One chaotic, one clear. The fork is right now.",
+ tags:["#FutureOfWork","#AITools","#KnowledgeWorker","#Productivity"]},
+
+{day:72,week:11,month:"3",platform:"fb",persona:"general",type:"community",
+ personaLabel:"Series Community Wrap",
+ hook:"This is the last week of our 90-day series. Thank you for being here for all of it.",
+ body:`Over the past 90 days, we've shared the stories of 13 people from wildly different lives who all shared one problem: thoughts arriving faster than systems could catch them.
+
+Marcus, who stopped losing meeting decisions.
+Priya, who stopped losing creative ideas.
+Sandra, who stopped losing the thoughts that came at the wrong time.
+David, who found a tool that finally respected his time.
+Kofi, who found a way to actually remember what he learned.
+Amara, who turned captured ideas into funded grants.
+Tom, whose sales team followed up like they actually listened.
+Lin, who started studying smarter, not harder.
+Yuki, who turned one podcast into a full content system.
+Elena, who came back to work with her edge fully intact.
+Sofia, whose 5 AM ideas started making it to November menus.
+Raj, whose remote team stopped misremembering decisions.
+James, who finally spent more time deciding than remembering.
+
+Their stories are real. The tool is free to start.
+
+→ voicifyai.com — your story is next.
+
+Like and share if any of this resonated. Tag someone who needs this.`,
+ cta:"voicifyai.com — your story is next.",
+ visual:"Mosaic of all 13 personas — warm, human, diverse. The series in one image.",
+ tags:["#90DaySeries","#VoicifyAI","#Community","#AllPersonas"]},
+
+{day:73,week:11,month:"3",platform:"x",persona:"general",type:"community",
+ personaLabel:"Series Wrap — X",
+ hook:"90-day series wrap.",
+ body:`We told 13 stories. One tool. One problem.
+
+The thoughts you have are only as useful as the system that catches them.
+
+→ voicifyai.com — what story will you tell in 90 days?`,
+ cta:"voicifyai.com — what story will you tell?",
+ visual:"Timeline of all 13 personas. Clean, editorial, shareable.",
+ tags:["#VoicifyAI","#90DayWrap","#CaptureEverything","#YourStory"]},
+
+{day:78,week:12,month:"3",platform:"li",persona:"general",type:"empathy",
+ personaLabel:"Empathetic — The 11 PM Reader",
+ hook:"To the person reading this at 11 PM wondering why they can't keep up.",
+ body:`You're not failing because you're not trying hard enough.
+
+You're failing the same way everyone else is failing: with a capture system that can't keep pace with the speed at which your life demands decisions, ideas, and follow-through.
+
+The answer isn't more discipline. It's a better door.
+
+→ voicifyai.com. Free. Available now. Open the app and speak.`,
+ cta:"voicifyai.com. Free. Open the app and speak.",
+ visual:"Quiet late-night desk scene — warm lamp, laptop, person. Empathetic, not judgmental.",
+ tags:["#LateNightThoughts","#Productivity","#YouGotThis","#VoicifyAI"]},
+
+{day:80,week:12,month:"3",platform:"fb",persona:"general",type:"community",
+ personaLabel:"Conversion — One Honest Question",
+ hook:"One question. Honest answer.",
+ body:`When was the last time you had an idea and actually did something with it?
+
+Not eventually. Not "I'll get to it." Actually captured it, organized it, and moved on it within 24 hours.
+
+If the answer is "not recently," that's not a motivation problem. That's a system problem.
+
+And system problems have system solutions.
+
+→ voicifyai.com — free to start. Your ideas are waiting.`,
+ cta:"voicifyai.com — free to start. Your ideas are waiting.",
+ visual:"Single powerful image — open road, forward momentum. One clear direction.",
+ tags:["#OneQuestion","#Productivity","#VoicifyAI","#SystemSolutions"]},
+
+{day:85,week:12,month:"3",platform:"yt",persona:"general",type:"video",
+ personaLabel:"90-Day Honest Review",
+ hook:"I tried every productivity app. Here's the only one I still use 90 days later. (Long-form, 18 min)",
+ body:`YOUTUBE LONG-FORM DESCRIPTION
+
+TITLE: I Tried Every Productivity App. Here's the Only One That Became a Habit. (VoicifyAI 90-Day Honest Review)
+
+CHAPTERS:
+0:00 — Why I'm skeptical of productivity apps (and you should be too)
+3:00 — The 90-day experiment setup
+5:30 — What actually happened, week by week
+9:00 — The features I use most (and least)
+13:00 — Who this is really for
+16:00 — What I'd tell my past self
+18:30 — Download and free plan details
+
+SCRIPT TONE: Honest, mildly skeptical voice that converts through credibility, not enthusiasm. Show the product working, not just claiming to work.
+
+KEY BEATS TO HIT:
+— Initial skepticism and why I almost didn't try it
+— The moment it actually clicked (meeting bot on day 3)
+— The feature I least expected to use (intent detection on voice notes)
+— Concrete quantified result after 90 days
+— Honest critique: what it doesn't do yet
+— Why I'm still using it
+
+This is the high-trust conversion video. Every sentence earns belief before asking for action.`,
+ cta:"voicifyai.com — free download. Link in description + pinned comment.",
+ visual:"Thumbnail: 'Still Using It 90 Days Later' — credible, not hype-y. Real desk, real screen.",
+ tags:["#AppReview","#ProductivityApps","#HonestReview","#VoicifyAI"]},
+
+// ─────── WEEK 13 — THE CLOSE ───────
+{day:88,week:13,month:"3",platform:"li",persona:"general",type:"data",
+ personaLabel:"Final Summary",
+ hook:"The 90-day summary nobody asked for but everybody needs.",
+ body:`Here's what the last 90 days confirmed:
+
+1. The gap between thinking and capturing is where most productivity dies.
+2. Voice is the fastest capture method that exists.
+3. The difference between a voice note and organized, actionable content is intelligence — not effort.
+4. The people who benefit most from VoicifyAI aren't the disorganized ones. They're the ones already performing at high levels who want to lose less.
+5. The free plan is legitimately free and the upgrade is legitimately worth it.
+
+If you've been reading this series and haven't tried it yet — what are you waiting for?
+
+→ voicifyai.com. The 91st day starts whenever you decide to.`,
+ cta:"voicifyai.com — the 91st day starts now.",
+ visual:"Clean numbered list card. Bold, minimal typography. Screenshot-worthy and shareable.",
+ tags:["#FinalSummary","#VoicifyAI","#TakeAction","#The91stDay"]},
+
+{day:89,week:13,month:"3",platform:"fb",persona:"general",type:"community",
+ personaLabel:"Brand Personal — Final Post",
+ hook:"Final post of the series. This one's personal.",
+ body:`We built VoicifyAI because we were tired of losing things.
+
+Not things. Thoughts. The kind that arrive uninvited and leave without warning and occasionally change everything.
+
+We wanted a tool that would work at 5 AM with flour on your fingers. That would join your meeting and let you be present. That would hear "I need to pick up milk and also we have the dentist Thursday" and understand that those are two different kinds of things.
+
+We built it to work for 63-year-old consultants and 22-year-old students and overwhelmed parents and scaling founders and every kind of person in between.
+
+And after 90 days of sharing their stories with you, we're more convinced than ever that the problem we set out to solve is the right one.
+
+Your thoughts matter. They deserve a system that keeps up.
+
+→ voicifyai.com — free to start. Thank you for being here.
+
+With love, the VoicifyAI team.`,
+ cta:"voicifyai.com — free to start. Thank you.",
+ visual:"Simple, warm brand image. Human and sincere. The logo, the mission, nothing else.",
+ tags:["#VoicifyAI","#ThankYou","#OurWhy","#FinalPost"]},
+
+{day:90,week:13,month:"3",platform:"x",persona:"general",type:"hook",
+ personaLabel:"Day 90 — Final CTA",
+ hook:"Day 90.",
+ body:`You've had approximately 3,000 thoughts since Day 1 that were worth capturing.
+
+How many made it?
+
+Start Day 91 differently.
+
+→ voicifyai.com`,
+ cta:"voicifyai.com — download now.",
+ visual:"Clean counter: Day 1 → Day 90. Minimal. The whole campaign in one image.",
+ tags:["#Day90","#VoicifyAI","#StartNow","#CaptureEverything"]}
+
+]; // END POSTS
+
+// ═══════════════════════════════════════════════════
+// WEEK METADATA
+// ═══════════════════════════════════════════════════
+const WEEKS = {
+  1:  {title:"The Cost of Lost Thoughts",       phase:"m1", phaseLabel:"Month 1", theme:"Surface the pain. Name the enemy. Build recognition."},
+  2:  {title:"The Creator & The Parent",         phase:"m1", phaseLabel:"Month 1", theme:"Idea loss, capture speed, life in motion."},
+  3:  {title:"Every Age, Every Stage",           phase:"m1", phaseLabel:"Month 1", theme:"Universal problem. Universal solution."},
+  4:  {title:"Founders, Directors & Managers",  phase:"m1", phaseLabel:"Month 1", theme:"Scale the use case. Close Month 1 strong."},
+  5:  {title:"The Sales Follow-Up Revolution",   phase:"m2", phaseLabel:"Month 2", theme:"What changes when the system works."},
+  6:  {title:"Students & Podcasters",            phase:"m2", phaseLabel:"Month 2", theme:"Unlikely users. Powerful transformations."},
+  7:  {title:"Returning Pros & 5 AM Bakers",     phase:"m2", phaseLabel:"Month 2", theme:"Your best ideas arrive when hands are busy."},
+  8:  {title:"Social Proof & Community",         phase:"m2", phaseLabel:"Month 2", theme:"50 days in — real people, real results."},
+  9:  {title:"The Data Makes the Case",          phase:"m3", phaseLabel:"Month 3", theme:"Proof. Specificity. Conversion-ready."},
+  10: {title:"Urgency & The Fence-Sitters",      phase:"m3", phaseLabel:"Month 3", theme:"Make the move obvious. Remove every objection."},
+  11: {title:"Aspiration & Community",           phase:"m3", phaseLabel:"Month 3", theme:"Which version of you meets the change?"},
+  12: {title:"Final Push & Honest Reviews",      phase:"m3", phaseLabel:"Month 3", theme:"Credibility converts. Honesty wins."},
+  13: {title:"The 90-Day Close",                 phase:"m3", phaseLabel:"Month 3", theme:"The 91st day starts whenever you decide."}
+};
+
+const PLATFORM = {
+  li:{name:"LinkedIn",cls:"li"},
+  fb:{name:"Facebook",cls:"fb"},
+  x:{name:"X / Twitter",cls:"x"},
+  yt:{name:"YouTube",cls:"yt"}
+};
+
+const TYPE_MAP = {
+  "story":"Story","thread":"Thread","video":"Video",
+  "thought-leadership":"Thought Leadership","empathy":"Empathy",
+  "community":"Community","hook":"Hook / Standalone","data":"Data"
+};
+
+// ═══════════════════════════════════════════════════
+// OVERVIEW TABLE DATA (from MD appendix)
+// ═══════════════════════════════════════════════════
+const TABLE_ROWS = [
+  {day:1,platform:"li",persona:"Marcus",theme:"Meeting decisions",type:"Story"},
+  {day:2,platform:"x",persona:"Marcus",theme:"Meeting data (30-day tracking)",type:"Thread"},
+  {day:3,platform:"fb",persona:"Marcus",theme:"Dropped balls / empathy",type:"Empathy"},
+  {day:4,platform:"x",persona:"Marcus",theme:"Quick hit — what 3 decisions?",type:"Hook"},
+  {day:5,platform:"yt",persona:"Marcus",theme:"No-notes meeting habit",type:"Short Video"},
+  {day:8,platform:"li",persona:"Priya",theme:"Creator idea loss",type:"Thought Leadership"},
+  {day:9,platform:"fb",persona:"Sandra",theme:"Working parent overwhelm",type:"Empathy"},
+  {day:10,platform:"x",persona:"General",theme:"Capture latency",type:"Hook"},
+  {day:11,platform:"li",persona:"Priya",theme:"Cognitive cost of creative career",type:"Industry Insight"},
+  {day:12,platform:"x",persona:"Priya",theme:"5 lost ideas pipeline",type:"Thread"},
+  {day:13,platform:"yt",persona:"Priya",theme:"Content backlog from voice",type:"Long-form"},
+  {day:15,platform:"li",persona:"Kofi",theme:"Cognitive load architecture",type:"Thought Leadership"},
+  {day:16,platform:"fb",persona:"David",theme:"Semi-retired, zero setup",type:"Empathy"},
+  {day:17,platform:"x",persona:"Kofi",theme:"Study smarter with voice",type:"Hook"},
+  {day:18,platform:"fb",persona:"David",theme:"No age limit on clarity",type:"Story"},
+  {day:19,platform:"x",persona:"Multi",theme:"Universal pain across ages",type:"Thread"},
+  {day:22,platform:"li",persona:"James",theme:"Founder chaos & captured ideas",type:"Story"},
+  {day:23,platform:"fb",persona:"Amara",theme:"Non-profit grant ideas captured",type:"Empathy"},
+  {day:24,platform:"x",persona:"Raj",theme:"Remote team capture failure",type:"Hook"},
+  {day:25,platform:"li",persona:"Raj",theme:"Decision half-life",type:"Industry"},
+  {day:26,platform:"yt",persona:"Raj",theme:"2-min Monday voice brief",type:"Short Video"},
+  {day:29,platform:"li",persona:"General",theme:"Month 1 personal reflection",type:"Personal"},
+  {day:30,platform:"fb",persona:"All",theme:"Month 1 wrap — all personas",type:"Community"},
+  {day:31,platform:"li",persona:"Tom",theme:"Sales follow-up is the product",type:"Story"},
+  {day:32,platform:"x",persona:"Tom",theme:"31% response rate stat",type:"Hook"},
+  {day:33,platform:"fb",persona:"Tom",theme:"The generic follow-up cringe",type:"Empathy"},
+  {day:36,platform:"li",persona:"Lin",theme:"Learning retention & retrieval practice",type:"Thought Leadership"},
+  {day:37,platform:"fb",persona:"Lin",theme:"Med student firehose problem",type:"Story"},
+  {day:38,platform:"x",persona:"Yuki",theme:"Podcast content mine",type:"Hook"},
+  {day:40,platform:"li",persona:"Yuki",theme:"Create once, extract everywhere",type:"Industry"},
+  {day:43,platform:"fb",persona:"Elena",theme:"8-year workforce gap",type:"Empathy"},
+  {day:44,platform:"li",persona:"Elena",theme:"Confidence gap, not skills gap",type:"Thought Leadership"},
+  {day:45,platform:"x",persona:"Sofia",theme:"Speed is the competitive edge",type:"Hook"},
+  {day:47,platform:"fb",persona:"Sofia",theme:"5 AM bakery idea → $4k November",type:"Story"},
+  {day:50,platform:"li",persona:"All",theme:"50-day social proof compilation",type:"Community"},
+  {day:51,platform:"fb",persona:"Community",theme:"What thought do you lose most?",type:"Interactive"},
+  {day:52,platform:"x",persona:"General",theme:"3 lost thoughts we all share",type:"Hook"},
+  {day:55,platform:"yt",persona:"General",theme:"7-day capture experiment",type:"Long-form"},
+  {day:57,platform:"li",persona:"Data",theme:"90-day metrics data",type:"Data"},
+  {day:58,platform:"fb",persona:"Data",theme:"The math of lost ideas",type:"Data"},
+  {day:59,platform:"x",persona:"Data",theme:"Quick stats card",type:"Data"},
+  {day:64,platform:"li",persona:"General",theme:"Extended mind philosophy",type:"Philosophy"},
+  {day:65,platform:"fb",persona:"General",theme:"Fence-sitters — just try it",type:"Conversion"},
+  {day:66,platform:"x",persona:"General",theme:"One voice note away",type:"Hook"},
+  {day:68,platform:"yt",persona:"General",theme:"7-day honest review",type:"Short Video"},
+  {day:71,platform:"li",persona:"General",theme:"Two kinds of knowledge workers",type:"Aspirational"},
+  {day:72,platform:"fb",persona:"All",theme:"Series wrap — all 13 personas",type:"Community"},
+  {day:73,platform:"x",persona:"All",theme:"90-day series close",type:"Summary"},
+  {day:78,platform:"li",persona:"General",theme:"11 PM reader — empathy close",type:"Empathetic"},
+  {day:80,platform:"fb",persona:"General",theme:"One honest question",type:"Conversion"},
+  {day:85,platform:"yt",persona:"General",theme:"90-day honest app review",type:"Long-form"},
+  {day:88,platform:"li",persona:"General",theme:"Final 5-point summary",type:"List"},
+  {day:89,platform:"fb",persona:"General",theme:"Brand personal — why we built it",type:"Emotional Close"},
+  {day:90,platform:"x",persona:"General",theme:"Day 90 — 3,000 thoughts",type:"Final CTA"}
+];
+
+// ═══════════════════════════════════════════════════
+// RENDER OVERVIEW TABLE
+// ═══════════════════════════════════════════════════
+function buildTable(){
+  const tbl = document.getElementById("tbl");
+  const phaseColors = {li:"var(--li-color)",fb:"var(--fb-color)",x:"#666",yt:"var(--yt-color)"};
+  tbl.innerHTML = `<thead><tr>
+    <th>Day</th><th>Platform</th><th>Persona</th><th>Theme / Angle</th><th>Post Type</th>
+  </tr></thead><tbody>${TABLE_ROWS.map(r=>`<tr>
+    <td class="day-cell">${r.day}</td>
+    <td><span class="tbl-platform-dot ${r.platform}"></span>${PLATFORM[r.platform]?.name||r.platform}</td>
+    <td>${r.persona}</td>
+    <td>${r.theme}</td>
+    <td>${r.type}</td>
+  </tr>`).join("")}</tbody>`;
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER CALENDAR
+// ═══════════════════════════════════════════════════
+let activeFilters = {platform:"all",month:"all",persona:"all",type:"all"};
+
+function buildCalendar(){
+  const root = document.getElementById("calendarRoot");
+  root.innerHTML = "";
+  const weekMap = {};
+  POSTS.forEach(p=>{if(!weekMap[p.week])weekMap[p.week]=[];weekMap[p.week].push(p);});
+
+  Object.keys(weekMap).sort((a,b)=>+a-+b).forEach(wk=>{
+    const wd = WEEKS[wk];
+    const section = document.createElement("div");
+    section.className = "week-section";
+    section.dataset.week = wk;
+    section.innerHTML = `
+      <div class="week-header">
+        <span class="week-num">Week ${wk}</span>
+        <span class="week-title">${wd.title}</span>
+        <span class="week-phase ${wd.phase}">${wd.phaseLabel}</span>
+        <span class="week-theme">${wd.theme}</span>
+      </div>
+      <div class="posts-grid" id="wg-${wk}"></div>`;
+    root.appendChild(section);
+    const grid = section.querySelector(`#wg-${wk}`);
+    weekMap[wk].forEach(post=>grid.appendChild(buildCard(post)));
+  });
+  updateVisibility();
+  updateCount();
+}
+
+function buildCard(post){
+  const pl = PLATFORM[post.platform];
+  const card = document.createElement("div");
+  card.className = "post-card";
+  card.dataset.platform = post.platform;
+  card.dataset.month = post.month;
+  card.dataset.persona = post.persona;
+  card.dataset.type = post.type;
+  card.dataset.day = post.day;
+
+  card.innerHTML = `
+    <div class="post-card-header">
+      <div class="platform-dot ${pl.cls}"></div>
+      <span class="platform-name ${pl.cls}">${pl.name}</span>
+      <span class="persona-chip">${post.personaLabel.split(/[—–]/)[0].trim()}</span>
+      <span class="type-tag ${post.type}">${TYPE_MAP[post.type]||post.type}</span>
+      <span class="post-day-badge">Day ${post.day}</span>
+    </div>
+    <div class="post-card-body">
+      <div class="post-hook">${post.hook}</div>
+      <div class="post-preview">${post.body.substring(0,230).trim()}…</div>
+      <div class="post-meta">
+        <span>Wk ${post.week}</span>
+        <span>Mo ${post.month}</span>
+        <span>${post.personaLabel.replace(/[—–]/,'·')}</span>
+      </div>
+    </div>
+    <button class="post-expand-btn" onclick="openModal(${post.day})">Read Full Post</button>`;
+  return card;
+}
+
+function updateVisibility(){
+  document.querySelectorAll(".post-card").forEach(card=>{
+    const m = (
+      (activeFilters.platform==="all"||card.dataset.platform===activeFilters.platform)&&
+      (activeFilters.month==="all"||card.dataset.month===activeFilters.month)&&
+      (activeFilters.persona==="all"||card.dataset.persona===activeFilters.persona)&&
+      (activeFilters.type==="all"||card.dataset.type===activeFilters.type)
+    );
+    card.classList.toggle("hidden",!m);
+  });
+  document.querySelectorAll(".week-section").forEach(sec=>{
+    sec.style.display = sec.querySelectorAll(".post-card:not(.hidden)").length===0?"none":"";
+  });
+}
+
+function updateCount(){
+  const visible = document.querySelectorAll(".post-card:not(.hidden)").length;
+  const el = document.getElementById("result-count");
+  if(!el)return;
+  const parts = [];
+  if(activeFilters.platform!=="all")parts.push(PLATFORM[activeFilters.platform].name);
+  if(activeFilters.month!=="all")parts.push("Month "+activeFilters.month);
+  if(activeFilters.persona!=="all")parts.push(cap(activeFilters.persona));
+  if(activeFilters.type!=="all")parts.push(TYPE_MAP[activeFilters.type]||activeFilters.type);
+  el.textContent = `${visible} of ${POSTS.length} posts — ${parts.length?parts.join(" · "):"All Posts"}`;
+}
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+document.querySelectorAll(".filter-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const f=btn.dataset.filter,v=btn.dataset.value;
+    document.querySelectorAll(`[data-filter="${f}"]`).forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilters[f]=v;
+    updateVisibility();
+    updateCount();
+  });
+});
+
+// ═══════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════
+function openModal(dayNum){
+  const post = POSTS.find(p=>p.day===dayNum);
+  if(!post)return;
+  const pl = PLATFORM[post.platform];
+  const wd = WEEKS[post.week];
+
+  document.getElementById("modalHeader").innerHTML = `
+    <div class="platform-dot ${pl.cls}"></div>
+    <span class="platform-name ${pl.cls}">${pl.name}</span>
+    <span class="persona-chip">${post.personaLabel.split(/[—–]/)[0].trim()}</span>
+    <span class="type-tag ${post.type}" style="margin-left:2px">${TYPE_MAP[post.type]||post.type}</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(240,238,248,0.25);margin-left:6px">Day ${post.day} · Week ${post.week} · ${wd.phaseLabel}</span>
+    <button class="modal-close" onclick="closeModal()">✕</button>`;
+
+  document.getElementById("modalBody").innerHTML = `
+    <div class="modal-section">
+      <div class="modal-section-label">Persona</div>
+      <div class="modal-persona-box">👤 ${post.personaLabel} &nbsp;·&nbsp; <em>${wd.theme}</em></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Hook / Opening Line</div>
+      <div class="modal-hook">${post.hook}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Full Post Body</div>
+      <div class="modal-body-text">${post.body}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Call to Action</div>
+      <div class="modal-cta">🎯 ${post.cta}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Suggested Visual Direction</div>
+      <div class="modal-visual">🎨 ${post.visual}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Hashtags</div>
+      <div class="modal-tags">${(post.tags||[]).map(t=>`<span class="modal-tag">${t}</span>`).join("")}</div>
+    </div>`;
+
+  document.getElementById("modalOverlay").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function closeModal(e){
+  if(e&&e.target!==document.getElementById("modalOverlay"))return;
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.body.style.overflow="";
+}
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    document.getElementById("modalOverlay").classList.remove("open");
+    document.body.style.overflow="";
+  }
+});
+
+// INIT
+buildCalendar();
+buildTable();
+</script>
+</body>
+</html>
