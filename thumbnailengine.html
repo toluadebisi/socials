@@ -202,11 +202,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--snow);min
     <div class="hdr-logo">🎬</div>
     <div class="hdr-text">
       <h1>Thumbnail <em>Intelligence</em> Engine</h1>
-      <p>Upload characters · paste your story · Claude engineers the perfect thumbnail · Flux Pro generates it</p>
+      <p>Upload characters · paste your story · Claude engineers the perfect thumbnail · Z-Image generates it</p>
     </div>
     <div class="hdr-badges">
       <span class="badge badge-v">Claude Vision</span>
-      <span class="badge badge-c">Flux Pro</span>
+      <span class="badge badge-c">Z-Image</span>
       <span class="badge badge-g">MrBeast IQ</span>
     </div>
   </div>
@@ -909,19 +909,70 @@ OUTPUT — THIS EXACT JSON STRUCTURE:
   const raw = (data.content && data.content[0] ? data.content[0].text : '').trim();
   const clean = raw.replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
 
+  let parsed;
   try {
-    return JSON.parse(clean);
+    parsed = JSON.parse(clean);
   } catch(e) {
-    // Attempt extraction
     const fp = clean.match(/"fluxPrompt"\s*:\s*"([\s\S]+?)"\s*[,}]/)?.[1] || clean.substring(0, 400);
     const ot = clean.match(/"overlayText"\s*:\s*"([^"]+)"/)?.[1] || 'THIS CHANGES EVERYTHING';
     const st = clean.match(/"storyType"\s*:\s*"([^"]+)"/)?.[1] || 'transformation';
     const mood = clean.match(/"mood"\s*:\s*"([^"]+)"/)?.[1] || 'triumphant';
     const comp = clean.match(/"compositionTemplate"\s*:\s*"([^"]+)"/)?.[1] || 'split_screen_arrow';
-    return { storyType: st, compositionTemplate: comp, overlayText: ot, mood, fluxPrompt: fp,
-      narrativeTension:'', protagonistEmotion:'', objectOfStory:'', settingBackground:'',
-      colourGrade:'', overlayPosition:'bottom_center', compositionNotes:'' };
+    const os = clean.match(/"overlayStyle"\s*:\s*"([^"]+)"/)?.[1] || 'mrbeast';
+    parsed = { storyType: st, compositionTemplate: comp, overlayText: ot, overlayStyle: os,
+      mood, fluxPrompt: fp, narrativeTension:'', protagonistEmotion:'', objectOfStory:'',
+      settingBackground:'', colourGrade:'', overlayPosition:'bottom_center', compositionNotes:'' };
   }
+
+  // ── Compress fluxPrompt to under 950 chars if needed ─────
+  if (parsed.fluxPrompt && parsed.fluxPrompt.length > 950) {
+    try {
+      const cleanupRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': antKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 300,
+          system: `You compress image prompts to fit within 950 characters. Rules:
+- Output MUST be 950 characters or fewer — count carefully before outputting
+- Preserve: subject, emotion, composition, objects, background color, lighting, text overlay
+- Remove: redundant adjectives, repeated concepts, filler (stunning, beautiful, masterpiece, perfect, incredibly, extremely)
+- Shorten phrases: "positioned at the bottom center of the frame" → "bottom-center"
+- Keep all hex codes, numbers, technical terms
+- Output ONLY the compressed prompt. No explanation.`,
+          messages: [{
+            role: 'user',
+            content: `Compress to 950 chars or fewer. Current length: ${parsed.fluxPrompt.length}.
+
+${parsed.fluxPrompt}
+
+Output compressed prompt only. Must be 950 chars or fewer.`
+          }]
+        })
+      });
+      const cleanupData = await cleanupRes.json();
+      const compressed = (cleanupData.content && cleanupData.content[0] ? cleanupData.content[0].text : '').trim();
+      if (compressed && compressed.length <= 950) {
+        parsed.fluxPrompt = compressed;
+      } else if (compressed) {
+        const truncated = compressed.substring(0, 950);
+        const lastComma = truncated.lastIndexOf(',');
+        parsed.fluxPrompt = lastComma > 650 ? truncated.substring(0, lastComma).trim() : truncated.trim();
+      }
+    } catch(e) {
+      // Compression failed — hard trim fallback
+      const truncated = parsed.fluxPrompt.substring(0, 950);
+      const lastComma = truncated.lastIndexOf(',');
+      parsed.fluxPrompt = lastComma > 650 ? truncated.substring(0, lastComma).trim() : truncated.trim();
+    }
+  }
+
+  return parsed;
 }
 
 // ════════════════════════════════════════════════════════
@@ -962,34 +1013,41 @@ async function kieGenerate(prompt, kieKey, dims) {
   return await pollKie(taskId, kieKey);
 }
 
-async function pollKie(taskId, kieKey, max = 40) {
+async function pollKie(taskId, kieKey, max = 150) {
   for (let i = 0; i < max; i++) {
     await sleep(2000);
     try {
-      const res = await fetch(`https://api.kie.ai/api/v1/jobs/taskDetail?taskId=${taskId}`, {
+      const res = await fetch(`https://api.kie.ai/api/v1/jobs/recordInfo?taskId=${taskId}`, {
         headers: { 'Authorization': `Bearer ${kieKey}` }
       });
       const data = await res.json();
       const record = data?.data;
       if (!record) continue;
 
-      const status = (record.status || '').toLowerCase();
-      const url = record.output?.imageUrl
-               || record.output?.url
-               || record.resultUrl
-               || record.imageUrl;
+      const state = (record.state || '').toLowerCase();
 
-      if ((status.includes('success') || status.includes('complet') || status.includes('done')) && url) return url;
-      if (status.includes('fail') || status.includes('error')) {
-        throw new Error('Z-Image generation failed: ' + (record.errorMessage || record.failReason || status));
+      if (state === 'success') {
+        try {
+          const result = JSON.parse(record.resultJson || '{}');
+          const url = (result.resultUrls && result.resultUrls[0])
+                   || result.imageUrl
+                   || result.url;
+          if (url) return url;
+        } catch(e) {
+          throw new Error('Z-Image succeeded but could not parse result: ' + record.resultJson);
+        }
       }
 
-      showResultLoading(`<strong>Step 3:</strong> Generating with Z-Image… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${status || 'processing'}</span>`);
+      if (state === 'fail') {
+        throw new Error('Z-Image failed: ' + (record.failMsg || record.failCode || 'unknown error'));
+      }
+
+      showResultLoading(`<strong>Step 3:</strong> Generating with Z-Image… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${state || 'processing'}</span>`);
     } catch(e) {
-      if (e.message.includes('Z-Image generation failed')) throw e;
+      if (e.message.includes('Z-Image failed') || e.message.includes('could not parse')) throw e;
     }
   }
-  throw new Error('Z-Image timed out after 80s. Please try again.');
+  throw new Error('Z-Image timed out after 300s. Please try again.');
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
