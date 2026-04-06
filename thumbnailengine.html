@@ -74,12 +74,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--snow);min
 .uz-title{font-size:.84rem;font-weight:600;color:var(--snow);margin-bottom:3px;}
 .uz-sub{font-size:.72rem;color:var(--muted);}
 .uz-sub strong{color:var(--vl);}
-/* previews */
 .img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
 .img-prev-item{position:relative;width:80px;flex-shrink:0;}
 .img-prev-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid rgba(124,58,237,0.4);display:block;}
 .img-prev-label{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--vl);text-align:center;margin-top:3px;}
 .img-prev-remove{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--rose);border:2px solid var(--bg2);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;}
+/* upload status pill */
+.img-prev-status{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:8px;font-weight:700;padding:2px 6px;border-radius:100px;}
+.img-prev-status.uploading{background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);color:var(--gold);}
+.img-prev-status.done{background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.4);color:var(--green);}
+.img-prev-status.error{background:rgba(244,63,94,0.2);border:1px solid rgba(244,63,94,0.4);color:var(--rose);}
 
 /* ── FORM ELEMENTS ── */
 .flabel{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(241,240,248,0.35);font-weight:600;display:block;margin-bottom:5px;}
@@ -179,12 +183,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--snow);min
 .modal-hint{font-size:.74rem;color:var(--muted);margin-bottom:16px;}
 .modal-apply{width:100%;padding:11px;background:var(--v);border:none;border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;}
 
-/* ── STYLE SELECTOR TABS ── */
-.section-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
-.section-label::after{content:'';flex:1;height:1px;background:var(--bd);}
-
 /* ── STEP INDICATORS ── */
-.step-row{display:flex;gap:6px;margin-bottom:20px;}
+.step-row{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
 .step{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:100px;background:var(--bg3);border:1px solid var(--bd);font-size:.72rem;font-weight:600;color:var(--muted);}
 .step.done{background:var(--greenm);border-color:rgba(16,185,129,0.25);color:var(--green);}
 .step.active{background:var(--vm);border-color:var(--vb);color:var(--vl);}
@@ -202,11 +202,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--snow);min
     <div class="hdr-logo">🎬</div>
     <div class="hdr-text">
       <h1>Thumbnail <em>Intelligence</em> Engine</h1>
-      <p>Upload characters · paste your story · Claude engineers the perfect thumbnail · Z-Image generates it</p>
+      <p>Upload characters · paste your story · Claude directs the scene · Grok brings your real faces to life</p>
     </div>
     <div class="hdr-badges">
       <span class="badge badge-v">Claude Vision</span>
-      <span class="badge badge-c">Z-Image</span>
+      <span class="badge badge-c">Grok i2i</span>
       <span class="badge badge-g">MrBeast IQ</span>
     </div>
   </div>
@@ -251,7 +251,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--snow);min
       <span class="card-hdr-icon">👤</span>
       <div>
         <div class="card-hdr-title">Character Images</div>
-        <div class="card-hdr-sub">Upload 1–3 images · Claude uses them as subjects</div>
+        <div class="card-hdr-sub">Upload 1–3 images · Grok uses their real faces</div>
       </div>
     </div>
     <div class="card-body">
@@ -259,7 +259,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--snow);min
         <input type="file" id="imgFileInput" accept="image/*" multiple onchange="handleImgUpload(this)">
         <div class="uz-icon">🖼️</div>
         <div class="uz-title">Drop character images here</div>
-        <div class="uz-sub"><strong>Click to browse</strong> · PNG, JPG, WEBP · up to 3 images<br>Claude sees these and references the exact face/style</div>
+        <div class="uz-sub"><strong>Click to browse</strong> · PNG, JPG, WEBP · up to 3 images<br>Grok image-to-image preserves the EXACT face from your photos</div>
       </div>
       <div class="img-previews" id="imgPreviews"></div>
     </div>
@@ -366,10 +366,11 @@ Or paste a full video script. Claude deduces the story type, mood, composition, 
 
   <!-- STEP INDICATORS -->
   <div class="step-row" id="stepRow">
-    <div class="step" id="step1"><span class="step-dot"></span>Story Analysis</div>
-    <div class="step" id="step2"><span class="step-dot"></span>Prompt Engineering</div>
-    <div class="step" id="step3"><span class="step-dot"></span>Image Generation</div>
-    <div class="step" id="step4"><span class="step-dot"></span>Ready</div>
+    <div class="step" id="step1"><span class="step-dot"></span>Upload Images</div>
+    <div class="step" id="step2"><span class="step-dot"></span>Story Analysis</div>
+    <div class="step" id="step3"><span class="step-dot"></span>Prompt Engineering</div>
+    <div class="step" id="step4"><span class="step-dot"></span>Grok Generating</div>
+    <div class="step" id="step5"><span class="step-dot"></span>Ready</div>
   </div>
 
   <!-- STORY ANALYSIS RESULT -->
@@ -387,10 +388,10 @@ Or paste a full video script. Claude deduces the story type, mood, composition, 
     </div>
   </div>
 
-  <!-- FLUX PROMPT PREVIEW -->
+  <!-- GROK PROMPT PREVIEW -->
   <div class="prompt-card" id="promptCard">
     <div class="prompt-hdr">
-      <span class="prompt-hdr-title">📝 Flux Pro Prompt (Claude-engineered)</span>
+      <span class="prompt-hdr-title">📝 Grok i2i Prompt (Claude-engineered · @image references)</span>
       <button class="prompt-toggle" id="promptToggle" onclick="togglePrompt()">Expand</button>
     </div>
     <div class="prompt-body" id="promptBody"></div>
@@ -423,15 +424,16 @@ Or paste a full video script. Claude deduces the story type, mood, composition, 
     </div>
   </div>
 </div>
+
 <script>
 // ════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════
-let uploadedImages = []; // [{base64, mime, name, dataUrl}]
+let uploadedImages = []; // [{base64, mime, name, dataUrl, kieUrl}]
 let selectedStyle = null;
 let selectedFmt = 'youtube';
 let lastAnalysis = null;
-let lastFluxPrompt = '';
+let lastGrokPrompt = '';
 let lastOverlayText = '';
 let lastImgUrl = '';
 
@@ -473,12 +475,11 @@ const VIS = [
    s:'Roblox game aesthetic, blocky cube-head avatar, rectangular limbs, simple face on 3D head, bright flat textures, in-game screenshot look'},
 ];
 
-// Format dimensions
 const FMT_DIMS = {
-  youtube:{w:1280,h:720},
-  twitter:{w:1200,h:675},
-  facebook:{w:1080,h:1080},
-  portrait:{w:810,h:1440}
+  youtube:{w:1280,h:720,ratio:'16:9'},
+  twitter:{w:1200,h:675,ratio:'16:9'},
+  facebook:{w:1080,h:1080,ratio:'1:1'},
+  portrait:{w:810,h:1440,ratio:'9:16'}
 };
 
 // ════════════════════════════════════════════════════════
@@ -498,7 +499,6 @@ function buildVisGrid() {
        <div class="vis-name">${v.n}</div>
      </div>`
   ).join('');
-  // default select first
   const first = document.querySelector('.vis-card');
   if (first) { first.classList.add('on'); selectedStyle = VIS[0].id; }
 }
@@ -516,7 +516,7 @@ function setFmt(btn) {
 }
 
 // ════════════════════════════════════════════════════════
-// IMAGE UPLOAD
+// IMAGE UPLOAD (local preview only — KIE upload happens at generation time)
 // ════════════════════════════════════════════════════════
 function handleImgUpload(input) {
   const files = Array.from(input.files).slice(0, 3 - uploadedImages.length);
@@ -529,7 +529,9 @@ function handleImgUpload(input) {
         base64: dataUrl.split(',')[1],
         mime: file.type || 'image/jpeg',
         name: file.name,
-        dataUrl
+        file: file,        // keep raw File object for FormData upload
+        dataUrl,
+        kieUrl: null       // will be populated after KIE upload
       });
       renderPreviews();
     };
@@ -540,15 +542,17 @@ function handleImgUpload(input) {
 
 function renderPreviews() {
   const el = document.getElementById('imgPreviews');
-  const labels = ['Character 1','Character 2','Character 3'];
+  const labels = ['@image1','@image2','@image3'];
   el.innerHTML = uploadedImages.map((img, i) => `
-    <div class="img-prev-item">
+    <div class="img-prev-item" id="prevItem${i}">
       <img src="${img.dataUrl}" />
       <div class="img-prev-label">${labels[i]}</div>
       <span class="img-prev-remove" onclick="removeImg(${i})">✕</span>
+      ${img.kieUrl
+        ? `<span class="img-prev-status done">✓ uploaded</span>`
+        : `<span class="img-prev-status" id="prevSt${i}">pending</span>`}
     </div>`).join('');
 
-  // Update upload zone
   const zone = document.getElementById('uploadZone');
   if (uploadedImages.length >= 3) {
     zone.style.opacity = '.4';
@@ -571,9 +575,57 @@ function setupDragDrop() {
   zone.addEventListener('drop', e => {
     e.preventDefault(); zone.classList.remove('drag');
     const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    const fakeInput = { files };
+    const fakeInput = { files, value:'' };
     handleImgUpload(fakeInput);
   });
+}
+
+// ════════════════════════════════════════════════════════
+// KIE FILE UPLOAD — uploads each image and returns hosted URL
+// ════════════════════════════════════════════════════════
+async function uploadImageToKie(imgObj, idx, kieKey) {
+  // Update status pill to "uploading"
+  const stEl = document.getElementById(`prevSt${idx}`);
+  if (stEl) { stEl.textContent = '↑ uploading'; stEl.className = 'img-prev-status uploading'; }
+
+  const formData = new FormData();
+  formData.append('file', imgObj.file);
+
+  const res = await fetch('https://api.kie.ai/api/v1/files/upload', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${kieKey}` },
+    body: formData
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    if (stEl) { stEl.textContent = '✕ failed'; stEl.className = 'img-prev-status error'; }
+    throw new Error(`KIE file upload failed (${res.status}): ${errText.substring(0,150)}`);
+  }
+
+  const data = await res.json();
+  console.log(`KIE upload response [${idx}]:`, JSON.stringify(data).substring(0,200));
+
+  // KIE returns file URL — try common response shapes
+  const url = data?.data?.url || data?.data?.fileUrl || data?.url || data?.fileUrl;
+  if (!url) throw new Error(`KIE upload succeeded but no URL returned: ${JSON.stringify(data).substring(0,150)}`);
+
+  // Cache the URL on the image object
+  imgObj.kieUrl = url;
+
+  if (stEl) { stEl.textContent = '✓ uploaded'; stEl.className = 'img-prev-status done'; }
+  console.log(`Image ${idx+1} uploaded → ${url}`);
+  return url;
+}
+
+// Upload all images that don't yet have a KIE URL
+async function ensureAllImagesUploaded(kieKey) {
+  const pending = uploadedImages.filter(img => !img.kieUrl);
+  if (pending.length === 0) return; // all already uploaded
+
+  await Promise.all(
+    uploadedImages.map((img, idx) => img.kieUrl ? Promise.resolve(img.kieUrl) : uploadImageToKie(img, idx, kieKey))
+  );
 }
 
 // ════════════════════════════════════════════════════════
@@ -581,10 +633,7 @@ function setupDragDrop() {
 // ════════════════════════════════════════════════════════
 function saveAntKey() {
   const v = document.getElementById('antInp').value.trim();
-  if (!v || !v.startsWith('sk-ant-')) {
-    alert('Anthropic key must start with sk-ant-');
-    return;
-  }
+  if (!v || !v.startsWith('sk-ant-')) { alert('Anthropic key must start with sk-ant-'); return; }
   localStorage.setItem('tie_ant_key', v);
   document.getElementById('antInp').value = '';
   refreshAntKey();
@@ -601,15 +650,11 @@ function refreshAntKey() {
   const clr = document.getElementById('antClr');
   const inp = document.getElementById('antInp');
   if (k) {
-    row.classList.add('ok');
-    st.textContent = '✓ ' + k.substring(0,20) + '…';
-    clr.style.display = '';
-    inp.placeholder = 'Key saved';
+    row.classList.add('ok'); st.textContent = '✓ ' + k.substring(0,20) + '…';
+    clr.style.display = ''; inp.placeholder = 'Key saved';
   } else {
-    row.classList.remove('ok');
-    st.textContent = '';
-    clr.style.display = 'none';
-    inp.placeholder = 'sk-ant-api03-...';
+    row.classList.remove('ok'); st.textContent = '';
+    clr.style.display = 'none'; inp.placeholder = 'sk-ant-api03-...';
   }
 }
 function saveKieKey() {
@@ -631,23 +676,19 @@ function refreshKieKey() {
   const clr = document.getElementById('kieClr');
   const inp = document.getElementById('kieInp');
   if (k) {
-    row.classList.add('ok');
-    st.textContent = '✓ ' + k.substring(0,14) + '…';
-    clr.style.display = '';
-    inp.placeholder = 'Key saved';
+    row.classList.add('ok'); st.textContent = '✓ ' + k.substring(0,14) + '…';
+    clr.style.display = ''; inp.placeholder = 'Key saved';
   } else {
-    row.classList.remove('ok');
-    st.textContent = '';
-    clr.style.display = 'none';
-    inp.placeholder = 'kie_...';
+    row.classList.remove('ok'); st.textContent = '';
+    clr.style.display = 'none'; inp.placeholder = 'kie_...';
   }
 }
 
 // ════════════════════════════════════════════════════════
-// STEP UI
+// STEP UI (now 5 steps)
 // ════════════════════════════════════════════════════════
 function setStep(n) {
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 5; i++) {
     const el = document.getElementById('step'+i);
     el.classList.remove('active','done');
     if (i < n) el.classList.add('done');
@@ -672,40 +713,48 @@ async function runGeneration() {
   btn.disabled = true;
   btn.innerHTML = '<span class="gen-btn-icon">⏳</span> Generating…';
 
-  // Reset output
   document.getElementById('analysisCard').classList.remove('vis');
   document.getElementById('promptCard').classList.remove('vis');
-  showResultLoading('Claude is reading your story…');
+  showResultLoading('Preparing…');
   setStep(1);
 
   try {
-    // STEP 1: Claude analyses story + engineers prompt
+    // ── STEP 1: Upload all images to KIE ──────────────────
     setStep(1);
-    showResultLoading('<strong>Step 1:</strong> Claude is analysing your story and engineering the Flux prompt…');
+    showResultLoading('<strong>Step 1:</strong> Uploading character images to KIE…');
+    await ensureAllImagesUploaded(kieKey);
 
-    const analysis = await claudeAnalyseAndPrompt(transcript, antKey);
+    const kieUrls = uploadedImages.map(img => img.kieUrl).filter(Boolean);
+    if (kieUrls.length === 0) throw new Error('No images were successfully uploaded to KIE.');
+    console.log('KIE image URLs:', kieUrls);
+
+    // ── STEP 2: Claude analyses story + engineers prompt ──
+    setStep(2);
+    showResultLoading('<strong>Step 2:</strong> Claude is reading your story and engineering the scene…');
+    const analysis = await claudeAnalyseAndPrompt(transcript, antKey, kieUrls.length);
     lastAnalysis = analysis;
-    lastFluxPrompt = analysis.fluxPrompt;
+    lastGrokPrompt = analysis.grokPrompt;
     lastOverlayText = analysis.overlayText;
 
     renderAnalysis(analysis);
-    setStep(2);
-
-    // STEP 2: Show prompt
-    document.getElementById('promptBody').textContent = analysis.fluxPrompt;
-    document.getElementById('promptCard').classList.add('vis');
-    showResultLoading('<strong>Step 2:</strong> Prompt engineered. Sending to Flux Pro via KIE…');
     setStep(3);
 
-    // STEP 3: Generate image
-    const dims = FMT_DIMS[selectedFmt] || FMT_DIMS.youtube;
-    const imgUrl = await kieGenerate(analysis.fluxPrompt, kieKey, dims);
+    // ── STEP 3: Show prompt ───────────────────────────────
+    document.getElementById('promptBody').textContent = analysis.grokPrompt;
+    document.getElementById('promptCard').classList.add('vis');
+    showResultLoading('<strong>Step 3:</strong> Prompt ready. Sending to Grok image-to-image…');
+    setStep(4);
+
+    // ── STEP 4: Grok image-to-image generation ────────────
+    const fmt = FMT_DIMS[selectedFmt] || FMT_DIMS.youtube;
+    const imgUrl = await grokI2IGenerate(analysis.grokPrompt, kieUrls, kieKey, fmt.ratio);
     lastImgUrl = imgUrl;
 
-    setStep(4);
+    setStep(5);
     renderResult(imgUrl, analysis.overlayText);
 
   } catch(e) {
+    console.error('Generation error:', e);
     showResultError(e.message);
     setStep(1);
   }
@@ -715,9 +764,9 @@ async function runGeneration() {
 }
 
 // ════════════════════════════════════════════════════════
-// CLAUDE: STORY ANALYSIS + PROMPT ENGINEERING
+// CLAUDE: STORY ANALYSIS + GROK PROMPT ENGINEERING
 // ════════════════════════════════════════════════════════
-async function claudeAnalyseAndPrompt(transcript, antKey) {
+async function claudeAnalyseAndPrompt(transcript, antKey, numImages) {
   const styleMeta = VIS.find(v => v.id === selectedStyle) || VIS[0];
   const fmtLabel = {
     youtube:'YouTube thumbnail (1280×720, 16:9)',
@@ -729,23 +778,25 @@ async function claudeAnalyseAndPrompt(transcript, antKey) {
   const category = document.getElementById('categoryInp').value;
   const audience = document.getElementById('audienceInp').value;
   const extraCtx = document.getElementById('contextInp').value.trim();
-  const numChars = uploadedImages.length;
 
-  const sys = `You are the world's best thumbnail strategist and Flux Kontext Pro prompt engineer. You think EXACTLY like MrBeast's thumbnail team and Alex Hormozi's design team combined. You understand the critical difference: thumbnails are GRAPHIC DESIGN with photographed subjects — NOT cinematic photography or movie stills. Flux Kontext renders text directly into images when described with extreme technical precision. You produce prompts that result in thumbnails indistinguishable from MrBeast, Hormozi, and top Nollywood YouTube channels.
+  // Build image reference guide based on number of uploaded images
+  const imageRefGuide = numImages === 1
+    ? `@image1 = the sole character/protagonist (center frame, largest in composition)`
+    : numImages === 2
+    ? `@image1 = Character 1 — protagonist (dominant, larger in frame)\n@image2 = Character 2 — supporting cast, rival, or before/after counterpart`
+    : `@image1 = Character 1 — protagonist (largest, most dominant position)\n@image2 = Character 2 — supporting cast or rival\n@image3 = Character 3 — additional cast member`;
+
+  const sys = `You are the world's best YouTube thumbnail strategist and Grok image-to-image prompt engineer. You think EXACTLY like MrBeast's thumbnail team and Alex Hormozi's design team combined.
+
+CRITICAL RULE — IMAGE REFERENCES:
+The uploaded character images are being passed directly to Grok image-to-image. You MUST reference them using @image1, @image2, @image3 tags — you NEVER describe what the characters look like. Grok preserves the real face from the uploaded photo. Your job is to DIRECT the character (pose, expression, position, size in frame) NOT describe their appearance.
+
+WRONG: "A dark-skinned woman with natural hair and warm brown eyes showing shock"
+RIGHT: "@image1 showing jaw-dropped shock expression, mouth wide open, eyebrows raised to hairline, center frame, face occupying 65% of frame height"
 
 You ALWAYS output valid JSON only. No explanations, no markdown fences.`;
 
-  // Overlay style definitions — full technical descriptions for Flux Kontext
-  const OVERLAY_STYLES = {
-    hormozi: `massive Impact/Anton font ALL CAPS, pure WHITE (#FFFFFF) letter fill, 8px solid JET BLACK (#000000) outer stroke around every letter, 2px white inner stroke, hard black drop shadow offset 5px right 5px down zero blur, letters slightly condensed horizontally, text block dominates 40% of frame width`,
-    mrbeast: `massive Anton font ALL CAPS, blazing YELLOW (#FFE000) solid letter fill, 9px solid BLACK outer stroke, 1px white inner glow, black drop shadow 6px right 6px down zero blur, key word rendered 1.4x larger than others for emphasis, chaotic high-energy layout, text occupies 45-55% of frame width`,
-    nollywood_drama: `bold Impact font ALL CAPS, 3D beveled letters with GREEN (#00C851) to YELLOW (#FFE000) horizontal gradient fill, thick WHITE 6px outer stroke PLUS BLACK 3px stroke outside the white creating double outline, strong bottom drop shadow 8px offset creating 3D lift, letters appear physically raised off the image surface`,
-    nollywood_movie: `cinematic bold condensed font ALL CAPS, GOLD (#FFD700) to ORANGE (#FF8C00) top-to-bottom gradient letter fill, WHITE 5px outer stroke, elegant 4px drop shadow, premium movie-poster treatment, letters slightly tracked apart for gravitas`,
-    playful: `bouncy bold font ALL CAPS, alternating CYAN (#00D4FF) and YELLOW (#FFE000) letter fills word by word, BLACK 7px outer stroke on all letters, each word slightly different scale (±20%), words individually rotated ±3 degrees, carnival-energy composition`,
-    red_block: `massive Impact font ALL CAPS, solid BRIGHT RED (#FF0000) filled rectangle behind text block with 4px white border, WHITE (#FFFFFF) letters sitting on red block, extreme contrast emergency-alert energy, block covers full width of text zone`
-  };
-
-  // Smart style selection based on story
+  // Auto overlay style selection
   const storyLower = transcript.toLowerCase();
   let autoStyle = 'mrbeast';
   if (storyLower.includes('lost') || storyLower.includes('fail') || storyLower.includes('wrong') || storyLower.includes('mistake')) autoStyle = 'red_block';
@@ -754,9 +805,16 @@ You ALWAYS output valid JSON only. No explanations, no markdown fences.`;
   else if (storyLower.includes('movie') || storyLower.includes('film') || storyLower.includes('series')) autoStyle = 'nollywood_movie';
   else if (storyLower.includes('kids') || storyLower.includes('family') || storyLower.includes('fun') || storyLower.includes('comedy')) autoStyle = 'playful';
 
-  const chosenOverlayDesc = OVERLAY_STYLES[autoStyle];
+  const OVERLAY_STYLES = {
+    hormozi: `massive Impact/Anton font ALL CAPS, pure WHITE (#FFFFFF) letter fill, 8px solid JET BLACK (#000000) outer stroke, hard black drop shadow 5px right 5px down zero blur, text block dominates 40% of frame width`,
+    mrbeast: `massive Anton font ALL CAPS, blazing YELLOW (#FFE000) solid letter fill, 9px solid BLACK outer stroke, black drop shadow 6px right 6px down zero blur, key word 1.4x larger for emphasis, text occupies 45-55% of frame width`,
+    nollywood_drama: `bold Impact font ALL CAPS, 3D beveled letters with GREEN (#00C851) to YELLOW (#FFE000) horizontal gradient fill, thick WHITE 6px outer stroke PLUS BLACK 3px outside creating double outline, strong bottom drop shadow 8px creating 3D lift`,
+    nollywood_movie: `cinematic bold condensed font ALL CAPS, GOLD (#FFD700) to ORANGE (#FF8C00) gradient letter fill, WHITE 5px outer stroke, elegant 4px drop shadow, premium movie-poster treatment`,
+    playful: `bouncy bold font ALL CAPS, alternating CYAN (#00D4FF) and YELLOW (#FFE000) fills word by word, BLACK 7px outer stroke, each word slightly different scale, words individually rotated ±3 degrees`,
+    red_block: `massive Impact font ALL CAPS, solid BRIGHT RED (#FF0000) filled rectangle behind text, WHITE (#FFFFFF) letters on red block, extreme contrast emergency-alert energy`
+  };
 
-  const userText = `You are analysing a story to engineer a thumbnail that looks EXACTLY like top MrBeast, Alex Hormozi, and Nollywood YouTube thumbnails. Study the reference principles below before analysing.
+  const userText = `Analyse this story and engineer a Grok image-to-image prompt that creates a MrBeast/Hormozi-quality YouTube thumbnail using the uploaded character images.
 
 STORY / TRANSCRIPT:
 """
@@ -764,114 +822,85 @@ ${transcript.substring(0, 2000)}
 """
 
 ${extraCtx ? `EXTRA CONTEXT: ${extraCtx}` : ''}
-CONTENT CATEGORY: ${category === 'auto' ? 'auto-detect from story' : category}
-AUDIENCE ENERGY: ${audience === 'auto' ? 'auto-detect from story' : audience}
+CONTENT CATEGORY: ${category === 'auto' ? 'auto-detect' : category}
+AUDIENCE: ${audience === 'auto' ? 'auto-detect' : audience}
+THUMBNAIL FORMAT: ${fmtLabel}
+VISUAL STYLE: ${styleMeta.n} — ${styleMeta.s}
 AUTO-SELECTED OVERLAY STYLE: ${autoStyle}
 
-CHARACTER IMAGES UPLOADED: ${numChars} image(s) — you can see them above
-${numChars === 1 ? 'Character 1 = sole subject. Study their EXACT face shape, skin tone, hair texture, facial hair, and any distinguishing features. Reference all of these explicitly.' : ''}
-${numChars === 2 ? 'Character 1 = left/before subject. Character 2 = right/after OR opposing subject. Reference each person\'s exact appearance.' : ''}
-${numChars === 3 ? 'Character 1 = protagonist (center/front). Characters 2 & 3 = supporting cast. Protagonist gets largest face in frame.' : ''}
-
-THUMBNAIL FORMAT: ${fmtLabel}
-VISUAL STYLE: ${styleMeta.n}
-STYLE TECHNICAL SUFFIX: ${styleMeta.s}
+CHARACTER IMAGE REFERENCES (use ONLY these tags — never describe appearance):
+${imageRefGuide}
 
 ═══════════════════════════════════════════════
-THUMBNAIL DESIGN BIBLE — APPLY ALL RULES
+GROK i2i PROMPT RULES — APPLY ALL
 ═══════════════════════════════════════════════
 
-RULE 1 — FACE SIZE (MOST IMPORTANT):
-Subject face occupies 55-70% of frame HEIGHT. Close-up to medium shot ONLY — never wide shot. Face readable on mobile at 120px. Camera: 10-15 degrees below eye level (looking slightly up at subject). This creates power and dominance in the frame.
+RULE 1 — @IMAGE TAGS ARE MANDATORY:
+Every character in the scene MUST be referenced ONLY as @image1, @image2, or @image3 — never described by appearance. After the @imageN tag, write ONLY their: role, pose, expression, position in frame, size in frame, and any props they're interacting with.
 
-RULE 2 — EXPRESSION (THEATRICAL NOT NATURALISTIC):
-Choose the correct exaggerated expression for the story type:
-- Jaw-dropped shock: mouth wide open, eyes enormous, eyebrows raised to hairline, hand optionally on cheek
-- Triumphant joy: massive toothy smile, eyes crinkled and bright, arms possibly raised or pointing upward
-- Horrified realization: both hands on face, eyes wide, mouth open in O shape
-- Mischievous secret: one eyebrow cocked, slight smirk, finger pointing or gesturing
-- Determined confidence: jaw set, eyes intense, arms crossed or pointing directly at camera
-Expression MUST be readable at thumbnail size. Subtle = wrong. Theatrical = right.
+RULE 2 — FACE SIZE:
+Direct @imageN face to occupy 55-70% of frame HEIGHT. Close-up to medium shot only. Camera 10-15 degrees below eye level (subject looks dominant).
 
-RULE 3 — BACKGROUND (NEVER COMPETE WITH SUBJECT):
-Pick ONE:
-- Solid bold color: bright electric blue (#0066FF), deep purple (#6600CC), vivid green (#00AA44), bright red — the most powerful choice
-- Extreme bokeh blur f/0.95: ONE color dominates, saturation +70%, zero readable detail
-- Bold graphic gradient: two strong colors, radial from center or diagonal
-- Background brightness MUST contrast with subject — bright bg for dark subject, dark bg for light/colorful subject
+RULE 3 — THEATRICAL EXPRESSION (direct, never describe):
+"@image1 with jaw-dropped shock, mouth wide open, eyebrows raised to hairline"
+"@image1 with triumphant toothy grin, arms raised, eyes crinkled"
+"@image1 with horrified expression, both hands on face, eyes wide"
 
-RULE 4 — COLOR GRADING (HYPER-SATURATED, NOT NATURALISTIC):
-- Skin tones: boosted warm orange-gold (+30% warmth above natural)
-- Saturation: +60% overall above natural photography
-- Contrast: crushed blacks, bright whites, NOTHING muddy or grey or desaturated
-- Rim/edge light on subject: creates bright separation halo between subject and background
-- For split-screens: LEFT = cool blue-grey desaturated, RIGHT = warm golden-orange — OPPOSITE color temperatures
+RULE 4 — BACKGROUND (never compete with subject):
+Solid bold color (electric blue #0066FF, deep purple #6600CC, vivid green, bright red)
+OR extreme bokeh f/0.95 single dominant color
+OR bold gradient two-color radial
 
-RULE 5 — FACE LIGHTING (COMMERCIAL NOT CINEMATIC):
-- Bright even fill light covering ENTIRE face — NO shadows hiding any expression
-- Strong rim/edge light creating bright halo around head and shoulders
-- Catchlights (white specular dots) visible in BOTH eyes
-- This is beauty/commercial lighting — NOT moody film noir lighting
-- Face must be the brightest element in the frame
+RULE 5 — COLOR GRADE:
+Hyper-saturated +60%, crushed blacks, bright whites, warm skin +30%, strong rim light halo around subject separating from background.
 
-RULE 6 — COMPOSITION ZONES (THREE ZONES):
-Zone A — SUBJECT ZONE: 55-70% of frame = face and upper body
-Zone B — PROP/OBJECT ZONE: 15-20% = the key story object (phone, money, paper, trophy) clearly visible and glowing/highlighted  
-Zone C — TEXT ZONE: 25-35% = deliberately EMPTY of background clutter, cleared for overlay text. Text zone sits at bottom OR top of frame.
+RULE 6 — COMPOSITION ZONES:
+Zone A: @imageN subject = 55-70% frame
+Zone B: Key story prop/object = 15-20% frame, glowing/highlighted
+Zone C: Text zone = 25-35% cleared space at bottom or top
 
-RULE 7 — SPLIT SCREEN EXECUTION (for before/after stories):
-- Hard vertical divider at EXACT center: white 4-6px line with subtle outer glow OR bold diagonal slash
-- LEFT PANEL: cool blue-grey desaturated world, subject showing NEGATIVE state (slumped, worried, dark)
-- RIGHT PANEL: warm golden-orange world, subject showing POSITIVE state (upright, joyful, bright)
-- Both panels feature the same person (from uploaded reference) — same face, different worlds
-- A bold graphic arrow (thick, cartoony, NOT photographic) points LEFT-TO-RIGHT across the divide
+RULE 7 — SPLIT SCREEN (for before/after stories):
+Hard vertical divider center. LEFT: cool blue-grey, subject negative state. RIGHT: warm golden-orange, subject positive state. Bold cartoony arrow pointing left-to-right.
 
-RULE 8 — GRAPHIC DESIGN ELEMENTS (MINIMUM ONE):
-At least one of these must appear:
-- Bold RED or YELLOW cartoony arrow (thick outline, not photographic) pointing at key object or direction
-- Thick oval/circle outline in contrasting color highlighting something important
-- Starburst or badge shape in corner (e.g. "NEW" or "!" in red starburst)
-- Bold VS graphic between two subjects
-These are GRAPHIC DESIGN overlays — they look DESIGNED, not photographed.
+RULE 8 — GRAPHIC DESIGN ELEMENTS (minimum one):
+Bold red/yellow cartoony arrow OR thick oval highlight circle OR starburst badge OR bold VS graphic. These are DESIGNED elements, not photographed.
 
-RULE 9 — OVERLAY TEXT (CRITICAL — FLUX KONTEXT RENDERS THIS):
-Flux Kontext Pro renders text INTO the image when described with extreme precision. Use this exact technical language:
+RULE 9 — OVERLAY TEXT (Grok renders this into the image):
+Text: [MAX 5 WORDS ALL CAPS]
+Style: ${OVERLAY_STYLES[autoStyle]}
+Position: centered horizontally, bottom 30% OR top 20% of frame
+Size: letters minimum 12-15% of image height — ENORMOUS and dominant
 
-Text content: [THE OVERLAY TEXT — MAX 5 WORDS ALL CAPS]
-Font: Impact or Anton, ALL CAPS, ultra-bold weight
-Style: ${chosenOverlayDesc}
-Position: Centered horizontally in the TEXT ZONE (bottom 30% of frame OR top 20%)
-Size: Each letter minimum 12-15% of image HEIGHT — ENORMOUS, dominant, impossible to ignore at any size
-Rendering requirement: Letters individually sharp-edged, zero motion blur, zero softness, crisp as designed print typography. Text is a DOMINANT visual element — not a caption or watermark.
-
-RULE 10 — CHARACTER FIDELITY:
-Reference uploaded character images with extreme specificity:
-- "The [man/woman] from reference image [N], preserving their exact [skin tone description], [hair description], [facial feature description], [any distinguishing features]"
-- Do NOT invent appearance — describe what you actually see in the uploaded images
-- Character must be recognizable as the same person across all uses
+RULE 10 — PROMPT STRUCTURE ORDER:
+1. Start with @image references and their directions
+2. Composition and positions
+3. Background treatment
+4. Color grade and lighting
+5. Graphic design elements
+6. Overlay text with full style description
+7. End with visual style suffix verbatim
 
 ═══════════════════════════════════════════════
-OUTPUT — THIS EXACT JSON STRUCTURE:
+OUTPUT — EXACT JSON:
 ═══════════════════════════════════════════════
-
 {
   "storyType": "transformation|comparison|reveal|achievement|warning|journey|secret|confrontation",
   "compositionTemplate": "split_screen_arrow|split_screen_vs|single_subject_reaction|subject_pointing|before_after_blend|triptych|subject_recoiling",
-  "narrativeTension": "one sentence — the core emotional conflict of the story",
-  "protagonistEmotion": "exact theatrical emotion with physical description (e.g. 'jaw-dropped shock with mouth wide open and eyebrows raised to hairline')",
-  "objectOfStory": "hyper-specific object description (e.g. 'a glowing smartphone screen showing a bank transfer confirmation of $40,000 in bright green text')",
-  "settingBackground": "exact background treatment using Rule 3 (e.g. 'solid electric blue #0066FF background, zero detail, full saturation')",
-  "colourGrade": "exact color grade using Rule 4 language",
-  "overlayText": "MAX 5 WORDS ALL CAPS — curiosity gap phrase that makes NOT clicking feel impossible",
+  "narrativeTension": "core emotional conflict in one sentence",
+  "protagonistEmotion": "theatrical emotion with physical direction (for @image1)",
+  "objectOfStory": "the key prop/object that carries the story",
+  "settingBackground": "exact background treatment",
+  "colourGrade": "exact color grade",
+  "overlayText": "MAX 5 WORDS ALL CAPS — curiosity-gap phrase",
   "overlayStyle": "${autoStyle}",
   "overlayPosition": "bottom_center|top_center|bottom_left|bottom_right",
   "mood": "2-3 word thumbnail mood",
-  "compositionNotes": "detailed spatial layout — who is where, sizes, zones, graphic elements, exactly",
-  "fluxPrompt": "THE COMPLETE FLUX KONTEXT PRO PROMPT — 240-300 words — implements ALL 10 rules — references uploaded character images by exact appearance — includes subject pose/expression/size, background treatment, color grade, lighting, graphic elements, overlay text with full style description, composition zones, and ends with the STYLE TECHNICAL SUFFIX verbatim: ${styleMeta.s}"
+  "compositionNotes": "spatial layout details",
+  "grokPrompt": "THE COMPLETE GROK i2i PROMPT — 200-280 words — MUST start with @image1 direction — uses @image1/@image2/@image3 for ALL character references — NEVER describes character appearance — includes composition, background, color grade, lighting, graphic elements, overlay text with full style spec, ends with: ${styleMeta.s}"
 }`;
 
-  // Build messages with all uploaded images
-  const imgBlocks = uploadedImages.map((img, i) => ({
+  // Send uploaded images to Claude as vision input so it can understand story context
+  const imgBlocks = uploadedImages.map(img => ({
     type: 'image',
     source: { type: 'base64', media_type: img.mime, data: img.base64 }
   }));
@@ -913,21 +942,28 @@ OUTPUT — THIS EXACT JSON STRUCTURE:
   try {
     parsed = JSON.parse(clean);
   } catch(e) {
-    const fp = clean.match(/"fluxPrompt"\s*:\s*"([\s\S]+?)"\s*[,}]/)?.[1] || clean.substring(0, 400);
+    // Fallback extraction
+    const fp = clean.match(/"grokPrompt"\s*:\s*"([\s\S]+?)"\s*[,}]/)?.[1] || clean.substring(0, 400);
     const ot = clean.match(/"overlayText"\s*:\s*"([^"]+)"/)?.[1] || 'THIS CHANGES EVERYTHING';
     const st = clean.match(/"storyType"\s*:\s*"([^"]+)"/)?.[1] || 'transformation';
     const mood = clean.match(/"mood"\s*:\s*"([^"]+)"/)?.[1] || 'triumphant';
-    const comp = clean.match(/"compositionTemplate"\s*:\s*"([^"]+)"/)?.[1] || 'split_screen_arrow';
-    const os = clean.match(/"overlayStyle"\s*:\s*"([^"]+)"/)?.[1] || 'mrbeast';
-    parsed = { storyType: st, compositionTemplate: comp, overlayText: ot, overlayStyle: os,
-      mood, fluxPrompt: fp, narrativeTension:'', protagonistEmotion:'', objectOfStory:'',
+    const comp = clean.match(/"compositionTemplate"\s*:\s*"([^"]+)"/)?.[1] || 'single_subject_reaction';
+    const os = clean.match(/"overlayStyle"\s*:\s*"([^"]+)"/)?.[1] || autoStyle;
+    parsed = { storyType:st, compositionTemplate:comp, overlayText:ot, overlayStyle:os,
+      mood, grokPrompt:fp, narrativeTension:'', protagonistEmotion:'', objectOfStory:'',
       settingBackground:'', colourGrade:'', overlayPosition:'bottom_center', compositionNotes:'' };
   }
 
-  // ── Compress fluxPrompt to under 950 chars if needed ─────
-  if (parsed.fluxPrompt && parsed.fluxPrompt.length > 950) {
+  // ── Validate @image tags are present in the prompt ──────
+  if (parsed.grokPrompt && !parsed.grokPrompt.includes('@image')) {
+    // Claude forgot — prepend a corrective directive
+    parsed.grokPrompt = `@image1 as the protagonist, ${parsed.protagonistEmotion || 'showing intense emotion'}, center frame, face occupying 65% of frame height. ` + parsed.grokPrompt;
+  }
+
+  // ── Compress prompt to under 3500 chars (Grok has generous limit) ──
+  if (parsed.grokPrompt && parsed.grokPrompt.length > 3500) {
     try {
-      const cleanupRes = await fetch('https://api.anthropic.com/v1/messages', {
+      const compressRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -937,38 +973,21 @@ OUTPUT — THIS EXACT JSON STRUCTURE:
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
-          max_tokens: 300,
-          system: `You compress image prompts to fit within 950 characters. Rules:
-- Output MUST be 950 characters or fewer — count carefully before outputting
-- Preserve: subject, emotion, composition, objects, background color, lighting, text overlay
-- Remove: redundant adjectives, repeated concepts, filler (stunning, beautiful, masterpiece, perfect, incredibly, extremely)
-- Shorten phrases: "positioned at the bottom center of the frame" → "bottom-center"
-- Keep all hex codes, numbers, technical terms
+          max_tokens: 400,
+          system: `You compress Grok image-to-image prompts. Rules:
+- Output MUST be 3500 characters or fewer
+- PRESERVE all @image1/@image2/@image3 references — these are critical
+- Preserve: expressions, composition, background color/hex codes, lighting, overlay text style
+- Remove: redundant adjectives, repeated concepts, filler words
 - Output ONLY the compressed prompt. No explanation.`,
-          messages: [{
-            role: 'user',
-            content: `Compress to 950 chars or fewer. Current length: ${parsed.fluxPrompt.length}.
-
-${parsed.fluxPrompt}
-
-Output compressed prompt only. Must be 950 chars or fewer.`
-          }]
+          messages: [{ role:'user', content:`Compress to 3500 chars or fewer. KEEP all @image references.\n\n${parsed.grokPrompt}` }]
         })
       });
-      const cleanupData = await cleanupRes.json();
-      const compressed = (cleanupData.content && cleanupData.content[0] ? cleanupData.content[0].text : '').trim();
-      if (compressed && compressed.length <= 950) {
-        parsed.fluxPrompt = compressed;
-      } else if (compressed) {
-        const truncated = compressed.substring(0, 950);
-        const lastComma = truncated.lastIndexOf(',');
-        parsed.fluxPrompt = lastComma > 650 ? truncated.substring(0, lastComma).trim() : truncated.trim();
-      }
+      const cData = await compressRes.json();
+      const compressed = (cData.content && cData.content[0] ? cData.content[0].text : '').trim();
+      if (compressed && compressed.length <= 3500) parsed.grokPrompt = compressed;
     } catch(e) {
-      // Compression failed — hard trim fallback
-      const truncated = parsed.fluxPrompt.substring(0, 950);
-      const lastComma = truncated.lastIndexOf(',');
-      parsed.fluxPrompt = lastComma > 650 ? truncated.substring(0, lastComma).trim() : truncated.trim();
+      parsed.grokPrompt = parsed.grokPrompt.substring(0, 3500);
     }
   }
 
@@ -976,21 +995,23 @@ Output compressed prompt only. Must be 950 chars or fewer.`
 }
 
 // ════════════════════════════════════════════════════════
-// KIE FLUX GENERATION
+// GROK IMAGE-TO-IMAGE GENERATION
 // ════════════════════════════════════════════════════════
-async function kieGenerate(prompt, kieKey, dims) {
-  const ratio = dims.h === dims.w ? '1:1'
-              : dims.w > dims.h ? '16:9'
-              : '9:16';
-
+async function grokI2IGenerate(prompt, imageUrls, kieKey, aspectRatio) {
   const payload = {
-    model: 'z-image',
+    model: 'grok-imagine/image-to-image',
     input: {
       prompt,
-      aspect_ratio: ratio,
-      nsfw_checker: false
+      image_urls: imageUrls
     }
   };
+
+  console.log('Grok i2i payload:', JSON.stringify({
+    model: payload.model,
+    image_urls: imageUrls,
+    prompt_length: prompt.length,
+    prompt_preview: prompt.substring(0, 200)
+  }));
 
   const res = await fetch('https://api.kie.ai/api/v1/jobs/createTask', {
     method: 'POST',
@@ -1003,18 +1024,22 @@ async function kieGenerate(prompt, kieKey, dims) {
 
   if (!res.ok) {
     const e = await res.text();
-    throw new Error(`KIE ${res.status}: ${e.substring(0, 200)}`);
+    throw new Error(`Grok i2i create task ${res.status}: ${e.substring(0, 200)}`);
   }
 
   const data = await res.json();
-  console.log('KIE createTask response:', JSON.stringify(data).substring(0, 300));
+  console.log('Grok createTask response:', JSON.stringify(data).substring(0, 300));
+
   const taskId = data?.data?.taskId;
-  if (!taskId) throw new Error('Z-Image did not return a taskId: ' + JSON.stringify(data).substring(0, 150));
+  if (!taskId) throw new Error('Grok did not return a taskId: ' + JSON.stringify(data).substring(0, 150));
 
   console.log('Polling taskId:', taskId);
   return await pollKie(taskId, kieKey);
 }
 
+// ════════════════════════════════════════════════════════
+// POLL — unchanged, works for all KIE models
+// ════════════════════════════════════════════════════════
 async function pollKie(taskId, kieKey, max = 150) {
   for (let i = 0; i < max; i++) {
     await sleep(2000);
@@ -1023,67 +1048,58 @@ async function pollKie(taskId, kieKey, max = 150) {
         headers: { 'Authorization': `Bearer ${kieKey}` }
       });
 
-      // 404 on poll = task not indexed yet, keep waiting
       if (res.status === 404) {
-        showResultLoading(`<strong>Step 3:</strong> Waiting for Z-Image task… ${(i+1)*2}s`);
+        showResultLoading(`<strong>Step 4:</strong> Grok is warming up… ${(i+1)*2}s`);
         continue;
       }
 
       if (!res.ok) {
         const errText = await res.text();
-        // Non-fatal poll error — log and keep trying
-        console.warn(`Poll attempt ${i+1} failed: ${res.status} — ${errText.substring(0,100)}`);
-        showResultLoading(`<strong>Step 3:</strong> Retrying… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">status ${res.status}</span>`);
+        console.warn(`Poll ${i+1} error ${res.status}:`, errText.substring(0,100));
+        showResultLoading(`<strong>Step 4:</strong> Retrying… ${(i+1)*2}s`);
         continue;
       }
 
       const data = await res.json();
 
-      // Handle KIE error codes in response body
       if (data.code && data.code !== 200) {
-        console.warn('KIE poll response error:', data.msg, data.code);
-        showResultLoading(`<strong>Step 3:</strong> Processing… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${data.msg || 'queued'}</span>`);
+        showResultLoading(`<strong>Step 4:</strong> Processing… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${data.msg || 'queued'}</span>`);
         continue;
       }
 
       const record = data?.data;
       if (!record) {
-        showResultLoading(`<strong>Step 3:</strong> Queued… ${(i+1)*2}s`);
+        showResultLoading(`<strong>Step 4:</strong> Queued… ${(i+1)*2}s`);
         continue;
       }
 
       const state = (record.state || '').toLowerCase();
-      console.log(`Poll ${i+1}: state=${state}, taskId=${taskId}`);
+      console.log(`Poll ${i+1}: state=${state}`);
 
       if (state === 'success') {
         try {
           const result = JSON.parse(record.resultJson || '{}');
-          const url = (result.resultUrls && result.resultUrls[0])
-                   || result.imageUrl
-                   || result.url;
+          const url = (result.resultUrls && result.resultUrls[0]) || result.imageUrl || result.url;
           if (url) return url;
-          // Success state but no URL yet — keep polling
-          showResultLoading(`<strong>Step 3:</strong> Finalising… ${(i+1)*2}s`);
+          showResultLoading(`<strong>Step 4:</strong> Finalising… ${(i+1)*2}s`);
           continue;
         } catch(e) {
-          throw new Error('Z-Image succeeded but could not parse result: ' + record.resultJson);
+          throw new Error('Grok succeeded but could not parse result: ' + record.resultJson);
         }
       }
 
       if (state === 'fail') {
-        throw new Error('Z-Image failed: ' + (record.failMsg || record.failCode || 'unknown error'));
+        throw new Error('Grok generation failed: ' + (record.failMsg || record.failCode || 'unknown'));
       }
 
-      // waiting / queuing / generating — keep polling
-      showResultLoading(`<strong>Step 3:</strong> Generating with Z-Image… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${state || 'processing'}</span>`);
+      showResultLoading(`<strong>Step 4:</strong> Grok is generating… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${state || 'processing'}</span>`);
 
     } catch(e) {
-      if (e.message.includes('Z-Image failed') || e.message.includes('could not parse')) throw e;
-      // Network error — log and keep trying
-      console.warn(`Poll attempt ${i+1} network error:`, e.message);
+      if (e.message.includes('Grok generation failed') || e.message.includes('could not parse')) throw e;
+      console.warn(`Poll ${i+1} network error:`, e.message);
     }
   }
-  throw new Error('Z-Image timed out after 300s. Please try again.');
+  throw new Error('Grok timed out after 300s. Please try again.');
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -1113,7 +1129,6 @@ const COMP_CLASS = {
 
 function renderAnalysis(a) {
   document.getElementById('analysisCard').classList.add('vis');
-
   const badgeLabel = COMP_LABELS[a.compositionTemplate] || a.compositionTemplate;
   const badgeCls = COMP_CLASS[a.compositionTemplate] || 'comp-journey';
   document.getElementById('compositionBadge').innerHTML =
@@ -1124,8 +1139,8 @@ function renderAnalysis(a) {
     { label:'Mood', value: a.mood, cls:'mood' },
     { label:'Overlay Text', value: a.overlayText, cls:'overlay' },
     { label:'Overlay Style', value: a.overlayStyle, cls:'type' },
-    { label:'Protagonist Emotion', value: a.protagonistEmotion, cls:'' },
-    { label:'Object of Story', value: a.objectOfStory, cls:'' },
+    { label:'Protagonist Direction', value: a.protagonistEmotion, cls:'' },
+    { label:'Key Story Object', value: a.objectOfStory, cls:'' },
     { label:'Colour Grade', value: a.colourGrade, cls:'' },
   ];
 
@@ -1200,23 +1215,19 @@ function openOverlayModal() {
 function closeOverlayModal() {
   document.getElementById('overlayModal').classList.remove('open');
 }
-function applyOverlayEdit() {
+async function applyOverlayEdit() {
   const newText = document.getElementById('overlayEditInp').value.trim().toUpperCase();
   if (!newText) return;
   lastOverlayText = newText;
   closeOverlayModal();
-  // Update the flux prompt with new overlay text and regenerate
-  if (lastFluxPrompt && lastAnalysis) {
+
+  if (lastGrokPrompt && lastAnalysis) {
     lastAnalysis.overlayText = newText;
-    // Replace overlay text in the prompt
-    lastFluxPrompt = lastFluxPrompt.replace(
-      /"[^"]*" text|overlay text "[^"]*"/gi,
-      `"${newText}" text`
-    );
-    lastAnalysis.fluxPrompt = lastFluxPrompt;
-    document.getElementById('promptBody').textContent = lastFluxPrompt;
+    lastGrokPrompt = lastGrokPrompt.replace(/"[^"]{1,40}" text|overlay text "[^"]{1,40}"/gi, `"${newText}" text`);
+    lastAnalysis.grokPrompt = lastGrokPrompt;
+    document.getElementById('promptBody').textContent = lastGrokPrompt;
   }
-  runGenerationWithExistingPrompt();
+  await runGenerationWithExistingPrompt();
 }
 
 async function runGenerationWithExistingPrompt() {
@@ -1225,13 +1236,14 @@ async function runGenerationWithExistingPrompt() {
   const btn = document.getElementById('genBtn');
   btn.disabled = true;
 
-  setStep(3);
+  setStep(4);
   showResultLoading('<strong>Regenerating</strong> with updated overlay text…');
 
   try {
-    const dims = FMT_DIMS[selectedFmt] || FMT_DIMS.youtube;
-    const imgUrl = await kieGenerate(lastFluxPrompt, kieKey, dims);
-    setStep(4);
+    const kieUrls = uploadedImages.map(img => img.kieUrl).filter(Boolean);
+    const fmt = FMT_DIMS[selectedFmt] || FMT_DIMS.youtube;
+    const imgUrl = await grokI2IGenerate(lastGrokPrompt, kieUrls, kieKey, fmt.ratio);
+    setStep(5);
     renderResult(imgUrl, lastOverlayText);
   } catch(e) {
     showResultError(e.message);
