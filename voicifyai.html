@@ -2867,136 +2867,176 @@ async function claudeGenImgPrompt(content, styleId, antKey) {
   const styleMeta = VIS_STYLES.find(s => s.id === styleId) || {};
   const suffix = STYLE_SUFFIX[styleId] || '';
   const hasApp = !!appScreenBase64;
-  const fmtLabel = {twitter:'Twitter/X banner (16:9)',facebook:'Facebook post (square 1:1)',youtube:'YouTube thumbnail (16:9)',portrait:'Portrait/Reels (9:16)'}[imgFmt] || 'banner';
+  const fmtLabel = {twitter:'16:9 banner',facebook:'square 1:1',youtube:'16:9 thumbnail',portrait:'9:16 portrait'}[imgFmt] || '16:9';
 
- const sys = `You are the world's best thumbnail prompt engineer. You think exactly like MrBeast's thumbnail team and Alex Hormozi's design team. You write Flux Kontext Pro prompts that produce DESIGNED thumbnails — not cinematic photos. The difference: thumbnails are GRAPHIC DESIGN with a photographed subject, not movie stills. You understand that Flux Kontext renders text directly into images when described with extreme technical precision. Output ONLY valid JSON: {"fluxPrompt":"...","overlayText":"...","overlayStyle":"...","compositionType":"..."}`;
-
-  // Pick overlay style based on content type
+  // ── Smart overlay style selector ────────────────────────
   const overlayStyles = {
-    hormozi: `massive Impact/Anton font ALL CAPS, pure WHITE (#FFFFFF) letter fill, 8px solid JET BLACK (#000000) outer stroke, 2px white inner stroke, hard black drop shadow offset 5px right 5px down, no blur on shadow, letters slightly condensed, text DOMINATES the frame`,
-    mrbeast: `massive Anton font ALL CAPS, blazing YELLOW (#FFE000) letter fill, 9px solid BLACK outer stroke, slight white 1px inner glow, black drop shadow 6px offset no blur, words can vary in size (key word 2x larger), chaotic energy, text takes up 40-50% of frame width`,
-    nollywood_drama: `bold Impact font ALL CAPS, 3D beveled letters with GREEN (#00C851) to YELLOW (#FFE000) gradient fill left-to-right, thick WHITE 6px outer stroke PLUS thin BLACK 3px stroke outside the white, strong bottom drop shadow creating 3D lift effect, letters appear raised off the image`,
-    nollywood_movie: `cinematic bold font ALL CAPS, GOLD (#FFD700) to ORANGE (#FF8C00) gradient fill top-to-bottom, thick WHITE 5px stroke, elegant shadow, premium movie-poster feel, letters slightly spaced`,
-    playful: `bouncy bold font, words alternate CYAN (#00D4FF) and YELLOW (#FFE000) fills, each word slightly different size creating rhythm, BLACK 7px stroke on all letters, words slightly rotated ±3 degrees, energetic carnival energy`,
-    red_block: `massive Impact font ALL CAPS, solid BRIGHT RED (#FF0000) rectangle behind text, WHITE (#FFFFFF) letters on red block, thin black border around red block, extremely high contrast, Hormozi-meets-emergency-alert energy`
+    hormozi:        `white Impact ALL CAPS, 8px black stroke, 2px white inner stroke, hard black shadow 5px offset, condensed letters`,
+    mrbeast:        `yellow #FFE000 Anton ALL CAPS, 9px black stroke, white 1px glow, black shadow 6px no blur, key word 2x larger`,
+    nollywood_drama:`Impact ALL CAPS, green #00C851 to yellow #FFE000 gradient fill, 6px white stroke plus 3px black outer, 3D raised shadow`,
+    nollywood_movie:`bold ALL CAPS, gold #FFD700 to orange #FF8C00 gradient, 5px white stroke, elegant shadow, movie-poster style`,
+    playful:        `bold ALL CAPS alternating cyan #00D4FF and yellow #FFE000 words, 7px black stroke, words slightly rotated ±3deg`,
+    red_block:      `white Impact ALL CAPS on solid red #FF0000 rectangle, thin black border around block, emergency-alert contrast`
   };
 
-  // Auto-select style based on content
   const contentLower = content.toLowerCase();
   let chosenStyle = 'mrbeast';
   if (contentLower.includes('lost') || contentLower.includes('fail') || contentLower.includes('mistake')) chosenStyle = 'red_block';
   else if (contentLower.includes('money') || contentLower.includes('income') || contentLower.includes('earn')) chosenStyle = 'hormozi';
-  else if (contentLower.includes('story') || contentLower.includes('nigeria') || contentLower.includes('drama')) chosenStyle = 'nollywood_drama';
-  else if (contentLower.includes('discover') || contentLower.includes('secret') || contentLower.includes('idea')) chosenStyle = 'mrbeast';
+  else if (contentLower.includes('nigeria') || contentLower.includes('drama') || contentLower.includes('nollywood')) chosenStyle = 'nollywood_drama';
 
   const chosenStyleDesc = overlayStyles[chosenStyle];
 
-  const user = `Create a viral thumbnail image prompt for this VoicifyAI content:
+  // ── CALL 1: Scene prompt ────────────────────────────────
+  const sceneMessages = [{
+    role: 'user',
+    content: [
+      ...(hasApp ? [{type:'image', source:{type:'base64', media_type:appScreenMime, data:appScreenBase64}}] : []),
+      { type: 'text', text: `Write a viral thumbnail image prompt. Max 120 words. No filler words.
 
----
-${content.substring(0,500)}
----
-
+CONTENT: "${content.substring(0, 350)}"
 FORMAT: ${fmtLabel}
-VISUAL STYLE: ${styleMeta.label||styleId}
-STYLE TECHNICAL SUFFIX: ${suffix}
-${hasApp?'APP SCREEN: User uploaded a VoicifyAI app screenshot — show it held naturally by subject.':''}
+STYLE: ${styleMeta.label||styleId} — ${suffix}
+${hasApp ? 'APP: uploaded above — show on phone held by subject' : ''}
 
-═══════════════════════════════════════════
-THUMBNAIL DESIGN RULES — READ CAREFULLY
-═══════════════════════════════════════════
+RULES:
+- Subject face 55-70% of frame, close-up only, camera 10-15deg below eye level
+- THEATRICAL expression: jaw-dropped shock OR triumphant joy OR horrified realization
+- Background: solid bold color OR extreme bokeh blur, NEVER detailed
+- Hyper-saturated HDR, skin tones warm orange +30%, saturation +60%
+- Bright even fill light on face, strong rim light halo, catchlights in both eyes
+- If before/after: hard vertical split, left=cool blue, right=warm gold
+- One graphic element: bold cartoony arrow OR circle highlight OR starburst
+- Clear bottom-third empty zone for text
+- End prompt with style suffix verbatim
 
-This is NOT a cinematic photograph. This is a DESIGNED THUMBNAIL in the style of MrBeast and Alex Hormozi. The difference is critical.
+Output ONLY the prompt. No explanation.` }
+    ]
+  }];
 
-RULE 1 — FACE SIZE:
-The subject's face must occupy 55-70% of the frame HEIGHT. This is a close-up to medium shot ONLY. Never wide shot. Face must be large enough to read emotions on a mobile screen at 120px wide. Camera angle: slightly low (camera 10-15 degrees below subject eye level, looking slightly up). This creates power and dominance.
-
-RULE 2 — EXPRESSION:
-THEATRICAL, EXAGGERATED, NON-NATURALISTIC expression. Not "acting" — REACTING. Choose one:
-- Jaw-dropped shock (mouth wide open, eyes huge, eyebrows raised to hairline)
-- Triumphant joy (massive smile, eyes crinkled, possibly arms raised)  
-- Horrified realization (hand on face, eyes wide, mouth open)
-- Mischievous secret (one eyebrow raised, slight smirk, pointing finger)
-Expressions must be readable at thumbnail size. Subtle is wrong.
-
-RULE 3 — BACKGROUND:
-NEVER a detailed realistic background competing with the subject. Choose one:
-- Solid bold color (bright blue, purple, green, red) — most powerful
-- Extreme bokeh blur (f/0.95 equivalent) with ONE color dominating — colors boosted +60% saturation
-- Designed gradient (two bold colors, radial or diagonal)
-Background brightness must contrast sharply with subject. If subject is dark-skinned, background must be bright. If subject wears dark clothes, background must be bright color.
-
-RULE 4 — COLOR GRADE:
-Hyper-saturated. HDR processed. NOT natural or cinematic.
-- Skin tones: boosted warm orange (+30% warmth)
-- Background: pushed to complementary color of subject outfit
-- Overall saturation: +60% above natural
-- Contrast: crushed blacks, bright whites, nothing muddy or grey
-- Rim/edge light on subject: creates separation halo effect
-
-RULE 5 — LIGHTING ON FACE:
-Even, bright fill light on ENTIRE FACE — no shadows hiding expressions. PLUS strong rim light (bright edge glow) separating subject from background. Catchlights (white specular highlights) visible in both eyes. This is beauty/commercial lighting, not dramatic film lighting.
-
-RULE 6 — COMPOSITION ZONES:
-The frame has 3 zones:
-- SUBJECT ZONE: 60-70% of frame — the face/upper body
-- OBJECT ZONE: 15-20% — the phone/VoicifyAI screen/relevant prop — clearly visible, glowing
-- TEXT ZONE: 25-35% — deliberately EMPTY of background detail so text reads clearly. This zone is where the overlay text will sit.
-
-RULE 7 — SPLIT SCREEN (if before/after):
-Hard vertical divider at exact center — thin white 4px line with subtle outer glow.
-LEFT PANEL: cool desaturated blue-grey color grade, subject showing NEGATIVE emotion
-RIGHT PANEL: warm golden-orange color grade, same subject showing POSITIVE emotion
-Each panel must look like a different world. The color temperature contrast IS the story.
-
-RULE 8 — GRAPHIC ELEMENTS:
-Include AT LEAST ONE of:
-- Bold red/yellow arrow pointing at the key object (thick, cartoony, not realistic)
-- Bold circle/oval outline highlighting something important
-- Small badge or starburst shape in corner
-These must be described as GRAPHIC DESIGN elements rendered into the image, not photographic.
-
-RULE 9 — OVERLAY TEXT RENDERING:
-This is the most critical rule. Flux Kontext renders text INTO the image. Describe it with extreme precision:
-
-OVERLAY TEXT: "${content.substring(0,30).toUpperCase().split(' ').slice(0,5).join(' ')}" (Claude will improve this)
-TEXT STYLE: ${chosenStyleDesc}
-TEXT POSITION: Lower third of image, centered horizontally, sitting in the deliberately cleared TEXT ZONE
-TEXT SIZE: Letters must be minimum 15% of image height — ENORMOUS, dominant, impossible to miss
-TEXT RENDERING: Each letter individually rendered with crisp edges, zero blur, zero anti-aliasing softness. Text looks DESIGNED not generated.
-
-${hasApp?'RULE 10 — APP SCREEN: The VoicifyAI app screen must be clearly visible, phone held at angle showing screen, purple microphone icon prominent, slight screen glow illuminating subject face':''}
-
-═══════════════════════════════════════════
-OUTPUT JSON FIELDS:
-═══════════════════════════════════════════
-fluxPrompt: 220-280 words implementing ALL 9 rules above with the style suffix verbatim at end
-overlayText: MAX 5 WORDS ALL CAPS — the single most scroll-stopping curiosity-gap phrase
-overlayStyle: one of hormozi|mrbeast|nollywood_drama|nollywood_movie|playful|red_block
-compositionType: one of split_before_after|single_reaction|subject_pointing|subject_recoiling
-
-Output ONLY valid JSON, no explanation, no markdown.`;
-  const messages = [{role:'user',content:[{type:'text',text:user}]}];
-  if (hasApp) {
-    messages[0].content.unshift({type:'image',source:{type:'base64',media_type:appScreenMime,data:appScreenBase64}});
-  }
-
-  const res = await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:sys,messages})
+  const sceneRes = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': antKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 280,
+      system: 'You are a viral thumbnail prompt engineer. Output ONLY the image prompt. Max 120 words. No preamble, no explanation, no filler words like masterpiece/stunning/beautiful/highly-detailed.',
+      messages: sceneMessages
+    })
   });
-  const data = await res.json();
-  const raw = ((data.content&&data.content[0])?data.content[0].text:'').trim();
-  const clean = raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-  try { return JSON.parse(clean); }
-  catch(e) {
-    const fp = clean.match(/"fluxPrompt"\s*:\s*"([\s\S]+?)(?:",\s*"overlayText|"$)/)?.[1] || clean.substring(0,300);
-    const ot = clean.match(/"overlayText"\s*:\s*"([^"]+)"/)?.[1] || 'THIS CHANGES EVERYTHING';
-    const os = clean.match(/"overlayStyle"\s*:\s*"([^"]+)"/)?.[1] || 'mrbeast';
-    const ct = clean.match(/"compositionType"\s*:\s*"([^"]+)"/)?.[1] || 'single_reaction';
-    return {fluxPrompt:fp, overlayText:ot, overlayStyle:os, compositionType:ct};
+  const sceneData = await sceneRes.json();
+  const scenePrompt = (sceneData.content && sceneData.content[0] ? sceneData.content[0].text : '').trim();
+
+  // ── CALL 2: Overlay text + style ────────────────────────
+  const overlayRes = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': antKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 150,
+      system: 'You generate viral thumbnail overlay text. Output ONLY valid JSON. No explanation.',
+      messages: [{
+        role: 'user',
+        content: `For: "${content.substring(0, 250)}"
+
+Output JSON:
+{
+  "overlayText": "MAX 5 WORDS ALL CAPS scroll-stopping phrase",
+  "overlayInstruction": "15 words max — font/color/position for Flux to render"
+}
+
+overlayInstruction must reference: ${chosenStyleDesc}
+Position: bottom-center. Output ONLY the JSON.`
+      }]
+    })
+  });
+  const overlayData = await overlayRes.json();
+  const overlayRaw = (overlayData.content && overlayData.content[0] ? overlayData.content[0].text : '').trim();
+
+  let overlayText = 'THIS CHANGES EVERYTHING';
+  let overlayInstruction = `bottom-center, ${chosenStyleDesc}`;
+
+  try {
+    const cleanOv = overlayRaw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+    const parsed = JSON.parse(cleanOv);
+    overlayText = parsed.overlayText || overlayText;
+    overlayInstruction = parsed.overlayInstruction || overlayInstruction;
+  } catch(e) {
+    const ot = overlayRaw.match(/"overlayText"\s*:\s*"([^"]+)"/)?.[1];
+    const oi = overlayRaw.match(/"overlayInstruction"\s*:\s*"([^"]+)"/)?.[1];
+    if (ot) overlayText = ot;
+    if (oi) overlayInstruction = oi;
   }
+
+  // ── COMBINE: scene + overlay ────────────────────────────
+  const rawCombined = `${scenePrompt} Text: "${overlayText}", ${overlayInstruction}, bottom-center, crisp sharp letters.`;
+
+  // ── CALL 3: Compress to under 950 chars if needed ───────
+  let finalPrompt = rawCombined;
+
+  if (rawCombined.length > 950) {
+    try {
+      const cleanupRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': antKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 300,
+          system: `You compress image prompts to fit within 950 characters. Rules:
+- Output MUST be 950 characters or fewer — count carefully before outputting
+- Preserve: subject, emotion, composition, objects, background color, lighting, text overlay
+- Remove: redundant adjectives, repeated concepts, filler (stunning, beautiful, masterpiece, perfect, incredibly, extremely)
+- Shorten phrases: "positioned at the bottom center of the frame" → "bottom-center"
+- Keep all hex codes, numbers, technical terms
+- Output ONLY the compressed prompt. No explanation.`,
+          messages: [{
+            role: 'user',
+            content: `Compress to 950 chars or fewer. Current length: ${rawCombined.length}.
+
+${rawCombined}
+
+Output compressed prompt only. Must be 950 chars or fewer.`
+          }]
+        })
+      });
+      const cleanupData = await cleanupRes.json();
+      const compressed = (cleanupData.content && cleanupData.content[0] ? cleanupData.content[0].text : '').trim();
+      if (compressed && compressed.length <= 950) {
+        finalPrompt = compressed;
+      } else if (compressed) {
+        // Claude went slightly over — hard trim at last comma
+        const truncated = compressed.substring(0, 950);
+        const lastComma = truncated.lastIndexOf(',');
+        finalPrompt = lastComma > 650 ? truncated.substring(0, lastComma).trim() : truncated.trim();
+      }
+    } catch(e) {
+      // Cleanup failed — hard trim fallback
+      const truncated = rawCombined.substring(0, 950);
+      const lastComma = truncated.lastIndexOf(',');
+      finalPrompt = lastComma > 650 ? truncated.substring(0, lastComma).trim() : truncated.trim();
+    }
+  }
+
+  return {
+    fluxPrompt: finalPrompt,
+    overlayText,
+    overlayStyle: chosenStyle
+  };
 }
 
 async function kieFluxGen(prompt, kieKey, dims) {
