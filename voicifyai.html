@@ -2173,7 +2173,7 @@ function openModal(btn) {
         <div id="modalImgPromptText" style="background:rgba(0,0,0,0.25);border:1px solid rgba(124,92,252,0.2);border-radius:8px;padding:10px;font-size:.7rem;color:rgba(240,238,248,0.6);line-height:1.6;font-family:'JetBrains Mono',monospace;max-height:80px;overflow-y:auto;"></div>
       </div>
       <div id="modalImgResultBox" style="display:none;margin-bottom:10px;border-radius:8px;overflow:hidden;"></div>
-      <button id="modalImgBtn" onclick="modalGenerateImage(${JSON.stringify(post.hook + ' ' + post.body.substring(0,400)).replace(/'/g,"\\'")})" style="width:100%;padding:11px;background:linear-gradient(135deg,#7C3AED,#A855F7);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+      <button id="modalImgBtn" onclick="modalGenerateImage()" style="width:100%;padding:11px;background:linear-gradient(135deg,#7C3AED,#A855F7);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
         <span>🎨</span> Build Prompt &amp; Generate Image
       </button>
     </div>`;
@@ -2233,18 +2233,27 @@ function openModal(btn) {
         <div id="modalImgPromptText" style="background:rgba(0,0,0,0.25);border:1px solid rgba(124,92,252,0.2);border-radius:8px;padding:10px;font-size:.7rem;color:rgba(240,238,248,0.6);line-height:1.6;font-family:'JetBrains Mono',monospace;max-height:80px;overflow-y:auto;"></div>
       </div>
       <div id="modalImgResultBox" style="display:none;margin-bottom:10px;border-radius:8px;overflow:hidden;"></div>
-      <button id="modalImgBtn" onclick="modalGenerateImage(${JSON.stringify(post.hook + ' ' + post.body.substring(0,400)).replace(/'/g,"\\'")})" style="width:100%;padding:11px;background:linear-gradient(135deg,#7C3AED,#A855F7);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+      <button id="modalImgBtn" onclick="modalGenerateImage()" style="width:100%;padding:11px;background:linear-gradient(135deg,#7C3AED,#A855F7);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
         <span>🎨</span> Build Prompt &amp; Generate Image
       </button>
     </div>`:''}`;
   }
 
   bdy.innerHTML = html;
+  // Store post content safely for the image pipeline — avoids inline onclick encoding issues
+  window._modalPostContent = (post.hook || '') + ' ' + (post.body || '').substring(0, 400);
   overlay.classList.add('open');
   document.body.style.overflow='hidden';
 }
 
-function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  window._modalPostContent = null;
+  _modalStagedPrompt = null;
+  _modalStagedOverlay = null;
+  _modalCurrentContent = null;
+}
 document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
@@ -3195,7 +3204,12 @@ let _modalStagedPrompt = null;
 let _modalStagedOverlay = null;
 let _modalCurrentContent = null;
 
-async function modalGenerateImage(content) {
+async function modalGenerateImage() {
+  const content = window._modalPostContent || '';
+  if (!content.trim()) {
+    alert('No content found. Please open a post first.');
+    return;
+  }
   const antKey = localStorage.getItem('voicifyai_api_key');
   const kieKey = localStorage.getItem('voicifyai_kie_key');
 
