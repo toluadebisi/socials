@@ -750,7 +750,18 @@ async function runGeneration() {
 
     // ── STEP 4: Grok image-to-image generation ────────────
     const fmt = FMT_DIMS[selectedFmt] || FMT_DIMS.youtube;
-    const imgUrl = await grokI2IGenerate(analysis.grokPrompt, kieUrls, kieKey, fmt.ratio);
+    const ratioLabel = {
+      youtube:  'horizontal 16:9 widescreen landscape format, 1280x720 pixels',
+      twitter:  'horizontal 16:9 widescreen landscape format, 1200x675 pixels',
+      facebook: 'square 1:1 format, 1080x1080 pixels',
+      portrait: 'vertical 9:16 portrait format, 810x1440 pixels'
+    }[selectedFmt] || 'horizontal 16:9 widescreen landscape format, 1280x720 pixels';
+
+    const finalPrompt = analysis.grokPrompt.trimEnd() + ' Output image must be ' + ratioLabel + '.';
+    lastGrokPrompt = finalPrompt;
+    document.getElementById('promptBody').textContent = finalPrompt;
+
+    const imgUrl = await grokI2IGenerate(finalPrompt, kieUrls, kieKey, fmt.ratio);
     lastImgUrl = imgUrl;
 
     setStep(5);
