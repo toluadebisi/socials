@@ -3074,32 +3074,49 @@ async function kieFluxGen(prompt, kieKey, dims) {
   return await pollKie(taskId, kieKey);
 }
 
-async function pollKie(taskId, kieKey, max = 100) {
+async function pollKie(taskId, kieKey, max = 150) {
   for (let i = 0; i < max; i++) {
     await new Promise(r => setTimeout(r, 2000));
 
-    const res = await fetch(`https://api.kie.ai/api/v1/jobs/taskDetail?taskId=${taskId}`, {
+    const res = await fetch(`https://api.kie.ai/api/v1/jobs/recordInfo?taskId=${taskId}`, {
       headers: { 'Authorization': `Bearer ${kieKey}` }
     });
     const data = await res.json();
     const record = data?.data;
     if (!record) continue;
 
-    const status = (record.status || '').toLowerCase();
-    const url = record.output?.imageUrl
-             || record.output?.url
-             || record.resultUrl
-             || record.imageUrl;
+    // Correct field is 'state' not 'status'
+    const state = (record.state || '').toLowerCase();
 
-    if ((status.includes('success') || status.includes('complet') || status.includes('done')) && url) return url;
-    if (status.includes('fail') || status.includes('error')) {
-      throw new Error('Z-Image generation failed: ' + (record.errorMessage || record.failReason || status));
+    if (state === 'success') {
+      // resultJson is a JSON string — must be parsed
+      try {
+        const result = JSON.parse(record.resultJson || '{}');
+        const url = (result.resultUrls && result.resultUrls[0])
+                 || result.imageUrl
+                 || result.url;
+        if (url) return url;
+      } catch(e) {
+        throw new Error('Z-Image succeeded but could not parse result: ' + record.resultJson);
+      }
     }
 
+    if (state === 'fail') {
+      throw new Error('Z-Image failed: ' + (record.failMsg || record.failCode || 'unknown error'));
+    }
+
+    // Still running — update UI
     const el = document.getElementById('imgResult');
-    if (el) el.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Generating… ${(i + 1) * 2}s<br><span style="font-size:.7rem;opacity:.6">${status || 'processing'}</span></div></div>`;
+    if (el && el.querySelector('.img-result-loading')) {
+      el.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Generating… ${(i + 1) * 2}s<br><span style="font-size:.7rem;opacity:.6">${state || 'processing'}</span></div></div>`;
+    }
+    // Also update modal status if open
+    const modalStatus = document.getElementById('modalImgStatus');
+    if (modalStatus && modalStatus.style.display !== 'none') {
+      modalStatus.innerHTML = `<span style="color:var(--cyan)">🖼️ Generating… ${(i + 1) * 2}s · ${state || 'processing'}</span>`;
+    }
   }
-  throw new Error('Z-Image timed out after 200s. Try again.');
+  throw new Error('Z-Image timed out after 300s. Try again.');
 }
 
 function downloadImg() {
