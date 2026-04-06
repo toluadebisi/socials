@@ -156,6 +156,69 @@ body{font-family:'DM Sans',sans-serif;background:var(--void);color:var(--parchme
 .go-label{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--vl);font-family:'JetBrains Mono',monospace;font-weight:700;margin-bottom:7px;}
 .copy-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;border:1px solid rgba(124,92,252,0.25);background:rgba(124,92,252,0.07);color:var(--vl);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .16s;}
 .copy-btn:hover{background:rgba(124,92,252,0.15);}
+/* ── IMAGE GENERATOR ── */
+.gen-studio{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
+.gen-col{display:flex;flex-direction:column;gap:0;}
+.img-panel{background:var(--void2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.img-panel-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.2);}
+.img-panel-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;flex:1;}
+.img-panel-sub{font-size:.74rem;color:var(--muted);}
+.kie-key-bar{display:flex;align-items:center;gap:8px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:10px 14px;margin:14px 14px 0;flex-wrap:wrap;}
+.kie-key-bar.ok{background:rgba(0,229,160,0.05);border-color:rgba(0,229,160,0.18);}
+.kie-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--cyan);flex-shrink:0;white-space:nowrap;}
+.kie-key-bar.ok .kie-label{color:var(--emerald);}
+.kie-input{flex:1;min-width:140px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,255,0.2);border-radius:6px;padding:6px 9px;color:var(--parchment);font-family:'JetBrains Mono',monospace;font-size:.76rem;outline:none;}
+.kie-input:focus{border-color:var(--cyan);}
+.kie-save{padding:6px 13px;border-radius:6px;background:var(--cyan);border:none;color:#000;font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;flex-shrink:0;}
+.kie-clear{padding:6px 10px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.1);color:rgba(240,238,248,0.4);font-family:'DM Sans',sans-serif;font-size:.76rem;cursor:pointer;flex-shrink:0;}
+.kie-clear:hover{border-color:var(--rose);color:var(--rose);}
+.kie-status{font-size:.74rem;color:var(--emerald);font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.img-src{padding:14px;}
+.img-src-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,238,248,0.35);font-weight:600;margin-bottom:6px;display:block;}
+.img-src-text{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:10px;color:rgba(240,238,248,0.8);font-family:'DM Sans',sans-serif;font-size:.8rem;line-height:1.6;resize:vertical;min-height:80px;outline:none;transition:border-color .15s;}
+.img-src-text:focus{border-color:rgba(124,92,252,0.4);}
+.img-src-hint{font-size:.72rem;color:rgba(240,238,248,0.3);margin-top:5px;}
+.app-upload-zone{margin:0 14px 14px;border:1.5px dashed rgba(124,92,252,0.3);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:rgba(124,92,252,0.03);}
+.app-upload-zone:hover{border-color:var(--vl);background:rgba(124,92,252,0.07);}
+.app-upload-zone.has-img{border-style:solid;border-color:rgba(0,229,160,0.4);background:rgba(0,229,160,0.04);}
+.app-upload-icon{font-size:1.5rem;margin-bottom:5px;}
+.app-upload-text{font-size:.78rem;color:var(--muted);}
+.app-upload-text strong{color:var(--vl);}
+.app-upload-zone.has-img .app-upload-text{color:var(--emerald);}
+#appScreenInput{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.app-thumb-wrap{display:flex;align-items:center;gap:10px;justify-content:center;}
+.app-thumb{width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid rgba(0,229,160,0.3);}
+.app-thumb-remove{background:rgba(255,107,157,0.15);border:1px solid rgba(255,107,157,0.25);color:var(--rose);border-radius:5px;padding:3px 8px;font-size:.7rem;cursor:pointer;flex-shrink:0;}
+.img-platform-row{display:flex;gap:6px;padding:0 14px 12px;flex-wrap:wrap;}
+.img-plat-btn{padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:rgba(240,238,248,0.45);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.img-plat-btn:hover{border-color:var(--vl);color:var(--vl);}
+.img-plat-btn.on{background:var(--violet);border-color:var(--violet);color:#fff;}
+.vis-styles-wrap{padding:0 14px 14px;}
+.vis-styles-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,238,248,0.35);font-weight:600;margin-bottom:8px;display:block;}
+.vis-styles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:7px;}
+.vis-card{padding:9px 8px;background:rgba(0,0,0,0.25);border:1.5px solid var(--border);border-radius:9px;cursor:pointer;text-align:center;transition:all .18s;}
+.vis-card:hover{border-color:rgba(124,92,252,0.4);background:rgba(124,92,252,0.06);}
+.vis-card.selected{border-color:var(--violet);background:rgba(124,92,252,0.12);}
+.vis-card-em{font-size:1.2rem;display:block;margin-bottom:3px;}
+.vis-card-name{font-size:.68rem;font-weight:700;color:var(--parchment);line-height:1.2;}
+.vis-card-desc{font-size:.6rem;color:var(--muted);margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.img-prompt-preview{margin:0 14px 10px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.72rem;color:rgba(240,238,248,0.5);line-height:1.6;font-family:'JetBrains Mono',monospace;display:none;max-height:80px;overflow-y:auto;}
+.img-prompt-preview.vis{display:block;}
+.img-result{margin:0 14px 14px;border-radius:10px;overflow:hidden;position:relative;background:rgba(0,0,0,0.3);border:1px solid var(--border);min-height:220px;display:flex;align-items:center;justify-content:center;}
+.img-result-ph{text-align:center;padding:32px;color:rgba(240,238,248,0.2);}
+.img-result-ph .ph-icon{font-size:2.5rem;margin-bottom:8px;}
+.img-result-ph p{font-size:.78rem;line-height:1.6;}
+.img-result img{width:100%;display:block;}
+.img-result-loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:40px;color:var(--muted);font-size:.82rem;text-align:center;}
+.img-spin{width:36px;height:36px;border:3px solid rgba(124,92,252,0.2);border-top-color:var(--vl);border-radius:50%;animation:spin .85s linear infinite;}
+.img-dl-bar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.92),transparent);padding:14px;display:flex;gap:8px;align-items:center;}
+.img-dl-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;background:var(--emerald);border:none;color:#000;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:opacity .15s;}
+.img-dl-btn:hover{opacity:.85;}
+.img-overlay-txt{font-size:.7rem;color:rgba(255,255,255,0.65);font-style:italic;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.img-regen-btn{padding:7px 12px;border-radius:7px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;font-family:'DM Sans',sans-serif;font-size:.76rem;cursor:pointer;flex-shrink:0;}
+.img-regen-btn:hover{background:rgba(255,255,255,0.18);}
+@media(max-width:1100px){.gen-studio{grid-template-columns:1fr;}}
+@media(max-width:768px){.vis-styles-grid{grid-template-columns:repeat(3,1fr);}}
 .copy-btn.ok{background:rgba(0,180,0,0.1);border-color:rgba(0,180,0,0.25);color:#5dff8f;}
 .spinner{width:34px;height:34px;border:2px solid rgba(124,92,252,0.2);border-top-color:var(--vl);border-radius:50%;animation:spin .85s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -274,6 +337,11 @@ footer{text-align:center;padding:42px;border-top:1px solid var(--border);color:r
     <span class="key-status" id="keyStatus"></span>
   </div>
 
+  <!-- TWO-COLUMN STUDIO LAYOUT -->
+  <div class="gen-studio">
+
+  <!-- LEFT: CONTENT GENERATOR -->
+  <div class="gen-col">
   <div class="gen-type-grid">
     <div class="gen-type-card selected" data-type="tweets" onclick="selectType(this,'tweets')"><span class="gen-type-icon">⚡</span><div class="gen-type-name">10 Tweets</div><div class="gen-type-desc">Daily batch · scroll-stopping</div></div>
     <div class="gen-type-card" data-type="thread" onclick="selectType(this,'thread')"><span class="gen-type-icon">🧵</span><div class="gen-type-name">X Thread</div><div class="gen-type-desc">Story-driven · 7 tweets</div></div>
@@ -360,6 +428,79 @@ footer{text-align:center;padding:42px;border-top:1px solid var(--border);color:r
     <div class="gen-btns"><button class="gbtn tweet" onclick="generate()" id="genBtn">⚡ Generate 10 Tweets</button></div>
   </div>
   <div class="gen-out" id="genOut"></div>
+  </div><!-- end left col -->
+
+  <!-- RIGHT: IMAGE GENERATOR -->
+  <div class="gen-col">
+  <div class="img-panel">
+    <div class="img-panel-hdr">
+      <span style="font-size:1.3rem">🎨</span>
+      <div>
+        <div class="img-panel-title">AI Image Generator</div>
+        <div class="img-panel-sub">Flux Pro via KIE · Claude auto-prompts · CTR overlay text · 16 visual styles</div>
+      </div>
+    </div>
+
+    <!-- KIE API KEY -->
+    <div class="kie-key-bar" id="kieKeyBar">
+      <span class="kie-label">🔐 KIE API Key</span>
+      <input class="kie-input" id="kieKeyInput" type="password" placeholder="kie_..." autocomplete="off" onkeydown="if(event.key==='Enter')saveKieKey()" />
+      <button class="kie-save" onclick="saveKieKey()">Save</button>
+      <button class="kie-clear" id="kieClear" onclick="clearKieKey()" style="display:none">Clear</button>
+      <span class="kie-status" id="kieStatus"></span>
+    </div>
+
+    <!-- CONTENT SOURCE -->
+    <div style="padding:14px 14px 0;">
+      <span class="img-src-label">Content to Visualize (auto-fills from generator · or paste manually)</span>
+      <textarea class="img-src-text" id="imgSrcText" placeholder="Generate content on the left — it auto-fills here. Or paste any tweet, post, or script…"></textarea>
+      <div class="img-src-hint">💡 Claude reads this → generates Flux Pro prompt with emotional subject + max 5-word overlay text</div>
+    </div>
+
+    <!-- APP SCREENSHOT UPLOAD -->
+    <div style="padding:10px 14px 0;">
+      <span class="img-src-label">App Screenshot (optional — subject will use/show it in the image)</span>
+      <div class="app-upload-zone" id="appUploadZone">
+        <input type="file" id="appScreenInput" accept="image/*" onchange="handleAppUpload(this)">
+        <div id="appUploadContent">
+          <div class="app-upload-icon">📱</div>
+          <div class="app-upload-text"><strong>Click or drop</strong> a VoicifyAI app screenshot · Claude references it in the Flux prompt</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMAT -->
+    <div style="padding:10px 14px 4px;">
+      <span class="img-src-label">Image Format</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="img-plat-btn on" data-fmt="twitter" onclick="setImgFmt(this)">𝕏 Twitter 16:9</button>
+        <button class="img-plat-btn" data-fmt="facebook" onclick="setImgFmt(this)">Facebook 1:1</button>
+        <button class="img-plat-btn" data-fmt="youtube" onclick="setImgFmt(this)">YT Thumbnail</button>
+        <button class="img-plat-btn" data-fmt="portrait" onclick="setImgFmt(this)">Portrait 9:16</button>
+      </div>
+    </div>
+
+    <!-- VISUAL STYLES -->
+    <div style="padding:12px 14px 0;">
+      <span class="vis-styles-label">Visual Style · click any style to generate instantly</span>
+      <div class="vis-styles-grid" id="visStylesGrid"></div>
+    </div>
+
+    <!-- PROMPT PREVIEW -->
+    <div class="img-prompt-preview" id="imgPromptPreview"></div>
+
+    <!-- RESULT -->
+    <div class="img-result" id="imgResult">
+      <div class="img-result-ph">
+        <div class="ph-icon">🖼️</div>
+        <p>Generate content on the left →<br>then click any visual style to create your image</p>
+      </div>
+    </div>
+    <div style="height:14px;"></div>
+  </div><!-- end img-panel -->
+  </div><!-- end right col -->
+
+  </div><!-- end gen-studio -->
 </div>
 
 <!-- MODAL -->
@@ -2363,6 +2504,8 @@ async function generate() {
     const data = await res.json();
     const text = (data.content&&data.content[0]?data.content[0].text:'')||'No content returned.';
     window._lastGenText = text;
+    // Auto-fill image generator with generated content
+    autoFillImgSrc(text);
     out.innerHTML=`
       <div class="go-header">
         <div class="go-title">✅ ${labels[selectedType]} — Copy-Paste Ready</div>
@@ -2395,12 +2538,310 @@ function tips(type) {
 function cpGen(btn){navigator.clipboard.writeText(window._lastGenText||'').then(()=>{btn.textContent='✅ Copied!';btn.classList.add('ok');setTimeout(()=>{btn.textContent='📋 Copy All';btn.classList.remove('ok');},2000);});}
 
 // ════════════════════════════════════════════════════════
+// IMAGE GENERATOR
+// ════════════════════════════════════════════════════════
+
+const VIS_STYLES = [
+  {id:'cinematic_realistic',label:'Cinematic Realistic',desc:'Hollywood-grade dramatic lighting',emoji:'🎬'},
+  {id:'photorealistic_4k',label:'Photorealistic 4K',desc:'Ultra-realistic photography',emoji:'📸'},
+  {id:'cinematic_anime',label:'Cinematic Anime',desc:'Anime meets Hollywood lighting',emoji:'⚔️'},
+  {id:'anime',label:'Anime',desc:'Classic anime/manga style',emoji:'🎌'},
+  {id:'cartoon_2d',label:'2D Cartoon',desc:'Flat cartoon, bold colors',emoji:'🖍️'},
+  {id:'picstory_cocomelon',label:'3D Kids / Cocomelon',desc:'3D children\'s animation',emoji:'🧸'},
+  {id:'cinematic_picstory',label:'Pixar / 3D CGI',desc:'Cinematic Pixar/DreamWorks quality',emoji:'✨'},
+  {id:'oil_painting',label:'Oil Painting',desc:'Classical oil painting style',emoji:'🎨'},
+  {id:'watercolor',label:'Watercolor',desc:'Soft watercolor illustration',emoji:'💧'},
+  {id:'comic_book',label:'Comic Book',desc:'Bold panels, halftone effects',emoji:'💥'},
+  {id:'3d_whiteboard_cartoon',label:'3D Whiteboard',desc:'Explainer style, isometric',emoji:'🖊️'},
+  {id:'low_poly_3d_cartoon',label:'Low-Poly 3D',desc:'Geometric 3D, vibrant worlds',emoji:'🔷'},
+  {id:'roblox',label:'Roblox',desc:'Blocky characters, flat colors',emoji:'🧱'},
+  {id:'skeleton_protagonist',label:'Glass Skeleton (Viral)',desc:'Transparent skeleton, photo world',emoji:'💀'},
+  {id:'afro_nolly_global',label:'Afro-Nolly-Global',desc:'3D Pixar-quality African drama',emoji:'🌍'},
+  {id:'harry_potter',label:'Harry Potter',desc:'Dark whimsical, gothic teal',emoji:'🧙'},
+];
+
+const STYLE_SUFFIX = {
+  cinematic_realistic:'cinematic photography, anamorphic lens, dramatic rim lighting, shallow depth of field, film grain, Hollywood color grading, 8K, photorealistic',
+  photorealistic_4k:'ultra-photorealistic, 4K, DSLR photography, perfect sharp focus, professional studio lighting, hyperrealistic skin, RAW photo quality',
+  cinematic_anime:'cinematic anime, Studio Ghibli meets Hollywood, dramatic lighting, detailed backgrounds, expressive characters, vibrant color',
+  anime:'classic anime style, manga illustration, cel shading, bold outlines, expressive anime eyes, vibrant saturated colors',
+  cartoon_2d:'flat 2D cartoon illustration, bold black outlines, bright saturated colors, clean vector art, expressive faces, playful design',
+  picstory_cocomelon:'3D children\'s animation, Cocomelon-inspired, cute chubby characters, bright pastels, soft rounded shapes, cheerful, high quality CGI',
+  cinematic_picstory:'Pixar/DreamWorks CGI, cinematic lighting, subsurface scattering, photorealistic textures on stylized characters, dramatic camera angle',
+  oil_painting:'classical oil painting, rich impasto textures, old masters technique, dramatic chiaroscuro, painterly brushstrokes, museum quality',
+  watercolor:'soft watercolor illustration, translucent washes, wet-on-wet, delicate paper texture, loose expressive strokes, gentle pastels',
+  comic_book:'bold comic book art, halftone dot patterns, thick black ink outlines, primary colors, dynamic composition, Marvel/DC style',
+  '3d_whiteboard_cartoon':'clean 3D whiteboard cartoon, isometric perspective, bright flat colors with subtle shadows, explainer style, educational illustration',
+  low_poly_3d_cartoon:'low-poly 3D art, faceted geometric surfaces, vibrant color blocks, Pixar-meets-polygon, charming geometric characters',
+  roblox:'Roblox game aesthetic, blocky cube-head avatar, rectangular limbs, simple face on 3D head, bright flat textures, in-game look',
+  skeleton_protagonist:'transparent glass skeleton protagonist, detailed bones visible through translucent skin, expressive glowing eyes, realistic photographic environment, Bernard Films viral style',
+  afro_nolly_global:'Pixar-quality 3D CGI, African characters with warm expressive faces, Nollywood meets Disney, vibrant West African setting, warm golden cinematic lighting',
+  harry_potter:'dark whimsical illustration, Harry Potter cover style, teal and amber atmosphere, gothic architectural details, magical glow effects, wizarding world',
+};
+
+let selectedVisStyle = null;
+let imgFmt = 'twitter';
+let appScreenBase64 = null;
+let appScreenMime = null;
+let lastGeneratedImgUrl = null;
+let lastOverlayText = '';
+
+function buildVisStyles() {
+  const grid = document.getElementById('visStylesGrid');
+  if (!grid) return;
+  grid.innerHTML = VIS_STYLES.map(s => `
+    <div class="vis-card" data-id="${s.id}" onclick="selectVisStyle(this,'${s.id}')">
+      <span class="vis-card-em">${s.emoji}</span>
+      <div class="vis-card-name">${s.label}</div>
+      <div class="vis-card-desc">${s.desc}</div>
+    </div>`).join('');
+}
+
+function selectVisStyle(el, id) {
+  document.querySelectorAll('.vis-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedVisStyle = id;
+  generateImage();
+}
+
+function setImgFmt(btn) {
+  document.querySelectorAll('.img-plat-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  imgFmt = btn.dataset.fmt;
+}
+
+function saveKieKey() {
+  const val = document.getElementById('kieKeyInput').value.trim();
+  if (!val) return;
+  localStorage.setItem('voicifyai_kie_key', val);
+  document.getElementById('kieKeyInput').value = '';
+  refreshKieUI();
+}
+function clearKieKey() {
+  if (!confirm('Remove KIE API key?')) return;
+  localStorage.removeItem('voicifyai_kie_key');
+  refreshKieUI();
+}
+function refreshKieUI() {
+  const key = localStorage.getItem('voicifyai_kie_key');
+  const bar = document.getElementById('kieKeyBar');
+  const status = document.getElementById('kieStatus');
+  const clr = document.getElementById('kieClear');
+  const inp = document.getElementById('kieKeyInput');
+  if (!bar) return;
+  if (key) {
+    bar.classList.add('ok');
+    status.textContent = '✓ ' + key.substring(0,16) + '…';
+    status.style.color = 'var(--emerald)';
+    clr.style.display = '';
+    inp.placeholder = 'Key saved — paste new key to replace';
+  } else {
+    bar.classList.remove('ok');
+    status.textContent = '';
+    clr.style.display = 'none';
+    inp.placeholder = 'kie_...';
+  }
+}
+
+function handleAppUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    appScreenBase64 = dataUrl.split(',')[1];
+    appScreenMime = file.type || 'image/png';
+    const zone = document.getElementById('appUploadZone');
+    zone.classList.add('has-img');
+    document.getElementById('appUploadContent').innerHTML = `
+      <div class="app-thumb-wrap">
+        <img src="${dataUrl}" class="app-thumb" />
+        <div style="text-align:left">
+          <div style="font-size:.76rem;color:var(--emerald);font-weight:600">✓ Screenshot loaded</div>
+          <div style="font-size:.66rem;color:var(--muted)">${file.name}</div>
+        </div>
+        <button class="app-thumb-remove" onclick="removeAppScreen(event)">✕</button>
+      </div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeAppScreen(e) {
+  e.stopPropagation();
+  appScreenBase64 = null; appScreenMime = null;
+  const zone = document.getElementById('appUploadZone');
+  zone.classList.remove('has-img');
+  document.getElementById('appUploadContent').innerHTML = `
+    <div class="app-upload-icon">📱</div>
+    <div class="app-upload-text"><strong>Click or drop</strong> a VoicifyAI app screenshot · Claude references it in the Flux prompt</div>`;
+  document.getElementById('appScreenInput').value = '';
+}
+
+const FMT_DIMS = {
+  twitter:{w:1200,h:675},
+  facebook:{w:1080,h:1080},
+  youtube:{w:1280,h:720},
+  portrait:{w:810,h:1440},
+};
+
+async function generateImage() {
+  const srcText = (document.getElementById('imgSrcText').value||'').trim();
+  if (!srcText) { alert('Add content to visualize first — generate on the left or paste manually.'); return; }
+  if (!selectedVisStyle) return;
+
+  const kieKey = localStorage.getItem('voicifyai_kie_key');
+  if (!kieKey) {
+    document.getElementById('imgResult').innerHTML = `<div class="img-result-ph"><div class="ph-icon">🔐</div><p>Add your KIE API key above first</p></div>`;
+    return;
+  }
+  const antKey = localStorage.getItem('voicifyai_api_key');
+  if (!antKey) {
+    document.getElementById('imgResult').innerHTML = `<div class="img-result-ph"><div class="ph-icon">🔑</div><p>Add your Anthropic API key first<br><span style="font-size:.7rem">(in the key bar at the top of this tab)</span></p></div>`;
+    return;
+  }
+
+  const resultEl = document.getElementById('imgResult');
+  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Claude is crafting your Flux Pro prompt…</div></div>`;
+  document.getElementById('imgPromptPreview').classList.remove('vis');
+
+  let fluxPrompt, overlayText;
+  try {
+    const r = await claudeGenImgPrompt(srcText, selectedVisStyle, antKey);
+    fluxPrompt = r.fluxPrompt;
+    overlayText = r.overlayText;
+    lastOverlayText = overlayText;
+  } catch(e) {
+    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p>Claude error: ${e.message}</p></div>`;
+    return;
+  }
+
+  const prev = document.getElementById('imgPromptPreview');
+  prev.textContent = '📝 ' + fluxPrompt.substring(0,220) + '…';
+  prev.classList.add('vis');
+  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Generating with Flux Pro…<br><span style="font-size:.7rem;opacity:.6">15–30 seconds</span></div></div>`;
+
+  try {
+    const dims = FMT_DIMS[imgFmt] || FMT_DIMS.twitter;
+    const imgUrl = await kieFluxGen(fluxPrompt, kieKey, dims);
+    lastGeneratedImgUrl = imgUrl;
+    resultEl.innerHTML = `
+      <img src="${imgUrl}" alt="Generated" style="width:100%;display:block;" />
+      <div class="img-dl-bar">
+        <button class="img-dl-btn" onclick="downloadImg()">⬇ Download</button>
+        <span class="img-overlay-txt">"${overlayText}"</span>
+        <button class="img-regen-btn" onclick="generateImage()">↻</button>
+      </div>`;
+  } catch(e) {
+    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p>KIE error: ${e.message}<br><span style="font-size:.68rem;opacity:.6">Check your KIE key and try again</span></p></div>`;
+  }
+}
+
+async function claudeGenImgPrompt(content, styleId, antKey) {
+  const styleMeta = VIS_STYLES.find(s => s.id === styleId) || {};
+  const suffix = STYLE_SUFFIX[styleId] || '';
+  const hasApp = !!appScreenBase64;
+  const fmtLabel = {twitter:'Twitter/X banner (16:9)',facebook:'Facebook post (square 1:1)',youtube:'YouTube thumbnail (16:9)',portrait:'Portrait/Reels (9:16)'}[imgFmt] || 'banner';
+
+  const sys = `You are a world-class AI image prompt engineer creating viral MrBeast-style social media visuals. You write Flux Pro prompts that produce extreme emotion, clear composition, and scroll-stopping impact. Output ONLY valid JSON: {"fluxPrompt":"...","overlayText":"..."}`;
+
+  const user = `Create a viral Flux Pro image prompt for this VoicifyAI content:
+
+---
+${content.substring(0,500)}
+---
+
+FORMAT: ${fmtLabel}
+VISUAL STYLE: ${styleMeta.label||styleId}
+STYLE TECHNICAL SUFFIX: ${suffix}
+${hasApp?'APP SCREEN: User uploaded a VoicifyAI app screenshot. Intelligently show it being held/used by the subject.':''}
+
+REQUIREMENTS:
+1. HUMAN SUBJECT: One person showing extreme vivid emotion (shock/surprise/elation/epiphany) — face prominent, MrBeast thumbnail energy
+2. COMPOSITION: Split-screen (before/after) OR subject pointing at / reacting to an object with an arrow showing relationship
+3. THE OBJECT: A phone showing VoicifyAI, a lightbulb, notebook, brain, or relevant metaphor — clearly visible
+4. OVERLAY TEXT (5 words MAX): Text that makes scrolling IMPOSSIBLE — urgent, curious, or shocking. Position: bold white text, black stroke, lower third or top
+5. ENVIRONMENT: Match the content story (home office, shower, car, street, etc.)
+6. LIGHTING: Dramatic, rim-lit, cinematic — subject pops against background
+7. STYLE: Apply the technical suffix precisely
+${hasApp?'8. APP SCREEN: Show the uploaded VoicifyAI interface clearly on a phone in the subjects hand or on a nearby surface':''}
+
+fluxPrompt: 150-220 words, highly specific and detailed
+overlayText: MAX 5 WORDS, all caps preferred, creates irresistible curiosity
+
+Output ONLY valid JSON, no explanation.`;
+
+  const messages = [{role:'user',content:[{type:'text',text:user}]}];
+  if (hasApp) {
+    messages[0].content.unshift({type:'image',source:{type:'base64',media_type:appScreenMime,data:appScreenBase64}});
+  }
+
+  const res = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:sys,messages})
+  });
+  const data = await res.json();
+  const raw = ((data.content&&data.content[0])?data.content[0].text:'').trim();
+  const clean = raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  try { return JSON.parse(clean); }
+  catch(e) {
+    const fp = clean.match(/"fluxPrompt"\s*:\s*"([\s\S]+?)(?:",\s*"overlayText|"$)/)?.[1] || clean.substring(0,300);
+    const ot = clean.match(/"overlayText"\s*:\s*"([^"]+)"/)?.[1] || 'THIS CHANGES EVERYTHING';
+    return {fluxPrompt:fp, overlayText:ot};
+  }
+}
+
+async function kieFluxGen(prompt, kieKey, dims) {
+  const res = await fetch('https://api.kie.ai/api/v1/flux/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${kieKey}`},
+    body:JSON.stringify({prompt,model:'flux-pro',width:dims.w,height:dims.h,steps:28,guidance:3.5})
+  });
+  if(!res.ok){const e=await res.text();throw new Error(`KIE ${res.status}: ${e.substring(0,100)}`);}
+  const data = await res.json();
+  if(data.taskId||data.task_id) return await pollKie(data.taskId||data.task_id, kieKey);
+  const url = data.imageUrl||data.url||data.image_url||data.result?.imageUrl||data.data?.url;
+  if(url) return url;
+  throw new Error('Unexpected KIE response: '+JSON.stringify(data).substring(0,120));
+}
+
+async function pollKie(taskId, kieKey, max=35) {
+  for(let i=0;i<max;i++){
+    await new Promise(r=>setTimeout(r,2000));
+    const res = await fetch(`https://api.kie.ai/api/v1/flux/task/${taskId}`,{headers:{'Authorization':`Bearer ${kieKey}`}});
+    const data = await res.json();
+    const status = data.status||data.task?.status||'';
+    const url = data.imageUrl||data.url||data.result?.imageUrl||data.task?.imageUrl||data.images?.[0]?.url;
+    if((status.toLowerCase().includes('complet')||status.toLowerCase().includes('success'))&&url) return url;
+    if(status.toLowerCase().includes('fail')||status.toLowerCase().includes('error')) throw new Error('KIE task failed: '+(data.error||data.message||'unknown'));
+    const el=document.getElementById('imgResult');
+    if(el) el.innerHTML=`<div class="img-result-loading"><div class="img-spin"></div><div>Generating… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${status||'processing'}</span></div></div>`;
+  }
+  throw new Error('KIE timed out (70s). Try again.');
+}
+
+function downloadImg() {
+  if(!lastGeneratedImgUrl) return;
+  const a=document.createElement('a');
+  a.href=lastGeneratedImgUrl;
+  a.download=`voicifyai-${imgFmt}-${selectedVisStyle}-${Date.now()}.png`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+function autoFillImgSrc(text) {
+  const el=document.getElementById('imgSrcText');
+  if(el&&text) el.value=text.substring(0,600);
+}
+
+// ════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════
 activeFilters.week = 'all';
 buildCalendar();
 updateGenBtn('tweets');
 refreshKeyUI();
+buildVisStyles();
+refreshKieUI();
 </script>
 </body>
 </html>
