@@ -1007,9 +1007,11 @@ async function kieGenerate(prompt, kieKey, dims) {
   }
 
   const data = await res.json();
+  console.log('KIE createTask response:', JSON.stringify(data).substring(0, 300));
   const taskId = data?.data?.taskId;
   if (!taskId) throw new Error('Z-Image did not return a taskId: ' + JSON.stringify(data).substring(0, 150));
 
+  console.log('Polling taskId:', taskId);
   return await pollKie(taskId, kieKey);
 }
 
@@ -1020,11 +1022,38 @@ async function pollKie(taskId, kieKey, max = 150) {
       const res = await fetch(`https://api.kie.ai/api/v1/jobs/recordInfo?taskId=${taskId}`, {
         headers: { 'Authorization': `Bearer ${kieKey}` }
       });
+
+      // 404 on poll = task not indexed yet, keep waiting
+      if (res.status === 404) {
+        showResultLoading(`<strong>Step 3:</strong> Waiting for Z-Image task… ${(i+1)*2}s`);
+        continue;
+      }
+
+      if (!res.ok) {
+        const errText = await res.text();
+        // Non-fatal poll error — log and keep trying
+        console.warn(`Poll attempt ${i+1} failed: ${res.status} — ${errText.substring(0,100)}`);
+        showResultLoading(`<strong>Step 3:</strong> Retrying… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">status ${res.status}</span>`);
+        continue;
+      }
+
       const data = await res.json();
+
+      // Handle KIE error codes in response body
+      if (data.code && data.code !== 200) {
+        console.warn('KIE poll response error:', data.msg, data.code);
+        showResultLoading(`<strong>Step 3:</strong> Processing… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${data.msg || 'queued'}</span>`);
+        continue;
+      }
+
       const record = data?.data;
-      if (!record) continue;
+      if (!record) {
+        showResultLoading(`<strong>Step 3:</strong> Queued… ${(i+1)*2}s`);
+        continue;
+      }
 
       const state = (record.state || '').toLowerCase();
+      console.log(`Poll ${i+1}: state=${state}, taskId=${taskId}`);
 
       if (state === 'success') {
         try {
@@ -1033,6 +1062,9 @@ async function pollKie(taskId, kieKey, max = 150) {
                    || result.imageUrl
                    || result.url;
           if (url) return url;
+          // Success state but no URL yet — keep polling
+          showResultLoading(`<strong>Step 3:</strong> Finalising… ${(i+1)*2}s`);
+          continue;
         } catch(e) {
           throw new Error('Z-Image succeeded but could not parse result: ' + record.resultJson);
         }
@@ -1042,9 +1074,13 @@ async function pollKie(taskId, kieKey, max = 150) {
         throw new Error('Z-Image failed: ' + (record.failMsg || record.failCode || 'unknown error'));
       }
 
+      // waiting / queuing / generating — keep polling
       showResultLoading(`<strong>Step 3:</strong> Generating with Z-Image… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${state || 'processing'}</span>`);
+
     } catch(e) {
       if (e.message.includes('Z-Image failed') || e.message.includes('could not parse')) throw e;
+      // Network error — log and keep trying
+      console.warn(`Poll attempt ${i+1} network error:`, e.message);
     }
   }
   throw new Error('Z-Image timed out after 300s. Please try again.');
