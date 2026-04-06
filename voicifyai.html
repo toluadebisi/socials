@@ -2157,7 +2157,26 @@ function openModal(btn) {
         <button class="m-copy" onclick="prefillGen('tweets','${post.week}','${post.persona}')">🤖 Open Generator for This Day</button>
       </div>
     </div>
-    ${post.tags&&post.tags.length?`<div class="ms"><div class="msl">Tags</div><div class="m-tags">${post.tags.map(t=>`<span class="m-tag">${t}</span>`).join('')}</div></div>`:''}`;
+    ${post.tags&&post.tags.length?`<div class="ms"><div class="msl">Tags</div><div class="m-tags">${post.tags.map(t=>`<span class="m-tag">${t}</span>`).join('')}</div></div>`:''}
+    <div class="ms" style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px;">
+      <div class="msl">🎨 Generate Image From This Post</div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:12px;line-height:1.6;">Send this content directly to the AI Image Generator — Claude will build the prompt and generate a Z-Image thumbnail.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <button class="img-plat-btn on" onclick="setModalFmt(this,'twitter')" style="padding:5px 12px;border-radius:100px;border:1px solid var(--violet);background:var(--violet);color:#fff;font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;">𝕏 Twitter 16:9</button>
+        <button class="img-plat-btn" onclick="setModalFmt(this,'youtube')" style="padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:rgba(240,238,248,0.45);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;">▶ YouTube</button>
+        <button class="img-plat-btn" onclick="setModalFmt(this,'facebook')" style="padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:rgba(240,238,248,0.45);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;">Facebook 1:1</button>
+        <button class="img-plat-btn" onclick="setModalFmt(this,'portrait')" style="padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:rgba(240,238,248,0.45);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;">Portrait 9:16</button>
+      </div>
+      <div id="modalImgStatus" style="display:none;padding:10px 12px;background:rgba(124,92,252,0.07);border:1px solid rgba(124,92,252,0.15);border-radius:8px;font-size:.78rem;color:var(--muted);margin-bottom:10px;"></div>
+      <div id="modalImgPromptBox" style="display:none;margin-bottom:10px;">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--vl);font-weight:700;margin-bottom:5px;">📝 Claude-Generated Prompt</div>
+        <div id="modalImgPromptText" style="background:rgba(0,0,0,0.25);border:1px solid rgba(124,92,252,0.2);border-radius:8px;padding:10px;font-size:.7rem;color:rgba(240,238,248,0.6);line-height:1.6;font-family:'JetBrains Mono',monospace;max-height:80px;overflow-y:auto;"></div>
+      </div>
+      <div id="modalImgResultBox" style="display:none;margin-bottom:10px;border-radius:8px;overflow:hidden;"></div>
+      <button id="modalImgBtn" onclick="modalGenerateImage(${JSON.stringify(post.hook + ' ' + post.body.substring(0,400)).replace(/'/g,"\\'")})" style="width:100%;padding:11px;background:linear-gradient(135deg,#7C3AED,#A855F7);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+        <span>🎨</span> Build Prompt &amp; Generate Image
+      </button>
+    </div>`;
   } else if(post.type==='thread') {
     const tweets = (post.body||'').split('\n\n').filter(t=>t.trim());
     html = `<div class="ms"><div class="msl">X Thread — Story-Driven · Day ${post.day}</div>
@@ -2198,7 +2217,26 @@ function openModal(btn) {
     </div>
     ${post.cta?`<div class="ms"><div class="msl">CTA</div><div class="m-cta">${post.cta}</div></div>`:''}
     ${post.visual?`<div class="ms"><div class="msl">Visual Direction</div><div class="m-vis">🎨 ${post.visual}</div></div>`:''}
-    ${post.tags&&post.tags.length?`<div class="ms"><div class="msl">Tags</div><div class="m-tags">${post.tags.map(t=>`<span class="m-tag">${t}</span>`).join('')}</div></div>`:''}`;
+    ${post.tags&&post.tags.length?`<div class="ms"><div class="msl">Tags</div><div class="m-tags">${post.tags.map(t=>`<span class="m-tag">${t}</span>`).join('')}</div></div>`:''}
+    ${has?`<div class="ms" style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px;">
+      <div class="msl">🎨 Generate Image From This Post</div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:12px;line-height:1.6;">Send this content directly to the AI Image Generator — Claude will build the prompt and generate a Z-Image thumbnail.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <button class="img-plat-btn ${imgFmt==='twitter'?'on':''}" onclick="setModalFmt(this,'twitter')" style="padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:rgba(240,238,248,0.45);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;">𝕏 Twitter 16:9</button>
+        <button class="img-plat-btn ${imgFmt==='youtube'?'on':''}" onclick="setModalFmt(this,'youtube')" style="padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:rgba(240,238,248,0.45);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;">▶ YouTube</button>
+        <button class="img-plat-btn ${imgFmt==='facebook'?'on':''}" onclick="setModalFmt(this,'facebook')" style="padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:rgba(240,238,248,0.45);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;">Facebook 1:1</button>
+        <button class="img-plat-btn ${imgFmt==='portrait'?'on':''}" onclick="setModalFmt(this,'portrait')" style="padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:rgba(240,238,248,0.45);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;">Portrait 9:16</button>
+      </div>
+      <div id="modalImgStatus" style="display:none;padding:10px 12px;background:rgba(124,92,252,0.07);border:1px solid rgba(124,92,252,0.15);border-radius:8px;font-size:.78rem;color:var(--muted);margin-bottom:10px;"></div>
+      <div id="modalImgPromptBox" style="display:none;margin-bottom:10px;">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--vl);font-weight:700;margin-bottom:5px;">📝 Claude-Generated Prompt</div>
+        <div id="modalImgPromptText" style="background:rgba(0,0,0,0.25);border:1px solid rgba(124,92,252,0.2);border-radius:8px;padding:10px;font-size:.7rem;color:rgba(240,238,248,0.6);line-height:1.6;font-family:'JetBrains Mono',monospace;max-height:80px;overflow-y:auto;"></div>
+      </div>
+      <div id="modalImgResultBox" style="display:none;margin-bottom:10px;border-radius:8px;overflow:hidden;"></div>
+      <button id="modalImgBtn" onclick="modalGenerateImage(${JSON.stringify(post.hook + ' ' + post.body.substring(0,400)).replace(/'/g,"\\'")})" style="width:100%;padding:11px;background:linear-gradient(135deg,#7C3AED,#A855F7);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+        <span>🎨</span> Build Prompt &amp; Generate Image
+      </button>
+    </div>`:''}`;
   }
 
   bdy.innerHTML = html;
@@ -3130,6 +3168,162 @@ function downloadImg() {
 function autoFillImgSrc(text) {
   const el=document.getElementById('imgSrcText');
   if(el&&text) el.value=text.substring(0,600);
+}
+
+// ════════════════════════════════════════════════════════
+// MODAL IMAGE PIPELINE
+// ════════════════════════════════════════════════════════
+
+// Format picker inside modal
+function setModalFmt(btn, fmt) {
+  // Update the global imgFmt used by the pipeline
+  imgFmt = fmt;
+  // Update button styles within modal only
+  const allBtns = btn.closest('div').querySelectorAll('.img-plat-btn');
+  allBtns.forEach(b => {
+    b.style.background = 'transparent';
+    b.style.borderColor = 'rgba(255,255,255,0.09)';
+    b.style.color = 'rgba(240,238,248,0.45)';
+  });
+  btn.style.background = 'var(--violet)';
+  btn.style.borderColor = 'var(--violet)';
+  btn.style.color = '#fff';
+}
+
+// Two-stage pipeline triggered from inside the modal
+let _modalStagedPrompt = null;
+let _modalStagedOverlay = null;
+let _modalCurrentContent = null;
+
+async function modalGenerateImage(content) {
+  const antKey = localStorage.getItem('voicifyai_api_key');
+  const kieKey = localStorage.getItem('voicifyai_kie_key');
+
+  if (!antKey) {
+    alert('Add your Anthropic API key in the AI Generator tab first.');
+    return;
+  }
+
+  const btn = document.getElementById('modalImgBtn');
+  const statusEl = document.getElementById('modalImgStatus');
+  const promptBox = document.getElementById('modalImgPromptBox');
+  const promptText = document.getElementById('modalImgPromptText');
+  const resultBox = document.getElementById('modalImgResultBox');
+
+  // ── STAGE 1: Build prompt (if not already staged) ────
+  if (!_modalStagedPrompt || _modalCurrentContent !== content) {
+    _modalCurrentContent = content;
+    _modalStagedPrompt = null;
+    _modalStagedOverlay = null;
+
+    btn.disabled = true;
+    btn.innerHTML = `<span>⏳</span> Claude is writing prompt…`;
+    statusEl.style.display = 'block';
+    statusEl.innerHTML = `<span style="color:var(--vl)">⚙️ Step 1 — Claude is analysing your content and engineering the image prompt…</span>`;
+    promptBox.style.display = 'none';
+    resultBox.style.display = 'none';
+
+    // Use the first selected vis style, or default to cinematic_realistic
+    const currentStyle = selectedVisStyle || 'cinematic_realistic';
+
+    try {
+      const r = await claudeGenImgPrompt(content, currentStyle, antKey);
+      _modalStagedPrompt = r.fluxPrompt;
+      _modalStagedOverlay = r.overlayText;
+
+      // Show prompt
+      promptBox.style.display = 'block';
+      promptText.textContent = _modalStagedPrompt;
+
+      statusEl.innerHTML = `<span style="color:var(--emerald)">✅ Prompt ready — overlay: "${_modalStagedOverlay}"</span><br><span style="font-size:.72rem;opacity:.7">Review above · click Generate Image to create</span>`;
+
+      btn.disabled = false;
+      btn.innerHTML = `<span>🎨</span> Generate Image`;
+      btn.style.background = 'linear-gradient(135deg,#00C851,#00E5A0)';
+      btn.style.color = '#000';
+      return; // Wait for second click
+
+    } catch(e) {
+      statusEl.innerHTML = `<span style="color:var(--rose)">⚠️ Claude error: ${e.message}</span>`;
+      btn.disabled = false;
+      btn.innerHTML = `<span>🎨</span> Build Prompt & Generate Image`;
+      btn.style.background = 'linear-gradient(135deg,#7C3AED,#A855F7)';
+      btn.style.color = '#fff';
+      return;
+    }
+  }
+
+  // ── STAGE 2: Generate image ──────────────────────────
+  if (!kieKey) {
+    alert('Add your KIE API key in the AI Generator tab first.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = `<span>⏳</span> Generating image…`;
+  btn.style.background = 'linear-gradient(135deg,#7C3AED,#A855F7)';
+  btn.style.color = '#fff';
+  statusEl.innerHTML = `<span style="color:var(--cyan)">🖼️ Step 2 — Sending to Z-Image via KIE… (15–40s)</span>`;
+
+  try {
+    const dims = FMT_DIMS[imgFmt] || FMT_DIMS.twitter;
+    const imgUrl = await kieFluxGen(_modalStagedPrompt, kieKey, dims);
+
+    // Show result inside modal
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = `
+      <img src="${imgUrl}" style="width:100%;display:block;border-radius:8px;" />
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button onclick="modalDownloadImg('${imgUrl}')" style="flex:1;padding:9px;border-radius:7px;background:var(--emerald);border:none;color:#000;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">⬇ Download</button>
+        <button onclick="modalSendToGenerator('${imgUrl}')" style="flex:1;padding:9px;border-radius:7px;background:rgba(124,92,252,0.15);border:1px solid rgba(124,92,252,0.3);color:var(--vl);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;">↗ Open in Generator</button>
+      </div>`;
+
+    statusEl.innerHTML = `<span style="color:var(--emerald)">✅ Image generated! Download or open in the full generator.</span>`;
+
+    // Reset for potential next run
+    _modalStagedPrompt = null;
+    _modalStagedOverlay = null;
+    _modalCurrentContent = null;
+
+    btn.disabled = false;
+    btn.innerHTML = `<span>🎨</span> Generate Another`;
+    btn.style.background = 'linear-gradient(135deg,#7C3AED,#A855F7)';
+    btn.style.color = '#fff';
+
+  } catch(e) {
+    statusEl.innerHTML = `<span style="color:var(--rose)">⚠️ KIE error: ${e.message}</span><br><span style="font-size:.72rem;opacity:.6">Prompt was generated — copy it above and retry.</span>`;
+    btn.disabled = false;
+    btn.innerHTML = `<span>🎨</span> Retry Image Generation`;
+    btn.style.background = 'linear-gradient(135deg,#7C3AED,#A855F7)';
+    btn.style.color = '#fff';
+  }
+}
+
+function modalDownloadImg(url) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `voicifyai-modal-${imgFmt}-${Date.now()}.png`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function modalSendToGenerator(imgUrl) {
+  // Close modal, switch to generator tab, and show the image there
+  closeModal();
+  const genBtn = document.querySelector('[data-tab="gen"]');
+  switchTab('gen', genBtn);
+  setTimeout(() => {
+    lastGeneratedImgUrl = imgUrl;
+    const resultEl = document.getElementById('imgResult');
+    if (resultEl) {
+      resultEl.innerHTML = `
+        <img src="${imgUrl}" alt="Generated" style="width:100%;display:block;" />
+        <div class="img-dl-bar">
+          <button class="img-dl-btn" onclick="downloadImg()">⬇ Download</button>
+          <button class="img-regen-btn" onclick="regenImage()">↻ Regen</button>
+        </div>`;
+    }
+    document.getElementById('genPanel').scrollIntoView({behavior:'smooth'});
+  }, 200);
 }
 
 // ════════════════════════════════════════════════════════
