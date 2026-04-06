@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thumbnail Intelligence Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080F;--bg2:#0C1018;--bg3:#131A24;--bg4:#1A2332;
+  --v:#7C3AED;--vl:#A78BFA;--vm:rgba(124,58,237,0.18);--vb:rgba(124,58,237,0.35);
+  --gold:#F59E0B;--goldm:rgba(245,158,11,0.15);
+  --cyan:#06B6D4;--cyanm:rgba(6,182,212,0.12);
+  --green:#10B981;--greenm:rgba(16,185,129,0.12);
+  --rose:#F43F5E;--rosem:rgba(244,63,94,0.12);
+  --snow:#F1F0F8;--muted:rgba(241,240,248,0.45);--faint:rgba(241,240,248,0.12);
+  --bd:rgba(255,255,255,0.07);--r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--snow);min-height:100vh;overflow-x:hidden;}
+
+/* ── HEADER ── */
+.hdr{padding:36px 48px 28px;background:linear-gradient(160deg,var(--bg2) 0%,var(--bg) 70%);border-bottom:1px solid var(--bd);position:relative;overflow:hidden;}
+.hdr::before{content:'';position:absolute;top:-150px;right:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.1) 0%,transparent 65%);pointer-events:none;}
+.hdr::after{content:'';position:absolute;bottom:-100px;left:50px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(6,182,212,0.06) 0%,transparent 65%);pointer-events:none;}
+.hdr-inner{max-width:1400px;margin:0 auto;position:relative;z-index:1;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+.hdr-logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--v),#A855F7);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;box-shadow:0 0 32px rgba(124,58,237,0.4);}
+.hdr-text h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:900;line-height:1.1;}
+.hdr-text h1 em{color:var(--vl);font-style:italic;}
+.hdr-text p{color:var(--muted);font-size:.88rem;margin-top:4px;}
+.hdr-badges{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
+.badge{padding:5px 13px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.badge-v{background:var(--vm);border:1px solid var(--vb);color:var(--vl);}
+.badge-c{background:var(--cyanm);border:1px solid rgba(6,182,212,0.3);color:var(--cyan);}
+.badge-g{background:var(--goldm);border:1px solid rgba(245,158,11,0.3);color:var(--gold);}
+
+/* ── MAIN LAYOUT ── */
+.main{max-width:1400px;margin:0 auto;padding:32px 48px 60px;display:grid;grid-template-columns:420px 1fr;gap:28px;align-items:start;}
+
+/* ── LEFT PANEL ── */
+.left-panel{display:flex;flex-direction:column;gap:16px;position:sticky;top:20px;}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;}
+.card-hdr{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:9px;background:rgba(0,0,0,0.2);}
+.card-hdr-icon{font-size:1.1rem;}
+.card-hdr-title{font-size:.82rem;font-weight:700;letter-spacing:.04em;}
+.card-hdr-sub{font-size:.7rem;color:var(--muted);margin-top:1px;}
+.card-body{padding:14px;}
+
+/* ── API KEYS ── */
+.key-row{display:flex;align-items:center;gap:7px;padding:10px 12px;border-radius:9px;margin-bottom:8px;flex-wrap:wrap;}
+.key-row.ant{background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.18);}
+.key-row.ant.ok{background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.2);}
+.key-row.kie{background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.18);}
+.key-row.kie.ok{background:rgba(16,185,129,0.05);border-color:rgba(16,185,129,0.2);}
+.key-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;white-space:nowrap;}
+.key-row.ant .key-lbl{color:var(--vl);}
+.key-row.ant.ok .key-lbl,.key-row.kie.ok .key-lbl{color:var(--green);}
+.key-row.kie .key-lbl{color:var(--cyan);}
+.key-inp{flex:1;min-width:100px;background:rgba(0,0,0,0.3);border:1px solid var(--bd);border-radius:6px;padding:5px 8px;color:var(--snow);font-family:'JetBrains Mono',monospace;font-size:.72rem;outline:none;}
+.key-inp:focus{border-color:var(--v);}
+.key-save{padding:5px 11px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:700;cursor:pointer;flex-shrink:0;}
+.key-row.ant .key-save{background:var(--vl);color:#000;}
+.key-row.kie .key-save{background:var(--cyan);color:#000;}
+.key-clr{padding:5px 8px;border-radius:6px;background:transparent;border:1px solid var(--bd);color:var(--muted);font-size:.72rem;cursor:pointer;flex-shrink:0;}
+.key-clr:hover{border-color:var(--rose);color:var(--rose);}
+.key-status{font-size:.68rem;color:var(--green);font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{border:2px dashed rgba(124,58,237,0.3);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:rgba(124,58,237,0.03);}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--vl);background:rgba(124,58,237,0.08);}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.uz-icon{font-size:2rem;margin-bottom:8px;}
+.uz-title{font-size:.84rem;font-weight:600;color:var(--snow);margin-bottom:3px;}
+.uz-sub{font-size:.72rem;color:var(--muted);}
+.uz-sub strong{color:var(--vl);}
+.img-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.img-prev-item{position:relative;width:80px;flex-shrink:0;}
+.img-prev-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid rgba(124,58,237,0.4);display:block;}
+.img-prev-label{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--vl);text-align:center;margin-top:3px;}
+.img-prev-remove{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--rose);border:2px solid var(--bg2);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;}
+/* upload status pill */
+.img-prev-status{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:8px;font-weight:700;padding:2px 6px;border-radius:100px;}
+.img-prev-status.uploading{background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);color:var(--gold);}
+.img-prev-status.done{background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.4);color:var(--green);}
+.img-prev-status.error{background:rgba(244,63,94,0.2);border:1px solid rgba(244,63,94,0.4);color:var(--rose);}
+
+/* ── FORM ELEMENTS ── */
+.flabel{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(241,240,248,0.35);font-weight:600;display:block;margin-bottom:5px;}
+.ftextarea{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;color:var(--snow);font-family:'DM Sans',sans-serif;font-size:.82rem;line-height:1.65;resize:vertical;min-height:110px;outline:none;transition:border-color .15s;}
+.ftextarea:focus{border-color:rgba(124,58,237,0.45);}
+.fselect{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--bd);border-radius:8px;padding:8px 11px;color:var(--snow);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;cursor:pointer;}
+.fselect:focus{border-color:rgba(124,58,237,0.45);}
+.fselect option{background:var(--bg2);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+
+/* ── PLATFORM PILLS ── */
+.platform-row{display:flex;gap:6px;flex-wrap:wrap;}
+.plat-btn{padding:5px 12px;border-radius:100px;border:1px solid var(--bd);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.plat-btn:hover{border-color:var(--vl);color:var(--vl);}
+.plat-btn.on{background:var(--v);border-color:var(--v);color:#fff;}
+
+/* ── VISUAL STYLES ── */
+.vis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.vis-card{padding:8px 6px;background:rgba(0,0,0,0.25);border:1.5px solid var(--bd);border-radius:9px;cursor:pointer;text-align:center;transition:all .18s;}
+.vis-card:hover{border-color:var(--vb);background:rgba(124,58,237,0.07);}
+.vis-card.on{border-color:var(--v);background:var(--vm);}
+.vis-em{font-size:1.1rem;display:block;margin-bottom:2px;}
+.vis-name{font-size:.62rem;font-weight:700;color:var(--snow);line-height:1.2;}
+
+/* ── GENERATE BUTTON ── */
+.gen-btn{width:100%;padding:14px;background:linear-gradient(135deg,#7C3AED,#A855F7);border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:9px;letter-spacing:.02em;box-shadow:0 4px 20px rgba(124,58,237,0.3);}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,0.45);}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.gen-btn-icon{font-size:1.1rem;}
+
+/* ── RIGHT PANEL ── */
+.right-panel{display:flex;flex-direction:column;gap:20px;}
+
+/* ── STORY ANALYSIS CARD ── */
+.analysis-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:18px;display:none;}
+.analysis-card.vis{display:block;}
+.analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+.analysis-item{background:rgba(0,0,0,0.2);border-radius:8px;padding:11px 12px;}
+.ai-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.ai-value{font-size:.82rem;font-weight:600;color:var(--snow);}
+.ai-value.type{color:var(--vl);}
+.ai-value.mood{color:var(--gold);}
+.ai-value.overlay{color:var(--green);font-family:'JetBrains Mono',monospace;font-size:.76rem;}
+.composition-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:.74rem;font-weight:700;margin-top:8px;}
+.comp-transformation{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:var(--green);}
+.comp-comparison{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);color:var(--gold);}
+.comp-reveal{background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.25);color:var(--rose);}
+.comp-achievement{background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);color:var(--vl);}
+.comp-warning{background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.25);color:var(--rose);}
+.comp-journey{background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);color:var(--cyan);}
+
+/* ── PROMPT PREVIEW ── */
+.prompt-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;display:none;}
+.prompt-card.vis{display:block;}
+.prompt-hdr{padding:11px 16px;border-bottom:1px solid var(--bd);background:rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:space-between;}
+.prompt-hdr-title{font-size:.78rem;font-weight:700;color:var(--muted);}
+.prompt-toggle{padding:3px 9px;border-radius:6px;background:transparent;border:1px solid var(--bd);color:var(--muted);font-size:.7rem;cursor:pointer;}
+.prompt-toggle:hover{border-color:var(--vl);color:var(--vl);}
+.prompt-body{padding:14px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(241,240,248,0.55);line-height:1.7;max-height:100px;overflow:hidden;transition:max-height .3s;}
+.prompt-body.expanded{max-height:600px;}
+
+/* ── IMAGE RESULT ── */
+.result-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.result-ph{text-align:center;padding:48px 32px;color:rgba(241,240,248,0.18);}
+.result-ph-icon{font-size:3.5rem;margin-bottom:12px;display:block;}
+.result-ph h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;color:rgba(241,240,248,0.3);}
+.result-ph p{font-size:.8rem;line-height:1.6;}
+.result-img-wrap{width:100%;position:relative;}
+.result-img-wrap img{width:100%;display:block;}
+.result-actions{padding:14px 16px;border-top:1px solid var(--bd);display:flex;gap:10px;align-items:center;background:rgba(0,0,0,0.15);}
+.dl-btn{display:flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;background:var(--green);border:none;color:#000;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:opacity .15s;}
+.dl-btn:hover{opacity:.85;}
+.regen-btn{padding:8px 14px;border-radius:8px;background:transparent;border:1px solid var(--bd);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;transition:all .15s;}
+.regen-btn:hover{border-color:var(--vl);color:var(--vl);}
+.overlay-display{flex:1;font-size:.74rem;color:rgba(241,240,248,0.5);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.edit-overlay-btn{padding:7px 12px;border-radius:7px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:var(--gold);font-size:.74rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.edit-overlay-btn:hover{background:rgba(245,158,11,0.18);}
+
+/* ── LOADING ── */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:52px 32px;text-align:center;}
+.loading-ring{width:48px;height:48px;border:3px solid rgba(124,58,237,0.2);border-top-color:var(--vl);border-radius:50%;animation:spin .9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-step{font-size:.82rem;color:var(--muted);}
+.loading-step strong{color:var(--vl);}
+
+/* ── OVERLAY EDITOR MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(6,8,15,0.88);backdrop-filter:blur(8px);z-index:999;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.open{display:flex;}
+.modal-box{background:var(--bg2);border:1px solid rgba(124,58,237,0.3);border-radius:16px;width:100%;max-width:480px;overflow:hidden;}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;}
+.modal-body{padding:20px;}
+.modal-inp{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--bd);border-radius:8px;padding:10px 13px;color:var(--snow);font-family:'JetBrains Mono',monospace;font-size:.88rem;outline:none;text-transform:uppercase;margin-bottom:10px;}
+.modal-inp:focus{border-color:var(--v);}
+.modal-hint{font-size:.74rem;color:var(--muted);margin-bottom:16px;}
+.modal-apply{width:100%;padding:11px;background:var(--v);border:none;border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;}
+
+/* ── STEP INDICATORS ── */
+.step-row{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.step{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:100px;background:var(--bg3);border:1px solid var(--bd);font-size:.72rem;font-weight:600;color:var(--muted);}
+.step.done{background:var(--greenm);border-color:rgba(16,185,129,0.25);color:var(--green);}
+.step.active{background:var(--vm);border-color:var(--vb);color:var(--vl);}
+.step-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+@media(max-width:1100px){.main{grid-template-columns:1fr;}.left-panel{position:static;}}
+@media(max-width:680px){.main{padding:20px;}.hdr{padding:24px 20px;}.vis-grid{grid-template-columns:repeat(3,1fr);}.analysis-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-logo">🎬</div>
+    <div class="hdr-text">
+      <h1>Thumbnail <em>Intelligence</em> Engine</h1>
+      <p>Upload characters · paste your story · Claude directs the scene · Grok brings your real faces to life</p>
+    </div>
+    <div class="hdr-badges">
+      <span class="badge badge-v">Claude Vision</span>
+      <span class="badge badge-c">Grok i2i</span>
+      <span class="badge badge-g">MrBeast IQ</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ══ LEFT: INPUTS ══════════════════════════════════════ -->
+<div class="left-panel">
+
+  <!-- API KEYS -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-hdr-icon">🔑</span>
+      <div>
+        <div class="card-hdr-title">API Keys</div>
+        <div class="card-hdr-sub">Stored locally · never leaves your browser</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="key-row ant" id="antRow">
+        <span class="key-lbl">Anthropic</span>
+        <input class="key-inp" id="antInp" type="password" placeholder="sk-ant-api03-..." onkeydown="if(event.key==='Enter')saveAntKey()">
+        <button class="key-save" onclick="saveAntKey()">Save</button>
+        <button class="key-clr" id="antClr" onclick="clearAntKey()" style="display:none">✕</button>
+        <span class="key-status" id="antSt"></span>
+      </div>
+      <div class="key-row kie" id="kieRow">
+        <span class="key-lbl">KIE API</span>
+        <input class="key-inp" id="kieInp" type="password" placeholder="kie_..." onkeydown="if(event.key==='Enter')saveKieKey()">
+        <button class="key-save" onclick="saveKieKey()">Save</button>
+        <button class="key-clr" id="kieClr" onclick="clearKieKey()" style="display:none">✕</button>
+        <span class="key-status" id="kieSt"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARACTER IMAGES -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-hdr-icon">👤</span>
+      <div>
+        <div class="card-hdr-title">Character Images</div>
+        <div class="card-hdr-sub">Upload 1–3 images · Grok uses their real faces</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="imgFileInput" accept="image/*" multiple onchange="handleImgUpload(this)">
+        <div class="uz-icon">🖼️</div>
+        <div class="uz-title">Drop character images here</div>
+        <div class="uz-sub"><strong>Click to browse</strong> · PNG, JPG, WEBP · up to 3 images<br>Grok image-to-image preserves the EXACT face from your photos</div>
+      </div>
+      <div class="img-previews" id="imgPreviews"></div>
+    </div>
+  </div>
+
+  <!-- TRANSCRIPT -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-hdr-icon">📝</span>
+      <div>
+        <div class="card-hdr-title">Story / Script</div>
+        <div class="card-hdr-sub">Paste transcript or summary — Claude reads it</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <label class="flabel">Full transcript, summary, or key story beats</label>
+      <textarea class="ftextarea" id="transcriptInp" style="min-height:130px" placeholder="e.g. I was broke for 3 years. Couldn't afford rent. Then I discovered one habit that changed everything. Within 6 months I paid off $40k in debt and built a $15k emergency fund. This video shows exactly what I did step by step...
+
+Or paste a full video script. Claude deduces the story type, mood, composition, and generates the perfect thumbnail prompt."></textarea>
+      <div style="margin-top:8px;font-size:.72rem;color:var(--muted);">💡 The richer the story, the smarter the thumbnail. Full transcripts work best.</div>
+    </div>
+  </div>
+
+  <!-- PLATFORM + OPTIONS -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-hdr-icon">⚙️</span>
+      <div>
+        <div class="card-hdr-title">Format & Options</div>
+        <div class="card-hdr-sub">Platform, orientation, extra context</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div style="margin-bottom:12px;">
+        <label class="flabel">Platform Format</label>
+        <div class="platform-row">
+          <button class="plat-btn on" data-fmt="youtube" onclick="setFmt(this)">▶ YouTube 16:9</button>
+          <button class="plat-btn" data-fmt="twitter" onclick="setFmt(this)">𝕏 Twitter 16:9</button>
+          <button class="plat-btn" data-fmt="facebook" onclick="setFmt(this)">Facebook 1:1</button>
+          <button class="plat-btn" data-fmt="portrait" onclick="setFmt(this)">Portrait 9:16</button>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Content Category</label>
+          <select class="fselect" id="categoryInp">
+            <option value="auto">🤖 Auto-detect from story</option>
+            <option value="finance">💰 Finance / Money</option>
+            <option value="lifestyle">🌟 Lifestyle / Self-improvement</option>
+            <option value="drama">🎭 Drama / Storytelling</option>
+            <option value="education">📚 Education / Tutorial</option>
+            <option value="health">💪 Health / Fitness</option>
+            <option value="business">🏢 Business / Career</option>
+            <option value="relationships">❤️ Relationships</option>
+            <option value="travel">✈️ Travel / Adventure</option>
+            <option value="tech">💻 Technology / AI</option>
+            <option value="food">🍳 Food / Cooking</option>
+            <option value="entertainment">🎮 Entertainment</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flabel">Target Audience Energy</label>
+          <select class="fselect" id="audienceInp">
+            <option value="auto">🤖 Auto from story</option>
+            <option value="broad">👥 Broad / General</option>
+            <option value="young">🔥 Young / Gen Z</option>
+            <option value="professional">💼 Professional</option>
+            <option value="parent">👨‍👩‍👧 Parents / Family</option>
+            <option value="aspirational">✨ Aspirational / Climbers</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:0;">
+        <label class="flabel">Extra context for Claude (optional)</label>
+        <textarea class="ftextarea" id="contextInp" style="min-height:56px" placeholder="e.g. The main character is a 28-year-old woman. The story ends happily. The rival is her former employer."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISUAL STYLE -->
+  <div class="card">
+    <div class="card-hdr">
+      <span class="card-hdr-icon">🎨</span>
+      <div>
+        <div class="card-hdr-title">Visual Style</div>
+        <div class="card-hdr-sub">Determines the entire rendering universe</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="vis-grid" id="visGrid"></div>
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <button class="gen-btn" id="genBtn" onclick="runGeneration()">
+    <span class="gen-btn-icon">✦</span>
+    Generate Thumbnail Intelligence
+  </button>
+
+</div><!-- end left panel -->
+
+<!-- ══ RIGHT: OUTPUT ═════════════════════════════════════ -->
+<div class="right-panel">
+
+  <!-- STEP INDICATORS -->
+  <div class="step-row" id="stepRow">
+    <div class="step" id="step1"><span class="step-dot"></span>Upload Images</div>
+    <div class="step" id="step2"><span class="step-dot"></span>Story Analysis</div>
+    <div class="step" id="step3"><span class="step-dot"></span>Prompt Engineering</div>
+    <div class="step" id="step4"><span class="step-dot"></span>Grok Generating</div>
+    <div class="step" id="step5"><span class="step-dot"></span>Ready</div>
+  </div>
+
+  <!-- STORY ANALYSIS RESULT -->
+  <div class="analysis-card card" id="analysisCard">
+    <div class="card-hdr">
+      <span class="card-hdr-icon">🧠</span>
+      <div>
+        <div class="card-hdr-title">Claude's Story Intelligence</div>
+        <div class="card-hdr-sub">What Claude understood about your story</div>
+      </div>
+    </div>
+    <div style="padding:14px 16px;">
+      <div id="compositionBadge"></div>
+      <div class="analysis-grid" id="analysisGrid"></div>
+    </div>
+  </div>
+
+  <!-- GROK PROMPT PREVIEW -->
+  <div class="prompt-card" id="promptCard">
+    <div class="prompt-hdr">
+      <span class="prompt-hdr-title">📝 Grok i2i Prompt (Claude-engineered · @image references)</span>
+      <button class="prompt-toggle" id="promptToggle" onclick="togglePrompt()">Expand</button>
+    </div>
+    <div class="prompt-body" id="promptBody"></div>
+  </div>
+
+  <!-- IMAGE RESULT -->
+  <div class="result-card" id="resultCard">
+    <div class="result-ph" id="resultPh">
+      <span class="result-ph-icon">🎬</span>
+      <h3>Your Thumbnail Appears Here</h3>
+      <p>Upload character images, paste your story,<br>pick a visual style and hit Generate</p>
+    </div>
+  </div>
+
+</div><!-- end right panel -->
+</main>
+
+<!-- OVERLAY EDITOR MODAL -->
+<div class="modal-bg" id="overlayModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3>✏️ Edit Overlay Text</h3>
+      <button class="modal-close" onclick="closeOverlayModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <label class="flabel">Overlay text (max 5 words · all caps · makes scrolling impossible)</label>
+      <input class="modal-inp" id="overlayEditInp" type="text" maxlength="40" placeholder="I LOST EVERYTHING">
+      <div class="modal-hint">💡 Short = more powerful. "SHE DID WHAT?" beats "She made a surprising discovery"</div>
+      <button class="modal-apply" onclick="applyOverlayEdit()">Apply & Regenerate Image</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+let uploadedImages = []; // [{base64, mime, name, dataUrl, kieUrl}]
+let selectedStyle = null;
+let selectedFmt = 'youtube';
+let lastAnalysis = null;
+let lastGrokPrompt = '';
+let lastOverlayText = '';
+let lastImgUrl = '';
+
+// ════════════════════════════════════════════════════════
+// VISUAL STYLES
+// ════════════════════════════════════════════════════════
+const VIS = [
+  {id:'cinematic_realistic',n:'Cinematic',e:'🎬',
+   s:'cinematic photography, anamorphic lens, dramatic rim lighting, Hollywood color grading, 8K photorealistic, film grain, shallow depth of field'},
+  {id:'photorealistic_4k',n:'Photo 4K',e:'📸',
+   s:'ultra-photorealistic 4K DSLR photography, perfect sharp focus, professional studio lighting, hyperrealistic skin texture, RAW photo quality'},
+  {id:'pixar_3d',n:'Pixar 3D',e:'✨',
+   s:'Pixar/DreamWorks quality 3D CGI animation, cinematic subsurface scattering, stylized yet photorealistic characters, dramatic camera angle, rich colors'},
+  {id:'cinematic_anime',n:'Cin. Anime',e:'⚔️',
+   s:'cinematic anime style, Studio Ghibli meets Hollywood, dramatic lighting, expressive characters, vibrant color, theatrical composition'},
+  {id:'anime',n:'Anime',e:'🎌',
+   s:'classic anime/manga illustration, cel shading, bold outlines, expressive anime eyes, vibrant saturated colors, clean artwork'},
+  {id:'cartoon_2d',n:'2D Cartoon',e:'🖍️',
+   s:'flat 2D cartoon illustration, bold black outlines, bright saturated colors, clean vector art, playful expressive character design'},
+  {id:'afro_nolly',n:'Afro-Nolly',e:'🌍',
+   s:'Pixar-quality 3D CGI, African characters with warm expressive faces, Nollywood meets Disney, vibrant West African setting, warm golden cinematic lighting'},
+  {id:'3d_kids',n:'3D Kids',e:'🧸',
+   s:'3D children\'s animation style, Cocomelon-inspired, cute chubby characters, bright pastels, soft rounded shapes, cheerful high-quality CGI'},
+  {id:'comic_book',n:'Comic Book',e:'💥',
+   s:'bold comic book art, halftone dot patterns, thick black ink outlines, primary color palette, dynamic action composition, Marvel/DC style'},
+  {id:'oil_painting',n:'Oil Paint',e:'🎨',
+   s:'classical oil painting style, rich impasto textures, old masters technique, dramatic chiaroscuro lighting, painterly brushstrokes, museum quality'},
+  {id:'watercolor',n:'Watercolor',e:'💧',
+   s:'soft watercolor illustration, translucent washes, wet-on-wet technique, delicate paper texture, loose expressive strokes'},
+  {id:'whiteboard_3d',n:'Whiteboard',e:'🖊️',
+   s:'clean 3D whiteboard cartoon, isometric perspective, bright flat colors with subtle shadows, explainer style, educational illustration'},
+  {id:'low_poly',n:'Low-Poly',e:'🔷',
+   s:'low-poly 3D art, faceted geometric surfaces, vibrant color blocks, Pixar-meets-polygon aesthetic, charming geometric characters'},
+  {id:'skeleton_viral',n:'Skeleton',e:'💀',
+   s:'transparent glass skeleton protagonist, detailed bones visible through translucent skin, expressive glowing eyes, realistic photographic environment, Bernard Films viral style'},
+  {id:'harry_potter',n:'H. Potter',e:'🧙',
+   s:'dark whimsical illustration, Harry Potter cover style, teal and amber atmosphere, gothic architectural details, magical glow, wizarding world aesthetic'},
+  {id:'roblox',n:'Roblox',e:'🧱',
+   s:'Roblox game aesthetic, blocky cube-head avatar, rectangular limbs, simple face on 3D head, bright flat textures, in-game screenshot look'},
+];
+
+const FMT_DIMS = {
+  youtube:{w:1280,h:720,ratio:'16:9'},
+  twitter:{w:1200,h:675,ratio:'16:9'},
+  facebook:{w:1080,h:1080,ratio:'1:1'},
+  portrait:{w:810,h:1440,ratio:'9:16'}
+};
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+function init() {
+  buildVisGrid();
+  refreshAntKey();
+  refreshKieKey();
+  setupDragDrop();
+}
+
+function buildVisGrid() {
+  document.getElementById('visGrid').innerHTML = VIS.map(v =>
+    `<div class="vis-card" data-id="${v.id}" onclick="selectStyle(this,'${v.id}')">
+       <span class="vis-em">${v.e}</span>
+       <div class="vis-name">${v.n}</div>
+     </div>`
+  ).join('');
+  const first = document.querySelector('.vis-card');
+  if (first) { first.classList.add('on'); selectedStyle = VIS[0].id; }
+}
+
+function selectStyle(el, id) {
+  document.querySelectorAll('.vis-card').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  selectedStyle = id;
+}
+
+function setFmt(btn) {
+  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  selectedFmt = btn.dataset.fmt;
+}
+
+// ════════════════════════════════════════════════════════
+// IMAGE UPLOAD (local preview only — KIE upload happens at generation time)
+// ════════════════════════════════════════════════════════
+function handleImgUpload(input) {
+  const files = Array.from(input.files).slice(0, 3 - uploadedImages.length);
+  files.forEach(file => {
+    if (uploadedImages.length >= 3) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dataUrl = e.target.result;
+      uploadedImages.push({
+        base64: dataUrl.split(',')[1],
+        mime: file.type || 'image/jpeg',
+        name: file.name,
+        file: file,        // keep raw File object for FormData upload
+        dataUrl,
+        kieUrl: null       // will be populated after KIE upload
+      });
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function renderPreviews() {
+  const el = document.getElementById('imgPreviews');
+  const labels = ['@image1','@image2','@image3'];
+  el.innerHTML = uploadedImages.map((img, i) => `
+    <div class="img-prev-item" id="prevItem${i}">
+      <img src="${img.dataUrl}" />
+      <div class="img-prev-label">${labels[i]}</div>
+      <span class="img-prev-remove" onclick="removeImg(${i})">✕</span>
+      ${img.kieUrl
+        ? `<span class="img-prev-status done">✓ uploaded</span>`
+        : `<span class="img-prev-status" id="prevSt${i}">pending</span>`}
+    </div>`).join('');
+
+  const zone = document.getElementById('uploadZone');
+  if (uploadedImages.length >= 3) {
+    zone.style.opacity = '.4';
+    zone.style.pointerEvents = 'none';
+  } else {
+    zone.style.opacity = '';
+    zone.style.pointerEvents = '';
+  }
+}
+
+function removeImg(idx) {
+  uploadedImages.splice(idx, 1);
+  renderPreviews();
+}
+
+function setupDragDrop() {
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    const fakeInput = { files, value:'' };
+    handleImgUpload(fakeInput);
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// KIE FILE UPLOAD — uploads each image and returns hosted URL
+// ════════════════════════════════════════════════════════
+async function uploadImageToKie(imgObj, idx, kieKey) {
+  // Update status pill to "uploading"
+  const stEl = document.getElementById(`prevSt${idx}`);
+  if (stEl) { stEl.textContent = '↑ uploading'; stEl.className = 'img-prev-status uploading'; }
+
+  const formData = new FormData();
+  formData.append('file', imgObj.file);
+
+  const res = await fetch('https://api.kie.ai/api/v1/files/upload', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${kieKey}` },
+    body: formData
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    if (stEl) { stEl.textContent = '✕ failed'; stEl.className = 'img-prev-status error'; }
+    throw new Error(`KIE file upload failed (${res.status}): ${errText.substring(0,150)}`);
+  }
+
+  const data = await res.json();
+  console.log(`KIE upload response [${idx}]:`, JSON.stringify(data).substring(0,200));
+
+  // KIE returns file URL — try common response shapes
+  const url = data?.data?.url || data?.data?.fileUrl || data?.url || data?.fileUrl;
+  if (!url) throw new Error(`KIE upload succeeded but no URL returned: ${JSON.stringify(data).substring(0,150)}`);
+
+  // Cache the URL on the image object
+  imgObj.kieUrl = url;
+
+  if (stEl) { stEl.textContent = '✓ uploaded'; stEl.className = 'img-prev-status done'; }
+  console.log(`Image ${idx+1} uploaded → ${url}`);
+  return url;
+}
+
+// Upload all images that don't yet have a KIE URL
+async function ensureAllImagesUploaded(kieKey) {
+  const pending = uploadedImages.filter(img => !img.kieUrl);
+  if (pending.length === 0) return; // all already uploaded
+
+  await Promise.all(
+    uploadedImages.map((img, idx) => img.kieUrl ? Promise.resolve(img.kieUrl) : uploadImageToKie(img, idx, kieKey))
+  );
+}
+
+// ════════════════════════════════════════════════════════
+// API KEY MANAGEMENT
+// ════════════════════════════════════════════════════════
+function saveAntKey() {
+  const v = document.getElementById('antInp').value.trim();
+  if (!v || !v.startsWith('sk-ant-')) { alert('Anthropic key must start with sk-ant-'); return; }
+  localStorage.setItem('tie_ant_key', v);
+  document.getElementById('antInp').value = '';
+  refreshAntKey();
+}
+function clearAntKey() {
+  if (!confirm('Remove Anthropic key?')) return;
+  localStorage.removeItem('tie_ant_key');
+  refreshAntKey();
+}
+function refreshAntKey() {
+  const k = localStorage.getItem('tie_ant_key');
+  const row = document.getElementById('antRow');
+  const st = document.getElementById('antSt');
+  const clr = document.getElementById('antClr');
+  const inp = document.getElementById('antInp');
+  if (k) {
+    row.classList.add('ok'); st.textContent = '✓ ' + k.substring(0,20) + '…';
+    clr.style.display = ''; inp.placeholder = 'Key saved';
+  } else {
+    row.classList.remove('ok'); st.textContent = '';
+    clr.style.display = 'none'; inp.placeholder = 'sk-ant-api03-...';
+  }
+}
+function saveKieKey() {
+  const v = document.getElementById('kieInp').value.trim();
+  if (!v) return;
+  localStorage.setItem('tie_kie_key', v);
+  document.getElementById('kieInp').value = '';
+  refreshKieKey();
+}
+function clearKieKey() {
+  if (!confirm('Remove KIE key?')) return;
+  localStorage.removeItem('tie_kie_key');
+  refreshKieKey();
+}
+function refreshKieKey() {
+  const k = localStorage.getItem('tie_kie_key');
+  const row = document.getElementById('kieRow');
+  const st = document.getElementById('kieSt');
+  const clr = document.getElementById('kieClr');
+  const inp = document.getElementById('kieInp');
+  if (k) {
+    row.classList.add('ok'); st.textContent = '✓ ' + k.substring(0,14) + '…';
+    clr.style.display = ''; inp.placeholder = 'Key saved';
+  } else {
+    row.classList.remove('ok'); st.textContent = '';
+    clr.style.display = 'none'; inp.placeholder = 'kie_...';
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// STEP UI (now 5 steps)
+// ════════════════════════════════════════════════════════
+function setStep(n) {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('step'+i);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// MAIN GENERATION FLOW
+// ════════════════════════════════════════════════════════
+async function runGeneration() {
+  const transcript = document.getElementById('transcriptInp').value.trim();
+  if (!transcript) { alert('Please paste your story or transcript.'); return; }
+  if (uploadedImages.length === 0) { alert('Please upload at least one character image.'); return; }
+
+  const antKey = localStorage.getItem('tie_ant_key');
+  const kieKey = localStorage.getItem('tie_kie_key');
+  if (!antKey) { alert('Add your Anthropic API key first.'); return; }
+  if (!kieKey) { alert('Add your KIE API key first.'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="gen-btn-icon">⏳</span> Generating…';
+
+  document.getElementById('analysisCard').classList.remove('vis');
+  document.getElementById('promptCard').classList.remove('vis');
+  showResultLoading('Preparing…');
+  setStep(1);
+
+  try {
+    // ── STEP 1: Upload all images to KIE ──────────────────
+    setStep(1);
+    showResultLoading('<strong>Step 1:</strong> Uploading character images to KIE…');
+    await ensureAllImagesUploaded(kieKey);
+
+    const kieUrls = uploadedImages.map(img => img.kieUrl).filter(Boolean);
+    if (kieUrls.length === 0) throw new Error('No images were successfully uploaded to KIE.');
+    console.log('KIE image URLs:', kieUrls);
+
+    // ── STEP 2: Claude analyses story + engineers prompt ──
+    setStep(2);
+    showResultLoading('<strong>Step 2:</strong> Claude is reading your story and engineering the scene…');
+    const analysis = await claudeAnalyseAndPrompt(transcript, antKey, kieUrls.length);
+    lastAnalysis = analysis;
+    lastGrokPrompt = analysis.grokPrompt;
+    lastOverlayText = analysis.overlayText;
+
+    renderAnalysis(analysis);
+    setStep(3);
+
+    // ── STEP 3: Show prompt ───────────────────────────────
+    document.getElementById('promptBody').textContent = analysis.grokPrompt;
+    document.getElementById('promptCard').classList.add('vis');
+    showResultLoading('<strong>Step 3:</strong> Prompt ready. Sending to Grok image-to-image…');
+    setStep(4);
+
+    // ── STEP 4: Grok image-to-image generation ────────────
+    const fmt = FMT_DIMS[selectedFmt] || FMT_DIMS.youtube;
+    const imgUrl = await grokI2IGenerate(analysis.grokPrompt, kieUrls, kieKey, fmt.ratio);
+    lastImgUrl = imgUrl;
+
+    setStep(5);
+    renderResult(imgUrl, analysis.overlayText);
+
+  } catch(e) {
+    console.error('Generation error:', e);
+    showResultError(e.message);
+    setStep(1);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<span class="gen-btn-icon">✦</span> Generate Thumbnail Intelligence';
+}
+
+// ════════════════════════════════════════════════════════
+// CLAUDE: STORY ANALYSIS + GROK PROMPT ENGINEERING
+// ════════════════════════════════════════════════════════
+async function claudeAnalyseAndPrompt(transcript, antKey, numImages) {
+  const styleMeta = VIS.find(v => v.id === selectedStyle) || VIS[0];
+  const fmtLabel = {
+    youtube:'YouTube thumbnail (1280×720, 16:9)',
+    twitter:'Twitter/X banner (1200×675, 16:9)',
+    facebook:'Facebook post image (1080×1080, square)',
+    portrait:'Portrait/Reels (810×1440, 9:16)'
+  }[selectedFmt] || 'YouTube thumbnail';
+
+  const category = document.getElementById('categoryInp').value;
+  const audience = document.getElementById('audienceInp').value;
+  const extraCtx = document.getElementById('contextInp').value.trim();
+
+  // Build image reference guide based on number of uploaded images
+  const imageRefGuide = numImages === 1
+    ? `@image1 = the sole character/protagonist (center frame, largest in composition)`
+    : numImages === 2
+    ? `@image1 = Character 1 — protagonist (dominant, larger in frame)\n@image2 = Character 2 — supporting cast, rival, or before/after counterpart`
+    : `@image1 = Character 1 — protagonist (largest, most dominant position)\n@image2 = Character 2 — supporting cast or rival\n@image3 = Character 3 — additional cast member`;
+
+  const sys = `You are the world's best YouTube thumbnail strategist and Grok image-to-image prompt engineer. You think EXACTLY like MrBeast's thumbnail team and Alex Hormozi's design team combined.
+
+CRITICAL RULE — IMAGE REFERENCES:
+The uploaded character images are being passed directly to Grok image-to-image. You MUST reference them using @image1, @image2, @image3 tags — you NEVER describe what the characters look like. Grok preserves the real face from the uploaded photo. Your job is to DIRECT the character (pose, expression, position, size in frame) NOT describe their appearance.
+
+WRONG: "A dark-skinned woman with natural hair and warm brown eyes showing shock"
+RIGHT: "@image1 showing jaw-dropped shock expression, mouth wide open, eyebrows raised to hairline, center frame, face occupying 65% of frame height"
+
+You ALWAYS output valid JSON only. No explanations, no markdown fences.`;
+
+  // Auto overlay style selection
+  const storyLower = transcript.toLowerCase();
+  let autoStyle = 'mrbeast';
+  if (storyLower.includes('lost') || storyLower.includes('fail') || storyLower.includes('wrong') || storyLower.includes('mistake')) autoStyle = 'red_block';
+  else if (storyLower.includes('million') || storyLower.includes('money') || storyLower.includes('business') || storyLower.includes('sales')) autoStyle = 'hormozi';
+  else if (storyLower.includes('nigeria') || storyLower.includes('lagos') || storyLower.includes('nollywood') || storyLower.includes('drama')) autoStyle = 'nollywood_drama';
+  else if (storyLower.includes('movie') || storyLower.includes('film') || storyLower.includes('series')) autoStyle = 'nollywood_movie';
+  else if (storyLower.includes('kids') || storyLower.includes('family') || storyLower.includes('fun') || storyLower.includes('comedy')) autoStyle = 'playful';
+
+  const OVERLAY_STYLES = {
+    hormozi: `massive Impact/Anton font ALL CAPS, pure WHITE (#FFFFFF) letter fill, 8px solid JET BLACK (#000000) outer stroke, hard black drop shadow 5px right 5px down zero blur, text block dominates 40% of frame width`,
+    mrbeast: `massive Anton font ALL CAPS, blazing YELLOW (#FFE000) solid letter fill, 9px solid BLACK outer stroke, black drop shadow 6px right 6px down zero blur, key word 1.4x larger for emphasis, text occupies 45-55% of frame width`,
+    nollywood_drama: `bold Impact font ALL CAPS, 3D beveled letters with GREEN (#00C851) to YELLOW (#FFE000) horizontal gradient fill, thick WHITE 6px outer stroke PLUS BLACK 3px outside creating double outline, strong bottom drop shadow 8px creating 3D lift`,
+    nollywood_movie: `cinematic bold condensed font ALL CAPS, GOLD (#FFD700) to ORANGE (#FF8C00) gradient letter fill, WHITE 5px outer stroke, elegant 4px drop shadow, premium movie-poster treatment`,
+    playful: `bouncy bold font ALL CAPS, alternating CYAN (#00D4FF) and YELLOW (#FFE000) fills word by word, BLACK 7px outer stroke, each word slightly different scale, words individually rotated ±3 degrees`,
+    red_block: `massive Impact font ALL CAPS, solid BRIGHT RED (#FF0000) filled rectangle behind text, WHITE (#FFFFFF) letters on red block, extreme contrast emergency-alert energy`
+  };
+
+  const userText = `Analyse this story and engineer a Grok image-to-image prompt that creates a MrBeast/Hormozi-quality YouTube thumbnail using the uploaded character images.
+
+STORY / TRANSCRIPT:
+"""
+${transcript.substring(0, 2000)}
+"""
+
+${extraCtx ? `EXTRA CONTEXT: ${extraCtx}` : ''}
+CONTENT CATEGORY: ${category === 'auto' ? 'auto-detect' : category}
+AUDIENCE: ${audience === 'auto' ? 'auto-detect' : audience}
+THUMBNAIL FORMAT: ${fmtLabel}
+VISUAL STYLE: ${styleMeta.n} — ${styleMeta.s}
+AUTO-SELECTED OVERLAY STYLE: ${autoStyle}
+
+CHARACTER IMAGE REFERENCES (use ONLY these tags — never describe appearance):
+${imageRefGuide}
+
+═══════════════════════════════════════════════
+GROK i2i PROMPT RULES — APPLY ALL
+═══════════════════════════════════════════════
+
+RULE 1 — @IMAGE TAGS ARE MANDATORY:
+Every character in the scene MUST be referenced ONLY as @image1, @image2, or @image3 — never described by appearance. After the @imageN tag, write ONLY their: role, pose, expression, position in frame, size in frame, and any props they're interacting with.
+
+RULE 2 — FACE SIZE:
+Direct @imageN face to occupy 55-70% of frame HEIGHT. Close-up to medium shot only. Camera 10-15 degrees below eye level (subject looks dominant).
+
+RULE 3 — THEATRICAL EXPRESSION (direct, never describe):
+"@image1 with jaw-dropped shock, mouth wide open, eyebrows raised to hairline"
+"@image1 with triumphant toothy grin, arms raised, eyes crinkled"
+"@image1 with horrified expression, both hands on face, eyes wide"
+
+RULE 4 — BACKGROUND (never compete with subject):
+Solid bold color (electric blue #0066FF, deep purple #6600CC, vivid green, bright red)
+OR extreme bokeh f/0.95 single dominant color
+OR bold gradient two-color radial
+
+RULE 5 — COLOR GRADE:
+Hyper-saturated +60%, crushed blacks, bright whites, warm skin +30%, strong rim light halo around subject separating from background.
+
+RULE 6 — COMPOSITION ZONES:
+Zone A: @imageN subject = 55-70% frame
+Zone B: Key story prop/object = 15-20% frame, glowing/highlighted
+Zone C: Text zone = 25-35% cleared space at bottom or top
+
+RULE 7 — SPLIT SCREEN (for before/after stories):
+Hard vertical divider center. LEFT: cool blue-grey, subject negative state. RIGHT: warm golden-orange, subject positive state. Bold cartoony arrow pointing left-to-right.
+
+RULE 8 — GRAPHIC DESIGN ELEMENTS (minimum one):
+Bold red/yellow cartoony arrow OR thick oval highlight circle OR starburst badge OR bold VS graphic. These are DESIGNED elements, not photographed.
+
+RULE 9 — OVERLAY TEXT (Grok renders this into the image):
+Text: [MAX 5 WORDS ALL CAPS]
+Style: ${OVERLAY_STYLES[autoStyle]}
+Position: centered horizontally, bottom 30% OR top 20% of frame
+Size: letters minimum 12-15% of image height — ENORMOUS and dominant
+
+RULE 10 — PROMPT STRUCTURE ORDER:
+1. Start with @image references and their directions
+2. Composition and positions
+3. Background treatment
+4. Color grade and lighting
+5. Graphic design elements
+6. Overlay text with full style description
+7. End with visual style suffix verbatim
+
+═══════════════════════════════════════════════
+OUTPUT — EXACT JSON:
+═══════════════════════════════════════════════
+{
+  "storyType": "transformation|comparison|reveal|achievement|warning|journey|secret|confrontation",
+  "compositionTemplate": "split_screen_arrow|split_screen_vs|single_subject_reaction|subject_pointing|before_after_blend|triptych|subject_recoiling",
+  "narrativeTension": "core emotional conflict in one sentence",
+  "protagonistEmotion": "theatrical emotion with physical direction (for @image1)",
+  "objectOfStory": "the key prop/object that carries the story",
+  "settingBackground": "exact background treatment",
+  "colourGrade": "exact color grade",
+  "overlayText": "MAX 5 WORDS ALL CAPS — curiosity-gap phrase",
+  "overlayStyle": "${autoStyle}",
+  "overlayPosition": "bottom_center|top_center|bottom_left|bottom_right",
+  "mood": "2-3 word thumbnail mood",
+  "compositionNotes": "spatial layout details",
+  "grokPrompt": "THE COMPLETE GROK i2i PROMPT — 200-280 words — MUST start with @image1 direction — uses @image1/@image2/@image3 for ALL character references — NEVER describes character appearance — includes composition, background, color grade, lighting, graphic elements, overlay text with full style spec, ends with: ${styleMeta.s}"
+}`;
+
+  // Send uploaded images to Claude as vision input so it can understand story context
+  const imgBlocks = uploadedImages.map(img => ({
+    type: 'image',
+    source: { type: 'base64', media_type: img.mime, data: img.base64 }
+  }));
+
+  const messages = [{
+    role: 'user',
+    content: [
+      ...imgBlocks,
+      { type: 'text', text: userText }
+    ]
+  }];
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': antKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1500,
+      system: sys,
+      messages
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error('Claude API error ' + res.status + ': ' + err.substring(0, 150));
+  }
+
+  const data = await res.json();
+  const raw = (data.content && data.content[0] ? data.content[0].text : '').trim();
+  const clean = raw.replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+
+  let parsed;
+  try {
+    parsed = JSON.parse(clean);
+  } catch(e) {
+    // Fallback extraction
+    const fp = clean.match(/"grokPrompt"\s*:\s*"([\s\S]+?)"\s*[,}]/)?.[1] || clean.substring(0, 400);
+    const ot = clean.match(/"overlayText"\s*:\s*"([^"]+)"/)?.[1] || 'THIS CHANGES EVERYTHING';
+    const st = clean.match(/"storyType"\s*:\s*"([^"]+)"/)?.[1] || 'transformation';
+    const mood = clean.match(/"mood"\s*:\s*"([^"]+)"/)?.[1] || 'triumphant';
+    const comp = clean.match(/"compositionTemplate"\s*:\s*"([^"]+)"/)?.[1] || 'single_subject_reaction';
+    const os = clean.match(/"overlayStyle"\s*:\s*"([^"]+)"/)?.[1] || autoStyle;
+    parsed = { storyType:st, compositionTemplate:comp, overlayText:ot, overlayStyle:os,
+      mood, grokPrompt:fp, narrativeTension:'', protagonistEmotion:'', objectOfStory:'',
+      settingBackground:'', colourGrade:'', overlayPosition:'bottom_center', compositionNotes:'' };
+  }
+
+  // ── Validate @image tags are present in the prompt ──────
+  if (parsed.grokPrompt && !parsed.grokPrompt.includes('@image')) {
+    // Claude forgot — prepend a corrective directive
+    parsed.grokPrompt = `@image1 as the protagonist, ${parsed.protagonistEmotion || 'showing intense emotion'}, center frame, face occupying 65% of frame height. ` + parsed.grokPrompt;
+  }
+
+  // ── Compress prompt to under 3500 chars (Grok has generous limit) ──
+  if (parsed.grokPrompt && parsed.grokPrompt.length > 3500) {
+    try {
+      const compressRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': antKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 400,
+          system: `You compress Grok image-to-image prompts. Rules:
+- Output MUST be 3500 characters or fewer
+- PRESERVE all @image1/@image2/@image3 references — these are critical
+- Preserve: expressions, composition, background color/hex codes, lighting, overlay text style
+- Remove: redundant adjectives, repeated concepts, filler words
+- Output ONLY the compressed prompt. No explanation.`,
+          messages: [{ role:'user', content:`Compress to 3500 chars or fewer. KEEP all @image references.\n\n${parsed.grokPrompt}` }]
+        })
+      });
+      const cData = await compressRes.json();
+      const compressed = (cData.content && cData.content[0] ? cData.content[0].text : '').trim();
+      if (compressed && compressed.length <= 3500) parsed.grokPrompt = compressed;
+    } catch(e) {
+      parsed.grokPrompt = parsed.grokPrompt.substring(0, 3500);
+    }
+  }
+
+  return parsed;
+}
+
+// ════════════════════════════════════════════════════════
+// GROK IMAGE-TO-IMAGE GENERATION
+// ════════════════════════════════════════════════════════
+async function grokI2IGenerate(prompt, imageUrls, kieKey, aspectRatio) {
+  const payload = {
+    model: 'grok-imagine/image-to-image',
+    input: {
+      prompt,
+      image_urls: imageUrls
+    }
+  };
+
+  console.log('Grok i2i payload:', JSON.stringify({
+    model: payload.model,
+    image_urls: imageUrls,
+    prompt_length: prompt.length,
+    prompt_preview: prompt.substring(0, 200)
+  }));
+
+  const res = await fetch('https://api.kie.ai/api/v1/jobs/createTask', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${kieKey}`
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const e = await res.text();
+    throw new Error(`Grok i2i create task ${res.status}: ${e.substring(0, 200)}`);
+  }
+
+  const data = await res.json();
+  console.log('Grok createTask response:', JSON.stringify(data).substring(0, 300));
+
+  const taskId = data?.data?.taskId;
+  if (!taskId) throw new Error('Grok did not return a taskId: ' + JSON.stringify(data).substring(0, 150));
+
+  console.log('Polling taskId:', taskId);
+  return await pollKie(taskId, kieKey);
+}
+
+// ════════════════════════════════════════════════════════
+// POLL — unchanged, works for all KIE models
+// ════════════════════════════════════════════════════════
+async function pollKie(taskId, kieKey, max = 150) {
+  for (let i = 0; i < max; i++) {
+    await sleep(2000);
+    try {
+      const res = await fetch(`https://api.kie.ai/api/v1/jobs/recordInfo?taskId=${taskId}`, {
+        headers: { 'Authorization': `Bearer ${kieKey}` }
+      });
+
+      if (res.status === 404) {
+        showResultLoading(`<strong>Step 4:</strong> Grok is warming up… ${(i+1)*2}s`);
+        continue;
+      }
+
+      if (!res.ok) {
+        const errText = await res.text();
+        console.warn(`Poll ${i+1} error ${res.status}:`, errText.substring(0,100));
+        showResultLoading(`<strong>Step 4:</strong> Retrying… ${(i+1)*2}s`);
+        continue;
+      }
+
+      const data = await res.json();
+
+      if (data.code && data.code !== 200) {
+        showResultLoading(`<strong>Step 4:</strong> Processing… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${data.msg || 'queued'}</span>`);
+        continue;
+      }
+
+      const record = data?.data;
+      if (!record) {
+        showResultLoading(`<strong>Step 4:</strong> Queued… ${(i+1)*2}s`);
+        continue;
+      }
+
+      const state = (record.state || '').toLowerCase();
+      console.log(`Poll ${i+1}: state=${state}`);
+
+      if (state === 'success') {
+        try {
+          const result = JSON.parse(record.resultJson || '{}');
+          const url = (result.resultUrls && result.resultUrls[0]) || result.imageUrl || result.url;
+          if (url) return url;
+          showResultLoading(`<strong>Step 4:</strong> Finalising… ${(i+1)*2}s`);
+          continue;
+        } catch(e) {
+          throw new Error('Grok succeeded but could not parse result: ' + record.resultJson);
+        }
+      }
+
+      if (state === 'fail') {
+        throw new Error('Grok generation failed: ' + (record.failMsg || record.failCode || 'unknown'));
+      }
+
+      showResultLoading(`<strong>Step 4:</strong> Grok is generating… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${state || 'processing'}</span>`);
+
+    } catch(e) {
+      if (e.message.includes('Grok generation failed') || e.message.includes('could not parse')) throw e;
+      console.warn(`Poll ${i+1} network error:`, e.message);
+    }
+  }
+  throw new Error('Grok timed out after 300s. Please try again.');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ════════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ════════════════════════════════════════════════════════
+const COMP_LABELS = {
+  split_screen_arrow: '↔ Split Screen + Arrow',
+  split_screen_vs: '⚡ Split Screen VS',
+  single_subject_reaction: '😱 Single Subject Reaction',
+  subject_pointing: '👆 Subject Pointing',
+  before_after_blend: '🔀 Before/After Blend',
+  triptych: '🖼 Triptych (3 panels)',
+  subject_recoiling: '😨 Subject Recoiling'
+};
+
+const COMP_CLASS = {
+  split_screen_arrow: 'comp-transformation',
+  split_screen_vs: 'comp-comparison',
+  before_after_blend: 'comp-transformation',
+  single_subject_reaction: 'comp-reveal',
+  subject_pointing: 'comp-achievement',
+  subject_recoiling: 'comp-warning',
+  triptych: 'comp-journey'
+};
+
+function renderAnalysis(a) {
+  document.getElementById('analysisCard').classList.add('vis');
+  const badgeLabel = COMP_LABELS[a.compositionTemplate] || a.compositionTemplate;
+  const badgeCls = COMP_CLASS[a.compositionTemplate] || 'comp-journey';
+  document.getElementById('compositionBadge').innerHTML =
+    `<div class="composition-badge ${badgeCls}">${badgeLabel}</div>`;
+
+  const items = [
+    { label:'Story Type', value: a.storyType, cls:'type' },
+    { label:'Mood', value: a.mood, cls:'mood' },
+    { label:'Overlay Text', value: a.overlayText, cls:'overlay' },
+    { label:'Overlay Style', value: a.overlayStyle, cls:'type' },
+    { label:'Protagonist Direction', value: a.protagonistEmotion, cls:'' },
+    { label:'Key Story Object', value: a.objectOfStory, cls:'' },
+    { label:'Colour Grade', value: a.colourGrade, cls:'' },
+  ];
+
+  document.getElementById('analysisGrid').innerHTML = items.map(item =>
+    `<div class="analysis-item">
+       <div class="ai-label">${item.label}</div>
+       <div class="ai-value ${item.cls}">${item.value || '—'}</div>
+     </div>`
+  ).join('');
+}
+
+function showResultLoading(msg) {
+  document.getElementById('resultCard').innerHTML =
+    `<div class="loading-wrap"><div class="loading-ring"></div><div class="loading-step">${msg}</div></div>`;
+}
+
+function showResultError(msg) {
+  document.getElementById('resultCard').innerHTML = `
+    <div class="result-ph">
+      <span class="result-ph-icon">⚠️</span>
+      <h3>Generation Failed</h3>
+      <p style="color:var(--rose)">${msg}</p>
+      <p style="margin-top:10px;font-size:.76rem">Check your API keys and try again.</p>
+    </div>`;
+}
+
+function renderResult(imgUrl, overlayText) {
+  lastImgUrl = imgUrl;
+  lastOverlayText = overlayText;
+  document.getElementById('resultCard').innerHTML = `
+    <div class="result-img-wrap">
+      <img src="${imgUrl}" alt="Generated thumbnail" />
+    </div>
+    <div class="result-actions">
+      <button class="dl-btn" onclick="downloadThumb()">⬇ Download</button>
+      <span class="overlay-display">"${overlayText}"</span>
+      <button class="edit-overlay-btn" onclick="openOverlayModal()">✏️ Edit Text</button>
+      <button class="regen-btn" onclick="runGeneration()">↻ Regen</button>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════
+// PROMPT TOGGLE
+// ════════════════════════════════════════════════════════
+let promptExpanded = false;
+function togglePrompt() {
+  promptExpanded = !promptExpanded;
+  document.getElementById('promptBody').classList.toggle('expanded', promptExpanded);
+  document.getElementById('promptToggle').textContent = promptExpanded ? 'Collapse' : 'Expand';
+}
+
+// ════════════════════════════════════════════════════════
+// DOWNLOAD
+// ════════════════════════════════════════════════════════
+function downloadThumb() {
+  if (!lastImgUrl) return;
+  const a = document.createElement('a');
+  a.href = lastImgUrl;
+  a.download = `thumbnail-${selectedStyle}-${selectedFmt}-${Date.now()}.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ════════════════════════════════════════════════════════
+// OVERLAY EDITOR
+// ════════════════════════════════════════════════════════
+function openOverlayModal() {
+  document.getElementById('overlayEditInp').value = lastOverlayText;
+  document.getElementById('overlayModal').classList.add('open');
+}
+function closeOverlayModal() {
+  document.getElementById('overlayModal').classList.remove('open');
+}
+async function applyOverlayEdit() {
+  const newText = document.getElementById('overlayEditInp').value.trim().toUpperCase();
+  if (!newText) return;
+  lastOverlayText = newText;
+  closeOverlayModal();
+
+  if (lastGrokPrompt && lastAnalysis) {
+    lastAnalysis.overlayText = newText;
+    lastGrokPrompt = lastGrokPrompt.replace(/"[^"]{1,40}" text|overlay text "[^"]{1,40}"/gi, `"${newText}" text`);
+    lastAnalysis.grokPrompt = lastGrokPrompt;
+    document.getElementById('promptBody').textContent = lastGrokPrompt;
+  }
+  await runGenerationWithExistingPrompt();
+}
+
+async function runGenerationWithExistingPrompt() {
+  const kieKey = localStorage.getItem('tie_kie_key');
+  if (!kieKey) { alert('Add your KIE API key first.'); return; }
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+
+  setStep(4);
+  showResultLoading('<strong>Regenerating</strong> with updated overlay text…');
+
+  try {
+    const kieUrls = uploadedImages.map(img => img.kieUrl).filter(Boolean);
+    const fmt = FMT_DIMS[selectedFmt] || FMT_DIMS.youtube;
+    const imgUrl = await grokI2IGenerate(lastGrokPrompt, kieUrls, kieKey, fmt.ratio);
+    setStep(5);
+    renderResult(imgUrl, lastOverlayText);
+  } catch(e) {
+    showResultError(e.message);
+    setStep(1);
+  }
+  btn.disabled = false;
+}
+
+document.getElementById('overlayModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlayModal')) closeOverlayModal();
+});
+
+// ════════════════════════════════════════════════════════
+// START
+// ════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
