@@ -2928,16 +2928,15 @@ async function kieFluxGen(prompt, kieKey, dims) {
               : '9:16';
 
   const payload = {
-    prompt,
-    model: 'flux-kontext-pro',
-    aspectRatio: ratio,
-    outputFormat: 'jpeg',
-    enableTranslation: false,
-    promptUpsampling: false,
-    safetyTolerance: 2
+    model: 'z-image',
+    input: {
+      prompt,
+      aspect_ratio: ratio,
+      nsfw_checker: false
+    }
   };
 
-  const res = await fetch('https://api.kie.ai/api/v1/flux/kontext/generate', {
+  const res = await fetch('https://api.kie.ai/api/v1/jobs/createTask', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -2958,30 +2957,32 @@ async function kieFluxGen(prompt, kieKey, dims) {
   return await pollKie(taskId, kieKey);
 }
 
-async function pollKie(taskId, kieKey, max = 35) {
+async function pollKie(taskId, kieKey, max = 40) {
   for (let i = 0; i < max; i++) {
     await new Promise(r => setTimeout(r, 2000));
 
-    const res = await fetch(`https://api.kie.ai/api/v1/flux/kontext/record-info?taskId=${taskId}`, {
+    const res = await fetch(`https://api.kie.ai/api/v1/jobs/taskDetail?taskId=${taskId}`, {
       headers: { 'Authorization': `Bearer ${kieKey}` }
     });
     const data = await res.json();
     const record = data?.data;
     if (!record) continue;
 
-    const flag = record.successFlag;
-    if (flag === 1) {
-      const url = record.response?.resultImageUrl;
-      if (url) return url;
-    }
-    if (flag === 2 || flag === 3) {
-      throw new Error('KIE generation failed: ' + (record.errorMessage || record.errorCode || 'unknown'));
+    const status = (record.status || '').toLowerCase();
+    const url = record.output?.imageUrl
+             || record.output?.url
+             || record.resultUrl
+             || record.imageUrl;
+
+    if ((status.includes('success') || status.includes('complet') || status.includes('done')) && url) return url;
+    if (status.includes('fail') || status.includes('error')) {
+      throw new Error('Z-Image generation failed: ' + (record.errorMessage || record.failReason || status));
     }
 
     const el = document.getElementById('imgResult');
-    if (el) el.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Generating… ${(i + 1) * 2}s<br><span style="font-size:.7rem;opacity:.6">processing</span></div></div>`;
+    if (el) el.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Generating… ${(i + 1) * 2}s<br><span style="font-size:.7rem;opacity:.6">${status || 'processing'}</span></div></div>`;
   }
-  throw new Error('KIE timed out after 70s. Try again.');
+  throw new Error('Z-Image timed out after 80s. Try again.');
 }
 
 function downloadImg() {
