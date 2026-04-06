@@ -482,18 +482,31 @@ footer{text-align:center;padding:42px;border-top:1px solid var(--border);color:r
 
     <!-- VISUAL STYLES -->
     <div style="padding:12px 14px 0;">
-      <span class="vis-styles-label">Visual Style · click any style to generate instantly</span>
+      <span class="vis-styles-label">① Select Visual Style</span>
       <div class="vis-styles-grid" id="visStylesGrid"></div>
     </div>
 
-    <!-- PROMPT PREVIEW -->
-    <div class="img-prompt-preview" id="imgPromptPreview"></div>
+    <!-- GENERATE IMAGE BUTTON -->
+    <div style="padding:10px 14px 0;">
+      <button onclick="generateImage()" id="imgGenBtn" style="width:100%;padding:12px;background:linear-gradient(135deg,#7C3AED,#A855F7);border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.02em;box-shadow:0 4px 18px rgba(124,58,237,0.3);">
+        <span>🎨</span> ② Generate Image
+      </button>
+    </div>
+
+    <!-- CLAUDE PROMPT PREVIEW — always visible after generation attempt -->
+    <div id="imgPromptWrap" style="margin:10px 14px 0;display:none;">
+      <div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,238,248,0.35);font-weight:600;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;">
+        <span>📝 Claude-Generated Flux Prompt</span>
+        <button onclick="toggleImgPrompt()" id="imgPromptToggleBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.1);color:rgba(240,238,248,0.4);border-radius:5px;padding:2px 8px;font-size:.68rem;cursor:pointer;">Expand</button>
+      </div>
+      <div id="imgPromptPreview" style="background:rgba(0,0,0,0.25);border:1px solid rgba(124,58,237,0.2);border-radius:8px;padding:10px 12px;font-size:.72rem;color:rgba(240,238,248,0.65);line-height:1.65;font-family:'JetBrains Mono',monospace;max-height:72px;overflow:hidden;transition:max-height .3s;"></div>
+    </div>
 
     <!-- RESULT -->
-    <div class="img-result" id="imgResult">
+    <div class="img-result" id="imgResult" style="margin:10px 14px 14px;">
       <div class="img-result-ph">
         <div class="ph-icon">🖼️</div>
-        <p>Generate content on the left →<br>then click any visual style to create your image</p>
+        <p>① Select a style above<br>② Paste content or generate on the left<br>③ Hit Generate Image</p>
       </div>
     </div>
     <div style="height:14px;"></div>
@@ -2537,6 +2550,16 @@ function tips(type) {
 
 function cpGen(btn){navigator.clipboard.writeText(window._lastGenText||'').then(()=>{btn.textContent='✅ Copied!';btn.classList.add('ok');setTimeout(()=>{btn.textContent='📋 Copy All';btn.classList.remove('ok');},2000);});}
 
+let imgPromptExpanded = false;
+
+function toggleImgPrompt() {
+  imgPromptExpanded = !imgPromptExpanded;
+  const el = document.getElementById('imgPromptPreview');
+  const btn = document.getElementById('imgPromptToggleBtn');
+  if (el) el.style.maxHeight = imgPromptExpanded ? '400px' : '72px';
+  if (btn) btn.textContent = imgPromptExpanded ? 'Collapse' : 'Expand';
+}
+
 // ════════════════════════════════════════════════════════
 // IMAGE GENERATOR
 // ════════════════════════════════════════════════════════
@@ -2601,7 +2624,10 @@ function selectVisStyle(el, id) {
   document.querySelectorAll('.vis-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   selectedVisStyle = id;
-  generateImage();
+  // Update button to show selected style name
+  const meta = VIS_STYLES.find(s => s.id === id);
+  const btn = document.getElementById('imgGenBtn');
+  if (btn && meta) btn.innerHTML = `<span>${meta.emoji}</span> ② Generate · ${meta.label}`;
 }
 
 function setImgFmt(btn) {
@@ -2686,8 +2712,14 @@ const FMT_DIMS = {
 
 async function generateImage() {
   const srcText = (document.getElementById('imgSrcText').value||'').trim();
-  if (!srcText) { alert('Add content to visualize first — generate on the left or paste manually.'); return; }
-  if (!selectedVisStyle) return;
+  if (!srcText) {
+    alert('① Paste content to visualize — or generate content on the left first.');
+    return;
+  }
+  if (!selectedVisStyle) {
+    alert('① Select a visual style first.');
+    return;
+  }
 
   const kieKey = localStorage.getItem('voicifyai_kie_key');
   if (!kieKey) {
@@ -2696,13 +2728,20 @@ async function generateImage() {
   }
   const antKey = localStorage.getItem('voicifyai_api_key');
   if (!antKey) {
-    document.getElementById('imgResult').innerHTML = `<div class="img-result-ph"><div class="ph-icon">🔑</div><p>Add your Anthropic API key first<br><span style="font-size:.7rem">(in the key bar at the top of this tab)</span></p></div>`;
+    document.getElementById('imgResult').innerHTML = `<div class="img-result-ph"><div class="ph-icon">🔑</div><p>Add your Anthropic API key first<br><span style="font-size:.7rem">(key bar at the top of this panel)</span></p></div>`;
     return;
   }
 
+  // Disable button during generation
+  const btn = document.getElementById('imgGenBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = `<span>⏳</span> Claude is writing your prompt…`; }
+
   const resultEl = document.getElementById('imgResult');
-  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Claude is crafting your Flux Pro prompt…</div></div>`;
-  document.getElementById('imgPromptPreview').classList.remove('vis');
+  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Step 1 — Claude is analysing your content and engineering the Flux Pro prompt…</div></div>`;
+
+  // Hide prompt wrap until we have content
+  const promptWrap = document.getElementById('imgPromptWrap');
+  if (promptWrap) promptWrap.style.display = 'none';
 
   let fluxPrompt, overlayText;
   try {
@@ -2711,14 +2750,23 @@ async function generateImage() {
     overlayText = r.overlayText;
     lastOverlayText = overlayText;
   } catch(e) {
-    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p>Claude error: ${e.message}</p></div>`;
+    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p style="color:#FF6B9D">Claude error: ${e.message}</p><p style="font-size:.7rem;margin-top:6px;opacity:.6">Check your Anthropic API key</p></div>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = `<span>🎨</span> ② Generate Image`; }
     return;
   }
 
-  const prev = document.getElementById('imgPromptPreview');
-  prev.textContent = '📝 ' + fluxPrompt.substring(0,220) + '…';
-  prev.classList.add('vis');
-  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Generating with Flux Pro…<br><span style="font-size:.7rem;opacity:.6">15–30 seconds</span></div></div>`;
+  // Show prompt preview
+  if (promptWrap) {
+    promptWrap.style.display = 'block';
+    document.getElementById('imgPromptPreview').textContent = fluxPrompt;
+    imgPromptExpanded = false;
+    document.getElementById('imgPromptPreview').style.maxHeight = '72px';
+    const tb = document.getElementById('imgPromptToggleBtn');
+    if (tb) tb.textContent = 'Expand';
+  }
+
+  if (btn) btn.innerHTML = `<span>⏳</span> Sending to Flux Pro via KIE…`;
+  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Step 2 — Prompt engineered ✓<br>Sending to Flux Pro via KIE API…<br><span style="font-size:.7rem;opacity:.6">15–30 seconds</span></div></div>`;
 
   try {
     const dims = FMT_DIMS[imgFmt] || FMT_DIMS.twitter;
@@ -2729,11 +2777,13 @@ async function generateImage() {
       <div class="img-dl-bar">
         <button class="img-dl-btn" onclick="downloadImg()">⬇ Download</button>
         <span class="img-overlay-txt">"${overlayText}"</span>
-        <button class="img-regen-btn" onclick="generateImage()">↻</button>
+        <button class="img-regen-btn" onclick="generateImage()">↻ Regen</button>
       </div>`;
   } catch(e) {
-    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p>KIE error: ${e.message}<br><span style="font-size:.68rem;opacity:.6">Check your KIE key and try again</span></p></div>`;
+    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p style="color:#FF6B9D">KIE error: ${e.message}</p><p style="font-size:.68rem;margin-top:6px;opacity:.6">Check your KIE key · The Flux prompt above was generated successfully and is ready to copy</p></div>`;
   }
+
+  if (btn) { btn.disabled = false; btn.innerHTML = `<span>🎨</span> ② Generate Image`; }
 }
 
 async function claudeGenImgPrompt(content, styleId, antKey) {
@@ -2792,23 +2842,65 @@ Output ONLY valid JSON, no explanation.`;
 }
 
 async function kieFluxGen(prompt, kieKey, dims) {
-  const res = await fetch('https://api.kie.ai/api/v1/flux/generate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':`Bearer ${kieKey}`},
-    body:JSON.stringify({prompt,model:'flux-pro',width:dims.w,height:dims.h,steps:28,guidance:3.5})
+  // KIE.ai correct Flux endpoint — try /api/v1/image/generate first
+  const payload = {
+    prompt,
+    model: 'flux-pro',
+    width: dims.w,
+    height: dims.h,
+    num_inference_steps: 28,
+    guidance_scale: 3.5
+  };
+
+  // Try primary endpoint
+  let res = await fetch('https://api.kie.ai/api/v1/image/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
+    body: JSON.stringify(payload)
   });
-  if(!res.ok){const e=await res.text();throw new Error(`KIE ${res.status}: ${e.substring(0,100)}`);}
+
+  // If 404, try alternate path
+  if (res.status === 404) {
+    res = await fetch('https://api.kie.ai/api/v1/flux', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
+      body: JSON.stringify({ ...payload, steps: 28, guidance: 3.5 })
+    });
+  }
+
+  // If still 404, try legacy path
+  if (res.status === 404) {
+    res = await fetch('https://api.kie.ai/v1/images/generations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
+      body: JSON.stringify({ prompt, model: 'flux-pro', width: dims.w, height: dims.h })
+    });
+  }
+
+  if (!res.ok) {
+    const e = await res.text();
+    throw new Error(`KIE ${res.status}: ${e.substring(0, 180)}`);
+  }
+
   const data = await res.json();
-  if(data.taskId||data.task_id) return await pollKie(data.taskId||data.task_id, kieKey);
-  const url = data.imageUrl||data.url||data.image_url||data.result?.imageUrl||data.data?.url;
-  if(url) return url;
-  throw new Error('Unexpected KIE response: '+JSON.stringify(data).substring(0,120));
+
+  // Handle direct URL response
+  const directUrl = data.imageUrl || data.url || data.image_url
+                 || data.result?.imageUrl || data.data?.url
+                 || data.images?.[0]?.url || data.output?.[0];
+  if (directUrl) return directUrl;
+
+  // Handle task ID (async generation)
+  const taskId = data.taskId || data.task_id || data.id || data.requestId || data.request_id;
+  if (taskId) return await pollKie(taskId, kieKey);
+
+  throw new Error('Unexpected KIE response format: ' + JSON.stringify(data).substring(0, 150));
 }
 
 async function pollKie(taskId, kieKey, max=35) {
   for(let i=0;i<max;i++){
     await new Promise(r=>setTimeout(r,2000));
-    const res = await fetch(`https://api.kie.ai/api/v1/flux/task/${taskId}`,{headers:{'Authorization':`Bearer ${kieKey}`}});
+    const res = await fetch(`https://api.kie.ai/api/v1/image/task/${taskId}`,{headers:{'Authorization':`Bearer ${kieKey}`}});
     const data = await res.json();
     const status = data.status||data.task?.status||'';
     const url = data.imageUrl||data.url||data.result?.imageUrl||data.task?.imageUrl||data.images?.[0]?.url;
