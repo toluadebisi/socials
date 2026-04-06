@@ -2711,7 +2711,23 @@ const FMT_DIMS = {
   portrait:{w:810,h:1440},
 };
 
+// Two-stage flow: stage 1 = build prompt, stage 2 = generate image
+let _stagedPrompt = null;
+let _stagedOverlayText = null;
+let _stagedOverlayStyle = null;
+
 async function generateImage() {
+  // If we already have a staged prompt, go straight to image generation
+  if (_stagedPrompt) {
+    await _runImageGeneration(_stagedPrompt, _stagedOverlayText);
+    return;
+  }
+
+  // Otherwise run Stage 1: build the prompt
+  await _buildPrompt();
+}
+
+async function _buildPrompt() {
   const srcText = (document.getElementById('imgSrcText').value||'').trim();
   if (!srcText) {
     alert('① Paste content to visualize — or generate content on the left first.');
@@ -2721,70 +2737,130 @@ async function generateImage() {
     alert('① Select a visual style first.');
     return;
   }
+  const antKey = localStorage.getItem('voicifyai_api_key');
+  if (!antKey) {
+    document.getElementById('imgResult').innerHTML = `<div class="img-result-ph"><div class="ph-icon">🔑</div><p>Add your Anthropic API key first</p></div>`;
+    return;
+  }
 
+  const btn = document.getElementById('imgGenBtn');
+  const resultEl = document.getElementById('imgResult');
+  const promptWrap = document.getElementById('imgPromptWrap');
+
+  // Reset any previous staged prompt
+  _stagedPrompt = null;
+  _stagedOverlayText = null;
+  _stagedOverlayStyle = null;
+
+  if (btn) { btn.disabled = true; btn.innerHTML = `<span>⏳</span> Claude is writing your prompt…`; }
+  if (promptWrap) promptWrap.style.display = 'none';
+
+  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Claude is analysing your content and engineering the prompt…</div></div>`;
+
+  try {
+    const r = await claudeGenImgPrompt(srcText, selectedVisStyle, antKey);
+    _stagedPrompt = r.fluxPrompt;
+    _stagedOverlayText = r.overlayText;
+    _stagedOverlayStyle = r.overlayStyle;
+    lastOverlayText = r.overlayText;
+
+    // Show prompt preview
+    if (promptWrap) {
+      promptWrap.style.display = 'block';
+      document.getElementById('imgPromptPreview').textContent = _stagedPrompt;
+      imgPromptExpanded = false;
+      document.getElementById('imgPromptPreview').style.maxHeight = '72px';
+      const tb = document.getElementById('imgPromptToggleBtn');
+      if (tb) tb.textContent = 'Expand';
+    }
+
+    // Show the result area with a "ready" state and the Generate button
+    resultEl.innerHTML = `
+      <div class="img-result-ph">
+        <div class="ph-icon">✅</div>
+        <p style="color:var(--emerald);font-weight:700;margin-bottom:6px">Prompt ready!</p>
+        <p style="font-size:.78rem;opacity:.7">Review the prompt above — then hit<br><strong style="color:var(--vl)">Generate Image</strong> to create it.</p>
+        <p style="font-size:.7rem;margin-top:10px;opacity:.5">Overlay: "${_stagedOverlayText}"</p>
+      </div>`;
+
+    // Update button to stage 2
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<span>🎨</span> Generate Image`;
+      btn.style.background = 'linear-gradient(135deg,#00C851,#00E5A0)';
+      btn.style.color = '#000';
+    }
+
+  } catch(e) {
+    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p style="color:#FF6B9D">Claude error: ${e.message}</p></div>`;
+    if (btn) { btn.disabled = false; btn.innerHTML = `<span>🎨</span> ② Generate Image`; btn.style.background = ''; btn.style.color = ''; }
+  }
+}
+
+async function _runImageGeneration(fluxPrompt, overlayText) {
   const kieKey = localStorage.getItem('voicifyai_kie_key');
   if (!kieKey) {
     document.getElementById('imgResult').innerHTML = `<div class="img-result-ph"><div class="ph-icon">🔐</div><p>Add your KIE API key above first</p></div>`;
     return;
   }
-  const antKey = localStorage.getItem('voicifyai_api_key');
-  if (!antKey) {
-    document.getElementById('imgResult').innerHTML = `<div class="img-result-ph"><div class="ph-icon">🔑</div><p>Add your Anthropic API key first<br><span style="font-size:.7rem">(key bar at the top of this panel)</span></p></div>`;
-    return;
-  }
 
-  // Disable button during generation
   const btn = document.getElementById('imgGenBtn');
-  if (btn) { btn.disabled = true; btn.innerHTML = `<span>⏳</span> Claude is writing your prompt…`; }
-
   const resultEl = document.getElementById('imgResult');
-  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Step 1 — Claude is analysing your content and engineering the Flux Pro prompt…</div></div>`;
 
-  // Hide prompt wrap until we have content
-  const promptWrap = document.getElementById('imgPromptWrap');
-  if (promptWrap) promptWrap.style.display = 'none';
-
-  let fluxPrompt, overlayText;
-  try {
-    const r = await claudeGenImgPrompt(srcText, selectedVisStyle, antKey);
-    fluxPrompt = r.fluxPrompt;
-    overlayText = r.overlayText;
-    lastOverlayText = overlayText;
-  } catch(e) {
-    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p style="color:#FF6B9D">Claude error: ${e.message}</p><p style="font-size:.7rem;margin-top:6px;opacity:.6">Check your Anthropic API key</p></div>`;
-    if (btn) { btn.disabled = false; btn.innerHTML = `<span>🎨</span> ② Generate Image`; }
-    return;
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span>⏳</span> Generating image…`;
+    btn.style.background = '';
+    btn.style.color = '';
   }
 
-  // Show prompt preview
-  if (promptWrap) {
-    promptWrap.style.display = 'block';
-    document.getElementById('imgPromptPreview').textContent = fluxPrompt;
-    imgPromptExpanded = false;
-    document.getElementById('imgPromptPreview').style.maxHeight = '72px';
-    const tb = document.getElementById('imgPromptToggleBtn');
-    if (tb) tb.textContent = 'Expand';
-  }
-
-  if (btn) btn.innerHTML = `<span>⏳</span> Sending to Flux Pro via KIE…`;
-  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Step 2 — Prompt engineered ✓<br>Sending to Flux Pro via KIE API…<br><span style="font-size:.7rem;opacity:.6">15–30 seconds</span></div></div>`;
+  resultEl.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Sending to Z-Image via KIE…<br><span style="font-size:.7rem;opacity:.6">15–40 seconds</span></div></div>`;
 
   try {
     const dims = FMT_DIMS[imgFmt] || FMT_DIMS.twitter;
     const imgUrl = await kieFluxGen(fluxPrompt, kieKey, dims);
     lastGeneratedImgUrl = imgUrl;
+
     resultEl.innerHTML = `
       <img src="${imgUrl}" alt="Generated" style="width:100%;display:block;" />
       <div class="img-dl-bar">
         <button class="img-dl-btn" onclick="downloadImg()">⬇ Download</button>
         <span class="img-overlay-txt">"${overlayText}"</span>
-        <button class="img-regen-btn" onclick="generateImage()">↻ Regen</button>
+        <button class="img-regen-btn" onclick="regenImage()">↻ New Image</button>
       </div>`;
+
+    // Reset staged prompt so next click on button starts fresh
+    _stagedPrompt = null;
+    _stagedOverlayText = null;
+    _stagedOverlayStyle = null;
+
   } catch(e) {
-    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p style="color:#FF6B9D">KIE error: ${e.message}</p><p style="font-size:.68rem;margin-top:6px;opacity:.6">Check your KIE key · The Flux prompt above was generated successfully and is ready to copy</p></div>`;
+    resultEl.innerHTML = `<div class="img-result-ph"><div class="ph-icon">⚠️</div><p style="color:#FF6B9D">KIE error: ${e.message}</p><p style="font-size:.68rem;margin-top:6px;opacity:.6">The prompt above was generated successfully and is ready to copy</p></div>`;
   }
 
-  if (btn) { btn.disabled = false; btn.innerHTML = `<span>🎨</span> ② Generate Image`; }
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = `<span>🎨</span> ② Generate Image`;
+    btn.style.background = '';
+    btn.style.color = '';
+  }
+}
+
+// Regen: keeps the same prompt, just generates a new image from it
+async function regenImage() {
+  if (!_stagedPrompt && lastOverlayText) {
+    // Re-stage using the last known prompt from the preview
+    const promptPreview = document.getElementById('imgPromptPreview');
+    if (promptPreview && promptPreview.textContent) {
+      _stagedPrompt = promptPreview.textContent;
+      _stagedOverlayText = lastOverlayText;
+    }
+  }
+  if (_stagedPrompt) {
+    await _runImageGeneration(_stagedPrompt, _stagedOverlayText);
+  } else {
+    await _buildPrompt();
+  }
 }
 
 async function claudeGenImgPrompt(content, styleId, antKey) {
