@@ -2842,74 +2842,65 @@ Output ONLY valid JSON, no explanation.`;
 }
 
 async function kieFluxGen(prompt, kieKey, dims) {
-  // KIE.ai correct Flux endpoint — try /api/v1/image/generate first
+  const ratio = dims.h === dims.w ? '1:1'
+              : dims.w > dims.h ? '16:9'
+              : '9:16';
+
   const payload = {
     prompt,
-    model: 'flux-pro',
-    width: dims.w,
-    height: dims.h,
-    num_inference_steps: 28,
-    guidance_scale: 3.5
+    model: 'flux-kontext-pro',
+    aspectRatio: ratio,
+    outputFormat: 'jpeg',
+    enableTranslation: false,
+    promptUpsampling: false,
+    safetyTolerance: 2
   };
 
-  // Try primary endpoint
-  let res = await fetch('https://api.kie.ai/api/v1/image/generate', {
+  const res = await fetch('https://api.kie.ai/api/v1/flux/kontext/generate', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${kieKey}`
+    },
     body: JSON.stringify(payload)
   });
 
-  // If 404, try alternate path
-  if (res.status === 404) {
-    res = await fetch('https://api.kie.ai/api/v1/flux', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
-      body: JSON.stringify({ ...payload, steps: 28, guidance: 3.5 })
-    });
-  }
-
-  // If still 404, try legacy path
-  if (res.status === 404) {
-    res = await fetch('https://api.kie.ai/v1/images/generations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
-      body: JSON.stringify({ prompt, model: 'flux-pro', width: dims.w, height: dims.h })
-    });
-  }
-
   if (!res.ok) {
     const e = await res.text();
-    throw new Error(`KIE ${res.status}: ${e.substring(0, 180)}`);
+    throw new Error(`KIE ${res.status}: ${e.substring(0, 200)}`);
   }
 
   const data = await res.json();
+  const taskId = data?.data?.taskId;
+  if (!taskId) throw new Error('KIE did not return a taskId: ' + JSON.stringify(data).substring(0, 150));
 
-  // Handle direct URL response
-  const directUrl = data.imageUrl || data.url || data.image_url
-                 || data.result?.imageUrl || data.data?.url
-                 || data.images?.[0]?.url || data.output?.[0];
-  if (directUrl) return directUrl;
-
-  // Handle task ID (async generation)
-  const taskId = data.taskId || data.task_id || data.id || data.requestId || data.request_id;
-  if (taskId) return await pollKie(taskId, kieKey);
-
-  throw new Error('Unexpected KIE response format: ' + JSON.stringify(data).substring(0, 150));
+  return await pollKie(taskId, kieKey);
 }
 
-async function pollKie(taskId, kieKey, max=35) {
-  for(let i=0;i<max;i++){
-    await new Promise(r=>setTimeout(r,2000));
-    const res = await fetch(`https://api.kie.ai/api/v1/image/task/${taskId}`,{headers:{'Authorization':`Bearer ${kieKey}`}});
+async function pollKie(taskId, kieKey, max = 35) {
+  for (let i = 0; i < max; i++) {
+    await new Promise(r => setTimeout(r, 2000));
+
+    const res = await fetch(`https://api.kie.ai/api/v1/flux/kontext/record-info?taskId=${taskId}`, {
+      headers: { 'Authorization': `Bearer ${kieKey}` }
+    });
     const data = await res.json();
-    const status = data.status||data.task?.status||'';
-    const url = data.imageUrl||data.url||data.result?.imageUrl||data.task?.imageUrl||data.images?.[0]?.url;
-    if((status.toLowerCase().includes('complet')||status.toLowerCase().includes('success'))&&url) return url;
-    if(status.toLowerCase().includes('fail')||status.toLowerCase().includes('error')) throw new Error('KIE task failed: '+(data.error||data.message||'unknown'));
-    const el=document.getElementById('imgResult');
-    if(el) el.innerHTML=`<div class="img-result-loading"><div class="img-spin"></div><div>Generating… ${(i+1)*2}s<br><span style="font-size:.7rem;opacity:.6">${status||'processing'}</span></div></div>`;
+    const record = data?.data;
+    if (!record) continue;
+
+    const flag = record.successFlag;
+    if (flag === 1) {
+      const url = record.response?.resultImageUrl;
+      if (url) return url;
+    }
+    if (flag === 2 || flag === 3) {
+      throw new Error('KIE generation failed: ' + (record.errorMessage || record.errorCode || 'unknown'));
+    }
+
+    const el = document.getElementById('imgResult');
+    if (el) el.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Generating… ${(i + 1) * 2}s<br><span style="font-size:.7rem;opacity:.6">processing</span></div></div>`;
   }
-  throw new Error('KIE timed out (70s). Try again.');
+  throw new Error('KIE timed out after 70s. Try again.');
 }
 
 function downloadImg() {
