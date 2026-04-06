@@ -3074,7 +3074,7 @@ async function kieFluxGen(prompt, kieKey, dims) {
   return await pollKie(taskId, kieKey);
 }
 
-async function pollKie(taskId, kieKey, max = 40) {
+async function pollKie(taskId, kieKey, max = 100) {
   for (let i = 0; i < max; i++) {
     await new Promise(r => setTimeout(r, 2000));
 
@@ -3099,7 +3099,7 @@ async function pollKie(taskId, kieKey, max = 40) {
     const el = document.getElementById('imgResult');
     if (el) el.innerHTML = `<div class="img-result-loading"><div class="img-spin"></div><div>Generating… ${(i + 1) * 2}s<br><span style="font-size:.7rem;opacity:.6">${status || 'processing'}</span></div></div>`;
   }
-  throw new Error('Z-Image timed out after 80s. Try again.');
+  throw new Error('Z-Image timed out after 200s. Try again.');
 }
 
 function downloadImg() {
