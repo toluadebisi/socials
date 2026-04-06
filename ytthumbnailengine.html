@@ -542,7 +542,7 @@ function handleImgUpload(input) {
 
 function renderPreviews() {
   const el = document.getElementById('imgPreviews');
-  const labels = ['@image1','@image2','@image3'];
+  const labels = ['@image(1)','@image(2)','@image(3)'];
   el.innerHTML = uploadedImages.map((img, i) => `
     <div class="img-prev-item" id="prevItem${i}">
       <img src="${img.dataUrl}" />
@@ -584,17 +584,22 @@ function setupDragDrop() {
 // KIE FILE UPLOAD — uploads each image and returns hosted URL
 // ════════════════════════════════════════════════════════
 async function uploadImageToKie(imgObj, idx, kieKey) {
-  // Update status pill to "uploading"
   const stEl = document.getElementById(`prevSt${idx}`);
   if (stEl) { stEl.textContent = '↑ uploading'; stEl.className = 'img-prev-status uploading'; }
 
-  const formData = new FormData();
-  formData.append('file', imgObj.file);
-
-  const res = await fetch('https://api.kie.ai/api/v1/files/upload', {
+  // Use base64 upload — correct domain is kieai.redpandaai.co
+  // Send the full data URL (data:image/jpeg;base64,...) in base64Data field
+  const res = await fetch('https://kieai.redpandaai.co/api/file-base64-upload', {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${kieKey}` },
-    body: formData
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${kieKey}`
+    },
+    body: JSON.stringify({
+      base64Data: imgObj.dataUrl,          // full data URL format accepted
+      uploadPath: 'images/thumbnails',
+      fileName: `char${idx+1}_${Date.now()}.jpg`
+    })
   });
 
   if (!res.ok) {
@@ -604,15 +609,13 @@ async function uploadImageToKie(imgObj, idx, kieKey) {
   }
 
   const data = await res.json();
-  console.log(`KIE upload response [${idx}]:`, JSON.stringify(data).substring(0,200));
+  console.log(`KIE upload response [${idx}]:`, JSON.stringify(data).substring(0,300));
 
-  // KIE returns file URL — try common response shapes
-  const url = data?.data?.url || data?.data?.fileUrl || data?.url || data?.fileUrl;
-  if (!url) throw new Error(`KIE upload succeeded but no URL returned: ${JSON.stringify(data).substring(0,150)}`);
+  // Response shape: data.data.downloadUrl or data.data.fileUrl
+  const url = data?.data?.downloadUrl || data?.data?.fileUrl || data?.data?.url;
+  if (!url) throw new Error(`KIE upload succeeded but no URL in response: ${JSON.stringify(data).substring(0,200)}`);
 
-  // Cache the URL on the image object
   imgObj.kieUrl = url;
-
   if (stEl) { stEl.textContent = '✓ uploaded'; stEl.className = 'img-prev-status done'; }
   console.log(`Image ${idx+1} uploaded → ${url}`);
   return url;
@@ -781,18 +784,18 @@ async function claudeAnalyseAndPrompt(transcript, antKey, numImages) {
 
   // Build image reference guide based on number of uploaded images
   const imageRefGuide = numImages === 1
-    ? `@image1 = the sole character/protagonist (center frame, largest in composition)`
+    ? `@image(1) = the sole character/protagonist (center frame, largest in composition)`
     : numImages === 2
-    ? `@image1 = Character 1 — protagonist (dominant, larger in frame)\n@image2 = Character 2 — supporting cast, rival, or before/after counterpart`
-    : `@image1 = Character 1 — protagonist (largest, most dominant position)\n@image2 = Character 2 — supporting cast or rival\n@image3 = Character 3 — additional cast member`;
+    ? `@image(1) = Character 1 — protagonist (dominant, larger in frame)\n@image(2) = Character 2 — supporting cast, rival, or before/after counterpart`
+    : `@image(1) = Character 1 — protagonist (largest, most dominant position)\n@image(2) = Character 2 — supporting cast or rival\n@image(3) = Character 3 — additional cast member`;
 
   const sys = `You are the world's best YouTube thumbnail strategist and Grok image-to-image prompt engineer. You think EXACTLY like MrBeast's thumbnail team and Alex Hormozi's design team combined.
 
 CRITICAL RULE — IMAGE REFERENCES:
-The uploaded character images are being passed directly to Grok image-to-image. You MUST reference them using @image1, @image2, @image3 tags — you NEVER describe what the characters look like. Grok preserves the real face from the uploaded photo. Your job is to DIRECT the character (pose, expression, position, size in frame) NOT describe their appearance.
+The uploaded character images are being passed directly to Grok image-to-image. You MUST reference them using @image(1), @image(2), @image(3) tags — you NEVER describe what the characters look like. Grok preserves the real face from the uploaded photo. Your job is to DIRECT the character (pose, expression, position, size in frame) NOT describe their appearance.
 
 WRONG: "A dark-skinned woman with natural hair and warm brown eyes showing shock"
-RIGHT: "@image1 showing jaw-dropped shock expression, mouth wide open, eyebrows raised to hairline, center frame, face occupying 65% of frame height"
+RIGHT: "@image(1) showing jaw-dropped shock expression, mouth wide open, eyebrows raised to hairline, center frame, face occupying 65% of frame height"
 
 You ALWAYS output valid JSON only. No explanations, no markdown fences.`;
 
@@ -836,15 +839,15 @@ GROK i2i PROMPT RULES — APPLY ALL
 ═══════════════════════════════════════════════
 
 RULE 1 — @IMAGE TAGS ARE MANDATORY:
-Every character in the scene MUST be referenced ONLY as @image1, @image2, or @image3 — never described by appearance. After the @imageN tag, write ONLY their: role, pose, expression, position in frame, size in frame, and any props they're interacting with.
+Every character in the scene MUST be referenced ONLY as @image(1), @image(2), or @image(3) — never described by appearance. After the @image(N) tag, write ONLY their: role, pose, expression, position in frame, size in frame, and any props they're interacting with.
 
 RULE 2 — FACE SIZE:
-Direct @imageN face to occupy 55-70% of frame HEIGHT. Close-up to medium shot only. Camera 10-15 degrees below eye level (subject looks dominant).
+Direct @image(N) face to occupy 55-70% of frame HEIGHT. Close-up to medium shot only. Camera 10-15 degrees below eye level (subject looks dominant).
 
 RULE 3 — THEATRICAL EXPRESSION (direct, never describe):
-"@image1 with jaw-dropped shock, mouth wide open, eyebrows raised to hairline"
-"@image1 with triumphant toothy grin, arms raised, eyes crinkled"
-"@image1 with horrified expression, both hands on face, eyes wide"
+"@image(1) with jaw-dropped shock, mouth wide open, eyebrows raised to hairline"
+"@image(1) with triumphant toothy grin, arms raised, eyes crinkled"
+"@image(1) with horrified expression, both hands on face, eyes wide"
 
 RULE 4 — BACKGROUND (never compete with subject):
 Solid bold color (electric blue #0066FF, deep purple #6600CC, vivid green, bright red)
@@ -855,7 +858,7 @@ RULE 5 — COLOR GRADE:
 Hyper-saturated +60%, crushed blacks, bright whites, warm skin +30%, strong rim light halo around subject separating from background.
 
 RULE 6 — COMPOSITION ZONES:
-Zone A: @imageN subject = 55-70% frame
+Zone A: @image(N) subject = 55-70% frame
 Zone B: Key story prop/object = 15-20% frame, glowing/highlighted
 Zone C: Text zone = 25-35% cleared space at bottom or top
 
@@ -887,7 +890,7 @@ OUTPUT — EXACT JSON:
   "storyType": "transformation|comparison|reveal|achievement|warning|journey|secret|confrontation",
   "compositionTemplate": "split_screen_arrow|split_screen_vs|single_subject_reaction|subject_pointing|before_after_blend|triptych|subject_recoiling",
   "narrativeTension": "core emotional conflict in one sentence",
-  "protagonistEmotion": "theatrical emotion with physical direction (for @image1)",
+  "protagonistEmotion": "theatrical emotion with physical direction (for @image(1))",
   "objectOfStory": "the key prop/object that carries the story",
   "settingBackground": "exact background treatment",
   "colourGrade": "exact color grade",
@@ -896,7 +899,7 @@ OUTPUT — EXACT JSON:
   "overlayPosition": "bottom_center|top_center|bottom_left|bottom_right",
   "mood": "2-3 word thumbnail mood",
   "compositionNotes": "spatial layout details",
-  "grokPrompt": "THE COMPLETE GROK i2i PROMPT — 200-280 words — MUST start with @image1 direction — uses @image1/@image2/@image3 for ALL character references — NEVER describes character appearance — includes composition, background, color grade, lighting, graphic elements, overlay text with full style spec, ends with: ${styleMeta.s}"
+  "grokPrompt": "THE COMPLETE GROK i2i PROMPT — 200-280 words — MUST start with @image(1) direction — uses @image(1)/@image(2)/@image(3) for ALL character references — NEVER describes character appearance — includes composition, background, color grade, lighting, graphic elements, overlay text with full style spec, ends with: ${styleMeta.s}"
 }`;
 
   // Send uploaded images to Claude as vision input so it can understand story context
@@ -957,7 +960,7 @@ OUTPUT — EXACT JSON:
   // ── Validate @image tags are present in the prompt ──────
   if (parsed.grokPrompt && !parsed.grokPrompt.includes('@image')) {
     // Claude forgot — prepend a corrective directive
-    parsed.grokPrompt = `@image1 as the protagonist, ${parsed.protagonistEmotion || 'showing intense emotion'}, center frame, face occupying 65% of frame height. ` + parsed.grokPrompt;
+    parsed.grokPrompt = `@image(1) as the protagonist, ${parsed.protagonistEmotion || 'showing intense emotion'}, center frame, face occupying 65% of frame height. ` + parsed.grokPrompt;
   }
 
   // ── Compress prompt to under 3500 chars (Grok has generous limit) ──
@@ -976,7 +979,7 @@ OUTPUT — EXACT JSON:
           max_tokens: 400,
           system: `You compress Grok image-to-image prompts. Rules:
 - Output MUST be 3500 characters or fewer
-- PRESERVE all @image1/@image2/@image3 references — these are critical
+- PRESERVE all @image(1)/@image(2)/@image(3) references — these are critical
 - Preserve: expressions, composition, background color/hex codes, lighting, overlay text style
 - Remove: redundant adjectives, repeated concepts, filler words
 - Output ONLY the compressed prompt. No explanation.`,
