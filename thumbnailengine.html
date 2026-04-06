@@ -849,35 +849,60 @@ FLUX PROMPT MUST INCLUDE:
 // KIE FLUX GENERATION
 // ════════════════════════════════════════════════════════
 async function kieGenerate(prompt, kieKey, dims) {
-  const res = await fetch('https://api.kie.ai/api/v1/flux/generate', {
+  const payload = {
+    prompt,
+    model: 'flux-pro',
+    width: dims.w,
+    height: dims.h,
+    num_inference_steps: 28,
+    guidance_scale: 3.5
+  };
+
+  // Try primary endpoint
+  let res = await fetch('https://api.kie.ai/api/v1/image/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
-    body: JSON.stringify({ prompt, model: 'flux-pro', width: dims.w, height: dims.h, steps: 28, guidance: 3.5 })
+    body: JSON.stringify(payload)
   });
+
+  // Fallback endpoints if 404
+  if (res.status === 404) {
+    res = await fetch('https://api.kie.ai/api/v1/flux', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
+      body: JSON.stringify({ ...payload, steps: 28, guidance: 3.5 })
+    });
+  }
+  if (res.status === 404) {
+    res = await fetch('https://api.kie.ai/v1/images/generations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${kieKey}` },
+      body: JSON.stringify({ prompt, model: 'flux-pro', width: dims.w, height: dims.h })
+    });
+  }
 
   if (!res.ok) {
     const e = await res.text();
-    throw new Error('KIE error ' + res.status + ': ' + e.substring(0, 120));
+    throw new Error(`KIE ${res.status}: ${e.substring(0, 180)}`);
   }
 
   const data = await res.json();
-
-  // Direct URL
-  const directUrl = data.imageUrl || data.url || data.image_url || data.result?.imageUrl || data.data?.url;
+  const directUrl = data.imageUrl || data.url || data.image_url
+                 || data.result?.imageUrl || data.data?.url
+                 || data.images?.[0]?.url || data.output?.[0];
   if (directUrl) return directUrl;
 
-  // Task polling
-  const taskId = data.taskId || data.task_id || data.id;
+  const taskId = data.taskId || data.task_id || data.id || data.requestId;
   if (taskId) return await pollKie(taskId, kieKey);
 
-  throw new Error('Unexpected KIE response: ' + JSON.stringify(data).substring(0, 120));
+  throw new Error('Unexpected KIE response: ' + JSON.stringify(data).substring(0, 150));
 }
 
 async function pollKie(taskId, kieKey, max = 40) {
   for (let i = 0; i < max; i++) {
     await sleep(2000);
     try {
-      const res = await fetch(`https://api.kie.ai/api/v1/flux/task/${taskId}`, {
+      const res = await fetch(`https://api.kie.ai/api/v1/image/task/${taskId}`, {
         headers: { 'Authorization': `Bearer ${kieKey}` }
       });
       const data = await res.json();
