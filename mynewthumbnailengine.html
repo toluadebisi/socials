@@ -1036,7 +1036,7 @@ function replaceOverlayInPrompt(newText) {
 async function grokI2IGenerate(prompt, imageUrls, kieKey, aspectRatio) {
   const payload = {
     model: 'grok-imagine/image-to-image',
-    input: { prompt, image_urls: imageUrls }
+    input: { prompt, image_urls: imageUrls, aspect_ratio: aspectRatio }
   };
 
   const res = await fetch('https://api.kie.ai/api/v1/jobs/createTask', {
