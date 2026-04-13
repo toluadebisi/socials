@@ -26,21 +26,27 @@
   .badge-tip { background: #f1effe; color: #534ab7; }
   .badge-search { background: #e1f5ee; color: #0f6e56; }
 
-  .page-wrap { display: flex; gap: 0; min-height: calc(100vh - 140px); }
+  .page-wrap { display: flex; gap: 0; min-height: calc(100vh - 140px); overflow: hidden; }
 
-  .resume-panel { width: 280px; min-width: 280px; background: #fff; border-right: 1px solid #e0ddd6; overflow-y: auto; padding: 1rem; flex-shrink: 0; }
+  .resume-panel { width: 560px; min-width: 180px; max-width: 75vw; background: #fff; border-right: none; overflow-y: auto; padding: 1.25rem 1.5rem; flex-shrink: 0; position: relative; }
   .resume-panel-header { font-size: 11px; font-weight: 700; color: #0a2d5e; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f0ede8; display: flex; align-items: center; justify-content: space-between; }
+
+  .resize-handle { width: 6px; min-width: 6px; background: #e0ddd6; cursor: col-resize; flex-shrink: 0; position: relative; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+  .resize-handle:hover, .resize-handle.dragging { background: #0a2d5e; }
+  .resize-handle::after { content: ''; display: block; width: 2px; height: 32px; background: rgba(255,255,255,0.5); border-radius: 2px; pointer-events: none; }
   .resume-toggle { font-size: 11px; font-weight: 500; color: #888; cursor: pointer; background: none; border: none; text-decoration: underline; }
 
-  .resume-section { border-radius: 8px; padding: 0.65rem 0.75rem; margin-bottom: 6px; border: 1px solid #e8e5e0; transition: background 0.25s, border-color 0.25s; background: #fafaf8; }
+  .resume-section { border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 8px; border: 1px solid #e8e5e0; transition: background 0.25s, border-color 0.25s; background: #fafaf8; }
   .resume-section.highlighted { background: #eeff80; border-color: #c8e600; }
-  .resume-section-title { font-size: 11px; font-weight: 700; color: #0a2d5e; margin-bottom: 3px; }
+  .resume-section-title { font-size: 13px; font-weight: 700; color: #0a2d5e; margin-bottom: 3px; }
   .resume-section.highlighted .resume-section-title { color: #2d4a00; }
-  .resume-section-body { font-size: 11px; color: #555; line-height: 1.55; }
+  .resume-section-body { font-size: 12.5px; color: #555; line-height: 1.6; }
   .resume-section.highlighted .resume-section-body { color: #2d3a00; }
-  .resume-highlight-label { font-size: 10px; font-weight: 700; color: #5a7a00; background: #d4f000; padding: 1px 6px; border-radius: 6px; margin-bottom: 4px; display: inline-block; }
+  .resume-highlight-label { font-size: 10.5px; font-weight: 700; color: #5a7a00; background: #d4f000; padding: 2px 8px; border-radius: 6px; margin-bottom: 5px; display: inline-block; }
+  .resume-section.highlighted { background: #eeff80; border-color: #c8e600; animation: highlightFlash 0.4s ease-out; }
+  @keyframes highlightFlash { 0% { background: #fff9a0; } 100% { background: #eeff80; } }
 
-  .main-area { flex: 1; min-width: 0; }
+  .main-area { flex: 1; min-width: 0; padding-left: 2rem; }
   .main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; }
 
   .stage-intro { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
@@ -161,8 +167,31 @@
   .search-expanded-card .se-close { background: none; border: none; font-size: 20px; color: #aaa; cursor: pointer; line-height: 1; padding: 0; }
   .search-expanded-card .se-coaching { margin-top: 0.85rem; background: #f9f6ff; border: 0.5px solid #cdc8f5; border-radius: 8px; padding: 0.75rem 1rem; font-size: 13px; color: #534ab7; line-height: 1.6; }
 
+
+  .jd-resize-handle { width: 6px; min-width: 6px; background: #e0ddd6; cursor: col-resize; flex-shrink: 0; position: relative; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+  .jd-resize-handle:hover, .jd-resize-handle.dragging { background: #e31837; }
+  .jd-resize-handle::after { content: ''; display: block; width: 2px; height: 32px; background: rgba(255,255,255,0.5); border-radius: 2px; pointer-events: none; }
+
+  .jd-panel { width: 420px; min-width: 180px; max-width: 60vw; background: #fff; border-left: none; overflow-y: auto; padding: 1.25rem 1.5rem; flex-shrink: 0; transition: width 0.2s; }
+  .jd-panel.collapsed { width: 44px !important; min-width: 44px; overflow: hidden; padding: 0; }
+  .jd-panel-header { font-size: 11px; font-weight: 700; color: #e31837; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f0ede8; display: flex; align-items: center; justify-content: space-between; white-space: nowrap; }
+  .jd-toggle-btn { font-size: 11px; font-weight: 500; color: #888; cursor: pointer; background: none; border: none; text-decoration: underline; white-space: nowrap; }
+  .jd-collapsed-tab { display: none; writing-mode: vertical-rl; text-orientation: mixed; font-size: 11px; font-weight: 700; color: #e31837; letter-spacing: 0.1em; text-transform: uppercase; padding: 1rem 0.6rem; cursor: pointer; white-space: nowrap; height: 100%; align-items: center; justify-content: center; }
+  .jd-panel.collapsed .jd-collapsed-tab { display: flex; }
+  .jd-panel.collapsed .jd-panel-inner { display: none; }
+
+  .jd-section { border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 8px; border: 1px solid #e8e5e0; background: #fafaf8; transition: background 0.25s, border-color 0.25s; }
+  .jd-section.highlighted { background: #eeff80; border-color: #c8e600; animation: highlightFlash 0.4s ease-out; }
+  .jd-section-title { font-size: 12px; font-weight: 700; color: #e31837; margin-bottom: 4px; }
+  .jd-section.highlighted .jd-section-title { color: #5a7a00; }
+  .jd-section-body { font-size: 12px; color: #555; line-height: 1.6; }
+  .jd-section.highlighted .jd-section-body { color: #2d3a00; }
+  .jd-highlight-label { font-size: 10.5px; font-weight: 700; color: #5a7a00; background: #d4f000; padding: 2px 8px; border-radius: 6px; margin-bottom: 5px; display: inline-block; }
+
   @media (max-width: 768px) {
     .resume-panel { display: none; }
+    .jd-panel { display: none; }
+    .jd-resize-handle { display: none; }
     .app-header { padding: 1rem; }
     .main { padding: 1rem; }
     .card { padding: 1.25rem; }
@@ -336,7 +365,7 @@
   <span class="api-key-note">Your key is stored only in this browser session — never sent anywhere except directly to Anthropic's API.</span>
 </div>
 
-<div class="page-wrap">
+<div class="page-wrap" id="pageWrap">
   <div class="resume-panel" id="resumePanel">
     <div class="resume-panel-header">
       Resume
@@ -344,8 +373,20 @@
     </div>
     <div id="resumeSections"></div>
   </div>
+  <div class="resize-handle" id="resizeHandle" title="Drag to resize"></div>
   <div class="main-area">
     <div class="main" id="mainContent"></div>
+  </div>
+  <div class="jd-resize-handle" id="jdResizeHandle" title="Drag to resize JD panel"></div>
+  <div class="jd-panel" id="jdPanel">
+    <div class="jd-collapsed-tab" onclick="toggleJdPanel()">Job Description</div>
+    <div class="jd-panel-inner">
+      <div class="jd-panel-header">
+        Job Description
+        <button class="jd-toggle-btn" onclick="toggleJdPanel()">Collapse</button>
+      </div>
+      <div id="jdSections"></div>
+    </div>
   </div>
 </div>
 
@@ -536,6 +577,7 @@ I might have more questions as we continue — but those are the ones that matte
     {
       category: "Opening",
       resumeKeys: ["maestrogrid","rhea","plural"],
+      jdKeys: ["ext_labour", "category_strategy", "advisory"],
       q: "Tell me about yourself.",
       a: `I'm a strategic sourcing professional with over ten years of experience, and my entire career has been built around one category: external labour — contingent workforce, SOW professional services, and technology staff augmentation.
 
@@ -551,6 +593,7 @@ I'm here because the external labour category at a Tier-1 Canadian bank is the m
     {
       category: "Category Strategy",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["category_strategy", "ext_labour", "demand_mgmt"],
       q: "Walk me through how you build a category strategy for an external labour portfolio from scratch.",
       a: `Every category strategy I've built starts with spend data — not assumptions, but validated data. At Maestrogrid I pulled AP records, cross-referenced against VMS reports and HR headcount data, and for the first time gave the business an accurate picture of what we were spending, with whom, and on what. That exercise uncovered maverick spend, inflated rates on six role categories, and a concentration issue with one supplier holding a disproportionate share of volume.
 
@@ -564,6 +607,7 @@ The savings methodology gets agreed with Finance before I present anything to le
     {
       category: "RFP Execution",
       resumeKeys: ["maestrogrid","rhea"],
+      jdKeys: ["sourcing_exec", "category_strategy"],
       q: "Describe the most complex RFP you've run. What made it complex and what decisions did you make that others might not have?",
       a: `The most complex RFP I've run was a full re-sourcing event for a technology staff augmentation portfolio covering twelve role categories across two geographies. The complexity came from three sources simultaneously: a politically embedded incumbent relationship, fragmented spend data across multiple cost centers, and an evaluation model that had to fairly score eight suppliers across both commercial and regulatory dimensions.
 
@@ -577,6 +621,7 @@ The outcome was a dual-panel award that reduced supplier concentration from 61% 
     {
       category: "Negotiations",
       resumeKeys: ["rhea","maestrogrid","skills"],
+      jdKeys: ["sourcing_exec", "category_strategy", "supplier_perf"],
       q: "Walk me through your negotiation preparation process for a high-value supplier engagement.",
       a: `My preparation has four components and I don't skip any of them regardless of time pressure.
 
@@ -592,6 +637,7 @@ Fourth, I assign clear roles before the room. Lead negotiator, technical SME, le
     {
       category: "Commercial Models",
       resumeKeys: ["maestrogrid","rhea","skills"],
+      jdKeys: ["category_strategy", "sourcing_exec", "demand_mgmt"],
       q: "How do you design a rate card for a technology staff augmentation category? What governance mechanisms do you build in from day one?",
       a: `Rate card design starts with role taxonomy — and the taxonomy has to be precise before a single rate is discussed. Every role needs a descriptor at defined seniority levels with specific skill indicators. I separate geography from the outset — Toronto, Calgary, and nearshore rates are distinct fields on the bid sheet. The nearshore rate differential only has value if it's a structured option, not an ad hoc conversation at requisition time.
 
@@ -605,6 +651,7 @@ At Maestrogrid this structure meant the rate card I negotiated was still deliver
     {
       category: "Stakeholder Management",
       resumeKeys: ["maestrogrid","plural"],
+      jdKeys: ["advisory", "demand_mgmt", "operating_model"],
       q: "Tell me about a time a key business stakeholder resisted your sourcing strategy. How did you bring them around?",
       a: `At Maestrogrid, the head of technology recruitment had a long-standing relationship with our primary staffing supplier and was openly skeptical of the RFP process. His concern was legitimate: the previous sourcing cycle had produced suppliers who couldn't fill niche roles and he'd spent months managing the fallout.
 
@@ -618,6 +665,7 @@ The result was that the incumbent supplier retained a position on the panel — 
     {
       category: "SRM & Governance",
       resumeKeys: ["maestrogrid","rhea"],
+      jdKeys: ["supplier_perf", "sourcing_exec", "operating_model"],
       q: "What does your supplier relationship management model look like in practice? Give me a specific example of a performance issue you managed through to resolution.",
       a: `My SRM model runs on three cadences: monthly operational reviews, quarterly business reviews, and an annual benchmarking review. Each has a distinct purpose and a distinct audience.
 
@@ -633,6 +681,7 @@ The supplier delivered the sourcing plan on time, two of the three roles were fi
     {
       category: "Risk Management",
       resumeKeys: ["plural","maestrogrid","skills"],
+      jdKeys: ["supplier_perf", "risk_reg", "operating_model"],
       q: "How do you embed OSFI third-party risk requirements into a sourcing process without it becoming a compliance checkbox at the end?",
       a: `The answer is to treat OSFI compliance as a qualification threshold that governs who enters the process, not a condition negotiated at the end of it.
 
@@ -648,6 +697,7 @@ In SRM post-award, I track SOC 2 and ISO 27001 renewal dates as standing risk it
     {
       category: "Savings Methodology",
       resumeKeys: ["maestrogrid","rhea","skills"],
+      jdKeys: ["category_strategy", "demand_mgmt", "advisory"],
       q: "How do you calculate and validate sourcing savings? Walk me through your methodology for a rate card renegotiation.",
       a: `Savings methodology is one of the places where sourcing teams lose credibility with Finance, so I invest heavily in getting the baseline right before I present a number.
 
@@ -661,6 +711,7 @@ The baseline methodology gets agreed with Finance before I present anything to l
     {
       category: "Demand Management",
       resumeKeys: ["maestrogrid","plural"],
+      jdKeys: ["demand_mgmt", "category_strategy", "advisory"],
       q: "Give me a specific example of where you reduced external labour spend through demand management rather than negotiation.",
       a: `At Maestrogrid we had a significant SOW with a management consulting firm covering regulatory impact analysis and remediation planning. When I did my category assessment, I pulled apart the deliverable structure and compared it against internal capability. What I found was that roughly 40% of the scope — data gathering, documentation, and project management — was work that our internal risk and project management teams could execute, with contractor support, at a fraction of the consulting rate. Only the specialized regulatory interpretation and executive presentation work genuinely required the consulting firm's expertise.
 
@@ -674,6 +725,7 @@ We restructured the engagement. The consulting firm retained the high-value spec
     {
       category: "Workforce Planning",
       resumeKeys: ["rhea","maestrogrid"],
+      jdKeys: ["demand_mgmt", "advisory", "operating_model"],
       q: "How do you partner with HR and workforce planning to make external labour sourcing more proactive rather than reactive?",
       a: `The reactive mode in external labour sourcing is the default — a hiring manager raises a requisition, sourcing routes it to a supplier. That model produces poor fill rates on hard-to-source skills and leaves sourcing with no leverage at the market level.
 
@@ -687,6 +739,7 @@ I also shared a quarterly labour market intelligence summary with HR and the CTO
     {
       category: "VMS & Technology",
       resumeKeys: ["maestrogrid","rhea","skills"],
+      jdKeys: ["supplier_perf", "sourcing_exec", "risk_reg"],
       q: "What is your experience with VMS platforms and how do you use VMS data to drive sourcing decisions?",
       a: `I've worked with VMS-adjacent environments throughout my career — at Maestrogrid and Rhea Carrison I used VMS data as the primary performance monitoring and rate card compliance tool for the contingent workforce category.
 
@@ -700,6 +753,7 @@ I'm familiar with Beeline specifically — I've reviewed Beeline integration req
     {
       category: "Difficult Decisions",
       resumeKeys: ["maestrogrid","plural"],
+      jdKeys: ["advisory", "operating_model", "category_strategy"],
       q: "Tell me about a time you recommended a sourcing outcome that was unpopular internally. How did you handle the pushback?",
       a: `At Maestrogrid, my RFP analysis produced a recommendation to move away from a supplier who had held 60% of our technology staffing volume for four years. The commercial case was clear — their rates were above market on six role categories and their fill rate for niche cloud roles had declined over three quarters. But the CTO had worked with their account director personally for years, and there was genuine resistance to the idea of disrupting what he perceived as a trusted partnership.
 
@@ -713,6 +767,7 @@ Leadership chose option one. The incumbent ultimately retained a position on the
     {
       category: "Problem Solving",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["risk_reg", "supplier_perf", "operating_model"],
       q: "Describe a time when you identified a significant sourcing problem that others had missed.",
       a: `At Maestrogrid, shortly after joining, I was doing a routine reconciliation of external labour spend — pulling AP records against VMS actuals — and noticed a consistent gap in one cost center. The VMS showed contractor hours for a group of software engineers, but AP had invoices from a supplier not on our approved panel, paid through a miscellaneous IT vendor code.
 
@@ -728,6 +783,7 @@ The lesson: maverick spend rarely announces itself. You find it by looking for i
     {
       category: "Forward Look",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["category_strategy", "operating_model", "advisory"],
       q: "What would your first 60 days look like in this role, and what would you want to have accomplished by the end of that period?",
       a: `I'd want to be operationally credible with stakeholders and analytically grounded in the category by day 60.
 
@@ -746,6 +802,7 @@ By day 60, I'd present to the Director a structured assessment of the category: 
     {
       category: "Opening",
       resumeKeys: ["maestrogrid","rhea","plural"],
+      jdKeys: ["ext_labour", "category_strategy", "advisory"],
       q: "Tell me about yourself.",
       a: `Thank you for having me. I want to use this time well, so I'll give you a focused picture of who I am professionally and then I'd love to hear from each of you about what matters most to your team — because that should shape this conversation.
 
@@ -761,6 +818,7 @@ What I want you to take away is this: I've done the analytical work, the commerc
     {
       category: "90-Day Plan",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["category_strategy", "operating_model", "advisory"],
       q: "Walk us through your 90-day plan for taking ownership of the External Labour category at BMO.",
       a: `Days 1 to 30 are about listening and grounding. I'd validate the spend baseline — reconciling AP, VMS, and HR data to get an accurate picture of what we're spending, with whom, and where. I'd meet every key stakeholder: CTO office, CHRO, Finance, Risk, and Technology hiring managers. My goal is to understand their pain points, their workforce demand signals, and where sourcing has or hasn't served them well. I'd also audit the supplier panel — contracts, SRM cadence, KPI performance, open issues.
 
@@ -774,6 +832,7 @@ The goal by day 90: trusted by stakeholders, grounded in the data, and credible 
     {
       category: "Data Baseline",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["category_strategy", "demand_mgmt", "advisory"],
       q: "How would you establish the savings baseline for this category if existing data was fragmented or inconsistent?",
       a: `Fragmented data is the rule in external labour categories, not the exception — spend lives in AP, VMS, HR systems, and project cost codes simultaneously, and none tells the complete story alone.
 
@@ -787,6 +846,7 @@ The methodology then gets co-authored with Finance before anything goes to leade
     {
       category: "Stakeholder Pushback",
       resumeKeys: ["maestrogrid","plural"],
+      jdKeys: ["advisory", "supplier_perf", "operating_model"],
       q: "A Technology hiring manager says: 'The last sourcing cycle gave us suppliers who couldn't fill our roles. Why should we trust this process again?' How do you respond in the room?",
       a: `I'd thank them for saying it directly — that's exactly the kind of feedback I need to do this job properly. And I'd mean it.
 
@@ -802,6 +862,7 @@ And I'd want your input in designing the evaluation criteria. This process works
     {
       category: "Concentration Risk",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["risk_reg", "supplier_perf", "category_strategy"],
       q: "If you found that one supplier represented 65% of BMO's external labour spend, what would your response be?",
       a: `That's a category risk I'd treat as the first priority on my list — and I'd be transparent with leadership about why.
 
@@ -817,6 +878,7 @@ And I'd track supplier concentration as a standing KPI at every quarterly catego
     {
       category: "Cross-Functional",
       resumeKeys: ["maestrogrid","rhea"],
+      jdKeys: ["advisory", "demand_mgmt", "operating_model"],
       q: "How do you manage competing priorities between Technology hiring speed and Finance cost discipline when they're in direct tension?",
       a: `This tension is real and I've navigated it directly. Technology wants speed — time-to-fill matters because open roles create delivery risk. Finance wants cost discipline — rate card integrity matters because maverick spend erodes the savings case. These two objectives can conflict when a hiring manager wants to approve an off-rate-card submission to fill a role faster.
 
@@ -830,6 +892,7 @@ I also try to get upstream of the tension by giving Technology better market int
     {
       category: "SOW Governance",
       resumeKeys: ["maestrogrid","plural","skills"],
+      jdKeys: ["category_strategy", "sourcing_exec", "risk_reg"],
       q: "How do you prevent SOW-based engagements from drifting into de facto staff augmentation?",
       a: `SOW drift is one of the most common and most expensive governance failures in professional services sourcing — and it's almost always gradual rather than sudden. A deliverable-based engagement starts accumulating ad hoc requests, the supplier starts billing time rather than outcomes, and 12 months later you're paying consulting rates for work that should have been on the rate card.
 
@@ -843,6 +906,7 @@ At Maestrogrid I restructured one engagement where 40% of the consulting scope h
     {
       category: "Nearshore Strategy",
       resumeKeys: ["maestrogrid","rhea","skills"],
+      jdKeys: ["ext_labour", "category_strategy", "risk_reg"],
       q: "How do you evaluate and implement a nearshore delivery model for technology staff augmentation? What are the governance considerations specific to a Canadian bank?",
       a: `Nearshore delivery in the Canadian banking context — Waterloo, Ottawa, Halifax, and Montreal — offers a rate arbitrage of 12 to 18% on eligible roles without the data residency and subcontractor oversight complexity of offshore models. But the arbitrage only has value if the governance is structured correctly.
 
@@ -858,6 +922,7 @@ At Rhea Carrison, I implemented a nearshore delivery component for data engineer
     {
       category: "Analytics & Data",
       resumeKeys: ["maestrogrid","rhea","krystal"],
+      jdKeys: ["advisory", "category_strategy", "demand_mgmt"],
       q: "How do you use data to make the sourcing function more proactive? Walk us through how you've built or used analytics in your sourcing role.",
       a: `I've used Advanced Excel-based models throughout my career as the primary analytical tool for sourcing decision-making — TCO models, rate benchmarking, scenario analysis for award decisions, and supplier concentration risk reporting.
 
@@ -873,6 +938,7 @@ The analytical output I care most about is actionable intelligence — models th
     {
       category: "Innovation",
       resumeKeys: ["rhea","maestrogrid"],
+      jdKeys: ["advisory", "category_strategy", "sourcing_exec"],
       q: "What is the most innovative thing you've done in an external labour sourcing role that you haven't seen others do?",
       a: `The most distinctive thing I've done is build a total cost of ownership model for supplier selection that explicitly valued fill rate and quality alongside commercial rate — and used it to demonstrate that the cheapest-rate supplier was not the lowest-cost supplier.
 
@@ -888,6 +954,7 @@ That approach changed how the organisation evaluated staffing suppliers and beca
     {
       category: "Supplier Failure",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["supplier_perf", "risk_reg", "operating_model"],
       q: "A primary supplier unexpectedly gives you 30-day notice of their inability to continue servicing the contract. How do you respond?",
       a: `Thirty days is tight but manageable if the governance architecture is in place.
 
@@ -905,6 +972,7 @@ The lesson from this scenario — which is why I build it into every category ri
     {
       category: "Regulatory Scenario",
       resumeKeys: ["plural","maestrogrid"],
+      jdKeys: ["risk_reg", "supplier_perf", "operating_model"],
       q: "During a QBR, your primary supplier discloses that their SOC 2 Type II certification lapsed two months ago and they failed to notify BMO. What do you do?",
       a: `This is a material compliance failure and I treat it accordingly — not as an administrative oversight, but as a contract breach that requires immediate escalation and a structured response.
 
@@ -922,6 +990,7 @@ I'd also issue a written notice to all other panel suppliers reminding them of t
     {
       category: "Market Intelligence",
       resumeKeys: ["skills","maestrogrid"],
+      jdKeys: ["demand_mgmt", "advisory", "ext_labour"],
       q: "What are the most significant trends in the Canadian technology staffing market right now, and how should they influence BMO's external labour strategy?",
       a: `Three trends are shaping the Canadian technology staffing market in ways that should directly influence BMO's sourcing strategy.
 
@@ -935,6 +1004,7 @@ Third, the boundary between staff augmentation and outcome-based delivery is blu
     {
       category: "Continuous Improvement",
       resumeKeys: ["maestrogrid","rhea"],
+      jdKeys: ["supplier_perf", "category_strategy", "operating_model"],
       q: "How do you drive continuous improvement in a supplier relationship beyond the initial contract negotiation?",
       a: `Continuous improvement in SRM starts with the governance cadence, but it's sustained by what happens in those review conversations — and most SRM programs fail because the reviews become reporting exercises rather than improvement conversations.
 
@@ -948,6 +1018,7 @@ At Maestrogrid, I structured the SRM programme so the first QBR after award cove
     {
       category: "Challenge the Room",
       resumeKeys: ["skills","maestrogrid"],
+      jdKeys: ["advisory", "category_strategy", "demand_mgmt"],
       q: "What is one thing about how most organizations approach external labour sourcing that you think is fundamentally wrong?",
       a: `The most common fundamental error is treating the sourcing event as the primary value creation moment. Organizations invest enormous effort in running the competitive event, negotiating the contract, celebrating the savings number — and then governance becomes a quarterly check-in until the next re-sourcing cycle. Meanwhile, the savings erode quietly, the supplier's performance drifts on rate and quality, and the business loses trust in the outcome.
 
@@ -964,6 +1035,7 @@ I'd ask it as a question of this organization rather than a verdict: how much of
     {
       category: "Opening",
       resumeKeys: ["maestrogrid","rhea","plural"],
+      jdKeys: ["ext_labour", "category_strategy", "advisory"],
       q: "Tell me about yourself.",
       a: `I'll keep this brief because I suspect what you want to understand is whether I can operate at the level this role requires — and I'd rather show you that through the conversation than through a biography.
 
@@ -979,6 +1051,7 @@ I have a strong point of view on where the external labour category is going —
     {
       category: "Strategic Value",
       resumeKeys: ["maestrogrid","rhea","skills"],
+      jdKeys: ["advisory", "category_strategy", "operating_model"],
       q: "How do you demonstrate that strategic sourcing is a value-creation function rather than a cost-reduction function to senior leadership?",
       a: `The framing shift from cost reduction to value creation starts with what you measure and what you put in front of leadership. If every sourcing update is a savings number, you've trained leadership to see you as a cost function. If your updates include savings alongside workforce agility metrics, supplier innovation pipeline, risk reduction outcomes, and talent supply intelligence — you've positioned sourcing as a strategic function.
 
@@ -992,6 +1065,7 @@ At Maestrogrid, that framing shifted sourcing's relationship with technology lea
     {
       category: "Executive Influence",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["advisory", "operating_model", "category_strategy"],
       q: "How do you bring senior leaders along on a sourcing recommendation when they have a strong existing relationship with the incumbent supplier?",
       a: `Incumbent relationships are real — especially in banking, where a supplier relationship might span multiple executives and years of trusted delivery. I don't dismiss that. I address it head-on.
 
@@ -1005,6 +1079,7 @@ What I don't do is walk into a VP's office with a slide that says 'we should swi
     {
       category: "Market Strategy",
       resumeKeys: ["skills","maestrogrid"],
+      jdKeys: ["ext_labour", "demand_mgmt", "advisory"],
       q: "Where do you see the external labour category going over the next three to five years, and how should BMO's sourcing strategy evolve to stay ahead of it?",
       a: `The external labour market is going through a structural shift that most sourcing strategies haven't fully caught up with yet.
 
@@ -1020,6 +1095,7 @@ My strategic recommendation would be to invest in two things: a more sophisticat
     {
       category: "Risk & Savings",
       resumeKeys: ["plural","maestrogrid","skills"],
+      jdKeys: ["risk_reg", "category_strategy", "supplier_perf"],
       q: "How do you balance the pressure to deliver cost savings with the bank's non-negotiable risk management obligations?",
       a: `This tension is real and I don't think it resolves by simply prioritizing one over the other. They're both obligations — commercial and regulatory — and the sourcing framework has to hold both simultaneously.
 
@@ -1033,6 +1109,7 @@ The way I frame it to senior leadership: the risk management provisions in our s
     {
       category: "Procurement Transformation",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["operating_model", "advisory", "category_strategy"],
       q: "If you were asked to elevate the procurement function's strategic standing within BMO over two years, what would your approach be?",
       a: `The strategic standing of a procurement function is earned through outcomes that senior stakeholders can see and feel — not through reorganization charts or function rebranding.
 
@@ -1048,6 +1125,7 @@ The measure of success at two years isn't just savings delivered — it's whethe
     {
       category: "Commercial Judgment",
       resumeKeys: ["maestrogrid","rhea","skills"],
+      jdKeys: ["sourcing_exec", "category_strategy", "risk_reg"],
       q: "A preferred supplier offers a 15% rate reduction in exchange for a 5-year exclusive commitment with no volume minimum relief. Do you take it?",
       a: `No — and I'd explain why to leadership clearly.
 
@@ -1065,6 +1143,7 @@ What I'd counter-propose is a 3-year term with renewal options, a rate lock for 
     {
       category: "Leadership & Team",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["operating_model", "advisory", "ext_labour"],
       q: "How do you build and develop a high-performing strategic sourcing team?",
       a: `I've thought about this a lot because it's one of the things I genuinely care about — and because the best way to scale your own impact as a senior manager is to build the capability of the people around you.
 
@@ -1080,6 +1159,7 @@ I also think diverse teams make better sourcing decisions — different backgrou
     {
       category: "Regulatory Intelligence",
       resumeKeys: ["plural","maestrogrid","skills"],
+      jdKeys: ["risk_reg", "operating_model", "supplier_perf"],
       q: "OSFI has updated its third-party risk management guidance. How do you ensure BMO's external labour contracts and governance stay compliant?",
       a: `Regulatory change in third-party risk management requires a proactive response, not a reactive one — and the sourcing team shouldn't be the last to know about it.
 
@@ -1097,6 +1177,7 @@ At Plural Health, navigating regulatory updates in a healthcare environment buil
     {
       category: "Difficult Scenario",
       resumeKeys: ["plural","maestrogrid"],
+      jdKeys: ["risk_reg", "supplier_perf", "sourcing_exec"],
       q: "Midway through a $42M sourcing event, your preferred supplier fails to complete their OSFI third-party risk assessment on time. The contract start date is 6 weeks away. What do you do?",
       a: `First, I find out why. Is this a capacity issue, a documentation gap, or a substantive compliance concern that the assessment process has surfaced? The answer determines everything.
 
@@ -1112,6 +1193,7 @@ I'd also do a lessons-learned on why this risk wasn't caught earlier. The OSFI a
     {
       category: "Communication",
       resumeKeys: ["maestrogrid","skills"],
+      jdKeys: ["advisory", "operating_model", "category_strategy"],
       q: "How do you communicate sourcing outcomes and category performance to senior leaders who don't have a deep procurement background?",
       a: `Senior leaders need two things from sourcing communication: clarity on what we did and what it delivers, and confidence that the risks are understood and managed.
 
@@ -1127,6 +1209,7 @@ At Maestrogrid, I started presenting to the CFO quarterly with a one-page catego
     {
       category: "Cultural Fit",
       resumeKeys: ["maestrogrid","plural"],
+      jdKeys: ["operating_model", "advisory", "ext_labour"],
       q: "How would you describe your leadership style, and how do you create an environment where your team does their best work?",
       a: `My leadership style is what I'd describe as high-expectation, high-support. I set a clear bar for the quality of analytical and commercial work, and I hold people to it — but I also invest heavily in giving them the context, the coaching, and the room to develop so they can actually meet that bar.
 
@@ -1142,6 +1225,7 @@ Finally, I actively create space for challenge and disagreement in my team. I'd 
     {
       category: "Closing",
       resumeKeys: ["skills"],
+      jdKeys: ["category_strategy", "advisory", "operating_model"],
       q: "What questions do you have for us at this level?",
       a: `I have a few, and I want to be deliberate about which ones I ask here because I know your time is limited.
 
@@ -1210,58 +1294,65 @@ function setStage(id) {
 }
 
 function renderMain() {
-  const el = document.getElementById("mainContent");
-  if (currentStage === "overview") { el.innerHTML = renderOverview(); return; }
-  if (currentStage === "tips") { el.innerHTML = renderTips(); return; }
-  if (currentStage === "search") { renderSearch(); return; }
-  const qs = getQs();
-  if (!qs.length) { el.innerHTML = '<p>No questions.</p>'; return; }
-  if (currentQ >= qs.length) { el.innerHTML = renderDone(); return; }
-  
-  const q = qs[currentQ];
-  const pct = Math.round((currentQ / qs.length) * 100);
-  const scoreKey = `${currentStage}-${currentQ}`;
-  const picked = scores[scoreKey];
+  var el = document.getElementById("mainContent");
+  if (!el) return;
+  if (currentStage === "overview") { el.innerHTML = renderOverview(); renderResumePanel([]); renderJdPanel([]); return; }
+  if (currentStage === "tips") { el.innerHTML = renderTips(); renderResumePanel([]); renderJdPanel([]); return; }
+  if (currentStage === "search") { renderSearch(); renderResumePanel([]); renderJdPanel([]); return; }
+  var qs = getQs();
+  if (!qs.length) { el.innerHTML = "<p>No questions.</p>"; return; }
+  if (currentQ >= qs.length) { el.innerHTML = renderDone(); renderResumePanel([]); renderJdPanel([]); return; }
 
-  el.innerHTML = `
-    <div class="stage-intro">${getStageIntro(currentStage)}</div>
-    <div class="mode-toggle">
-      <button class="mode-btn ${mode === 'practice' ? 'active' : ''}" onclick="setMode('practice')">Practice Mode</button>
-      <button class="mode-btn ${mode === 'study' ? 'active' : ''}" onclick="setMode('study')">Study Mode</button>
-    </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-      <span class="progress-label">${currentQ + 1} / ${qs.length}</span>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="q-number">Question ${currentQ + 1}</div>
-        </div>
-        <div class="q-category">${q.category}</div>
-      </div>
-      <div class="question-text">${q.q}</div>
-      ${mode === 'practice' ? `
-        <button class="reveal-btn" id="revealBtn" onclick="revealAnswer()">${revealed ? 'Hide answer' : 'Reveal answer'}</button>
-      ` : ''}
-      <div class="answer-block ${(mode === 'study' || revealed) ? 'visible' : ''}" id="answerBlock">
-        <div class="answer-label">Strong answer</div>
-        <div class="answer-text">${formatAnswer(q.a)}</div>
-        <div class="coaching-note"><span>Coaching note:</span> ${q.coaching}</div>
-        ${mode === 'practice' ? `
-        <div class="score-row">
-          <span style="font-size:12px;color:#888;align-self:center;">How did you do?</span>
-          <button class="score-btn easy ${picked === 'easy' ? 'picked' : ''}" onclick="markScore('easy')">Nailed it</button>
-          <button class="score-btn medium ${picked === 'medium' ? 'picked' : ''}" onclick="markScore('medium')">Getting there</button>
-          <button class="score-btn hard ${picked === 'hard' ? 'picked' : ''}" onclick="markScore('hard')">Need more work</button>
-        </div>` : ''}
-      </div>
-    </div>
-    <div class="nav-controls">
-      <button class="nav-btn" onclick="prevQ()" ${currentQ === 0 ? 'disabled' : ''}>← Previous</button>
-      <button class="nav-btn primary" onclick="nextQ()">${currentQ < qs.length - 1 ? 'Next question →' : 'Finish stage →'}</button>
-    </div>
-  `;
+  var q = qs[currentQ];
+  var pct = Math.round((currentQ / qs.length) * 100);
+  var scoreKey = currentStage + "-" + currentQ;
+  var picked = scores[scoreKey];
+  var rKeys = q.resumeKeys || [];
+
+  // Study mode: always show highlights. Practice mode: only show if answer already revealed
+  var showKeys = (mode === 'study' || revealed) ? rKeys : [];
+  renderResumePanel(showKeys);
+  renderJdPanel(showKeys.length > 0 ? (q.jdKeys || []) : []);
+
+  var revealBtnHtml = mode === "practice"
+    ? '<button class="reveal-btn" onclick="revealAnswer()">' + (revealed ? "Hide answer" : "Reveal answer") + "</button>"
+    : "";
+  var answerVisible = (mode === "study" || revealed) ? " visible" : "";
+  var scoreHtml = mode === "practice"
+    ? '<div class="score-row"><span style="font-size:12px;color:#888;align-self:center;">How did you do?</span>' +
+      '<button class="score-btn easy' + (picked === "easy" ? " picked" : "") + '" onclick="markScore(&apos;easy&apos;)">Nailed it</button>' +
+      '<button class="score-btn medium' + (picked === "medium" ? " picked" : "") + '" onclick="markScore(&apos;medium&apos;)">Getting there</button>' +
+      '<button class="score-btn hard' + (picked === "hard" ? " picked" : "") + '" onclick="markScore(&apos;hard&apos;)">Need more work</button></div>'
+    : "";
+
+  el.innerHTML =
+    '<div class="stage-intro">' + getStageIntro(currentStage) + "</div>" +
+    '<div class="mode-toggle">' +
+      '<button class="mode-btn ' + (mode === "practice" ? "active" : "") + '" onclick="setMode(&apos;practice&apos;)">Practice Mode</button>' +
+      '<button class="mode-btn ' + (mode === "study" ? "active" : "") + '" onclick="setMode(&apos;study&apos;)">Study Mode</button>' +
+    "</div>" +
+    '<div class="progress-bar-wrap">' +
+      '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+      '<span class="progress-label">' + (currentQ + 1) + " / " + qs.length + "</span>" +
+    "</div>" +
+    '<div class="card">' +
+      '<div class="card-header">' +
+        '<div><div class="q-number">Question ' + (currentQ + 1) + "</div></div>" +
+        '<div class="q-category">' + q.category + "</div>" +
+      "</div>" +
+      '<div class="question-text">' + esc(q.q) + "</div>" +
+      revealBtnHtml +
+      '<div class="answer-block' + answerVisible + '">' +
+        '<div class="answer-label">Strong answer</div>' +
+        '<div class="answer-text">' + formatAnswer(q.a) + "</div>" +
+        '<div class="coaching-note"><span>Coaching note:</span> ' + esc(q.coaching) + "</div>" +
+        scoreHtml +
+      "</div>" +
+    "</div>" +
+    '<div class="nav-controls">' +
+      '<button class="nav-btn" onclick="prevQ()" ' + (currentQ === 0 ? "disabled" : "") + ">&larr; Previous</button>" +
+      '<button class="nav-btn primary" onclick="nextQ()">' + (currentQ < qs.length - 1 ? "Next question &rarr;" : "Finish stage &rarr;") + "</button>" +
+    "</div>";
 }
 
 function formatAnswer(text) {
@@ -1375,7 +1466,7 @@ function renderDone() {
       ${hard > 0 ? `<p style="color:#a32d2d;font-size:13px">You flagged ${hard} question${hard>1?'s':''} as needing more work. Use Study Mode to review those answers until they feel natural.</p>` : ''}
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:1rem">
         <button class="nav-btn primary" onclick="restartStage()">Restart this stage</button>
-        <button class="nav-btn" onclick="setStage('overview')">Back to overview</button>
+        <button class="nav-btn" onclick="setStage(&apos;overview&apos;)">Back to overview</button>
       </div>
     </div>
   `;
@@ -1384,11 +1475,18 @@ function renderDone() {
 function setMode(m) {
   mode = m;
   revealed = false;
+  if (m === 'practice') { renderResumePanel([]); renderJdPanel([]); }
   renderMain();
 }
 
 function revealAnswer() {
   revealed = !revealed;
+  var qs = getQs();
+  var q = qs[currentQ];
+  if (q) {
+    renderResumePanel(revealed ? (q.resumeKeys || []) : []);
+    renderJdPanel(revealed ? (q.jdKeys || []) : []);
+  }
   renderMain();
 }
 
@@ -1625,7 +1723,7 @@ async function generateAiAnswer() {
   aiResult = null;
   renderSearch();
 
-  var systemPrompt = "You are an expert interview coach helping Tolulope Adebisi prepare for the BMO Financial Group Senior Manager, Strategic Sourcing (External Labour) role in Toronto, Canada.\n\nCANDIDATE BACKGROUND:\n" + RESUME_CONTEXT + "\n\nROLE & COMPANY CONTEXT:\n" + BMO_CONTEXT + "\n\nINTERVIEWER CONTEXT: " + stageCtx[stage] + "\n\nGenerate a strong, human, confident interview answer that:\n1. Sounds like Tolulope speaking naturally — senior Toronto market professional voice\n2. Draws on Tolulope's actual experience (Maestrogrid, Rhea Carrison, Plural Health, FITC, Krystal)\n3. References BMO-relevant context naturally (7-step framework, OSFI, rate cards, VMS, dual-panel model)\n4. Is calibrated for the specific interviewer type above\n5. Uses STAR structure for behavioral questions but leads with insight not just sequence\n6. Includes specific numbers and outcomes from the resume where relevant\n\nAlso generate a 1-2 sentence coaching note.\n\nRespond ONLY with valid JSON in this exact format (no markdown, no preamble):\n{\"answer\": \"full answer text, use \\\\n\\\\n for paragraph breaks\", \"coaching\": \"coaching note\"}";
+  var systemPrompt = "You are an expert interview coach helping Tolulope Adebisi prepare for the BMO Financial Group Senior Manager, Strategic Sourcing (External Labour) role in Toronto, Canada.\n\nCANDIDATE BACKGROUND:\n" + RESUME_CONTEXT + "\n\nROLE & COMPANY CONTEXT:\n" + BMO_CONTEXT + "\n\nINTERVIEWER CONTEXT: " + stageCtx[stage] + "\n\nGenerate a strong, human, confident interview answer that:\n1. Sounds like Tolulope speaking naturally — senior Toronto market professional voice\n2. Draws on Tolulope\'s actual experience (Maestrogrid, Rhea Carrison, Plural Health, FITC, Krystal)\n3. References BMO-relevant context naturally (7-step framework, OSFI, rate cards, VMS, dual-panel model)\n4. Is calibrated for the specific interviewer type above\n5. Uses STAR structure for behavioral questions but leads with insight not just sequence\n6. Includes specific numbers and outcomes from the resume where relevant\n\nAlso generate:\n- A 1-2 sentence coaching note\n- resumeKeys: which resume sections this answer draws on. Choose ONLY from: [maestrogrid, rhea, plural, fitc, krystal, skills]\n- jdKeys: which BMO JD sections this answer targets. Choose ONLY from: [ext_labour, category_strategy, sourcing_exec, demand_mgmt, supplier_perf, advisory, risk_reg, operating_model]\n\nRespond ONLY with valid JSON — no markdown, no preamble:\n{\"answer\": \"answer text with \\\\n\\\\n for paragraph breaks\", \"coaching\": \"coaching note\", \"resumeKeys\": [\"maestrogrid\", \"rhea\"], \"jdKeys\": [\"category_strategy\", \"ext_labour\"]}"
 
   try {
     var resp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1658,12 +1756,16 @@ async function generateAiAnswer() {
     } catch(e) {
       parsed = { answer: raw, coaching: 'Review and adapt this answer to your own voice.' };
     }
-    aiResult = { q: question, a: parsed.answer || raw, coaching: parsed.coaching || '', stage: stage };
+    aiResult = { q: question, a: parsed.answer || raw, coaching: parsed.coaching || '', stage: stage, resumeKeys: parsed.resumeKeys || [], jdKeys: parsed.jdKeys || [] };
   } catch(e) {
-    aiResult = { q: question, a: 'Error: ' + e.message + '. Check your API key and try again.', coaching: '', stage: stage, isError: true };
+    aiResult = { q: question, a: 'Error: ' + e.message + '. Check your API key and try again.', coaching: '', stage: stage, isError: true, resumeKeys: [] };
   }
 
   aiGenerating = false;
+  if (aiResult && !aiResult.isError) {
+    renderResumePanel(aiResult.resumeKeys || []);
+    renderJdPanel(aiResult.jdKeys || []);
+  }
   renderSearch();
 }
 
@@ -1673,13 +1775,17 @@ function saveAiAnswer() {
     category: 'AI Generated',
     q: aiResult.q,
     a: aiResult.a,
-    coaching: aiResult.coaching || 'AI-generated answer — adapt to your own voice before using.'
+    coaching: aiResult.coaching || 'AI-generated answer — adapt to your own voice before using.',
+    resumeKeys: aiResult.resumeKeys || [],
+    jdKeys: aiResult.jdKeys || []
   };
   if (!customQuestions[aiResult.stage]) customQuestions[aiResult.stage] = [];
   customQuestions[aiResult.stage].push(entry);
   searchQuery = aiResult.q.substring(0, 50);
   aiResult = null;
   aiDraftQuestion = '';
+  renderResumePanel([]);
+  renderJdPanel([]);
   renderSearch();
 }
 
@@ -1762,13 +1868,28 @@ var RESUME_SECTIONS = [
 function renderResumePanel(activeKeys) {
   var container = document.getElementById('resumeSections');
   if (!container) return;
+  var hasActive = activeKeys && activeKeys.length > 0;
   var html = '';
+
+  if (!hasActive && (currentStage === 'hr' || currentStage === 'hm' || currentStage === 'tp' || currentStage === 'vp')) {
+    var qs = getQs();
+    var q = qs[currentQ];
+    var hasKeys = q && q.resumeKeys && q.resumeKeys.length > 0;
+    if (hasKeys && mode === 'practice' && !revealed) {
+      html += '<div style="background:#f0f4ff;border:1px solid #b5d4f4;border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:10px;font-size:12px;color:#185fa5;line-height:1.5">' +
+        '<strong>Resume references hidden</strong><br>Reveal the answer to see which parts of your resume speak to this question.' +
+        '</div>';
+    }
+  }
+
   RESUME_SECTIONS.forEach(function(s) {
-    var isActive = activeKeys && activeKeys.length > 0 && activeKeys.indexOf(s.key) > -1;
+    var isActive = hasActive && activeKeys.indexOf(s.key) > -1;
     html += '<div class="resume-section' + (isActive ? ' highlighted' : '') + '">';
-    if (isActive) html += '<div class="resume-highlight-label">Relevant to this question</div>';
+    if (isActive) {
+      html += '<div class="resume-highlight-label">&#10003; Referenced in answer</div>';
+    }
     html += '<div class="resume-section-title">' + s.title + '</div>';
-    html += '<div class="resume-section-body" style="font-size:10px;color:#888;margin-bottom:3px">' + s.subtitle + '</div>';
+    html += '<div class="resume-section-body" style="font-size:11.5px;color:#888;margin-bottom:4px">' + s.subtitle + '</div>';
     html += '<div class="resume-section-body">' + s.body + '</div>';
     html += '</div>';
   });
@@ -1784,7 +1905,181 @@ function toggleResumePanel() {
   if (btn) btn.textContent = resumePanelVisible ? 'Hide' : 'Show resume';
 }
 
+
+var JD_SECTIONS = [
+  {
+    key: "ext_labour",
+    title: "Category Scope — External Labour",
+    body: "Leads end-to-end sourcing for BMO's external labour category, including professional services, advisory, staff augmentation, technology services and managed services across onshore, nearshore, and offshore models. Partners closely with business leaders to understand workforce needs, upcoming strategic plans, and transformation initiatives."
+  },
+  {
+    key: "category_strategy",
+    title: "Category Strategy & End-to-End Sourcing Execution",
+    body: "Provides strategic input into business decisions as a trusted advisor. Develops Category Management Framework and sourcing strategies including roadmap, priorities, and strategic execution plan. Manages and implements sourcing strategy projects throughout their lifecycle, including competitive events (RFI/RFP), supplier selection, and contract negotiations/renewals. Conducts market and supply analysis to identify preferred suppliers and optimize supplier mix across staffing firms, niche providers, and SOW partners."
+  },
+  {
+    key: "sourcing_exec",
+    title: "Commercial Models & Competitive Events",
+    body: "Leads development and ongoing management of External Labor commercial models including rate cards, markup frameworks, milestone-based SOW pricing, and value-based pricing constructs. Demonstrates strong knowledge of External Labour practices benchmarked against best-in-class standards."
+  },
+  {
+    key: "demand_mgmt",
+    title: "Demand Management & Workforce Planning Partnership",
+    body: "Identifies, develops, and implements demand management and cost reduction opportunities while maximizing overall value. Partners with HR/workforce planning and functional leaders to align sourcing strategies to workforce demand signals (skill scarcity, time-to-fill, capacity constraints, seasonality). Provides labor market intelligence (skills supply, geographic rate variability, and trends) to inform category strategy, budgeting, and demand shaping."
+  },
+  {
+    key: "supplier_perf",
+    title: "Supplier Performance, Governance & SRM",
+    body: "Evaluates and selects suppliers; performs initial supplier risk assessment and provides input on key supplier risks/metrics. Develops strategies and approaches to manage risk and support the business strategy and goals. Directs supplier contract negotiations and contract lifecycle activities (create/modify/renew/terminate)."
+  },
+  {
+    key: "advisory",
+    title: "Advisory & Consulting Elements",
+    body: "Delivers strategic consulting to internal stakeholders on sourcing frameworks, commercial deal structuring, and supplier negotiations for high-value external labor engagements (contingent and SOW). Prepares and presents data-driven consulting reports to senior leadership outlining sourcing strategies, risk assessments, and investment recommendations. Maintains or refreshes category playbooks, commercial models, and key contractual terms/frameworks."
+  },
+  {
+    key: "risk_reg",
+    title: "Risk Management & Regulatory Compliance",
+    body: "In-depth knowledge of relevant risk and regulatory requirements; demonstrated ability to assess risks (identify, quantify, prioritize). Takes measured risks while protecting the bank by applying the Risk Management Framework and making sound, risk-informed decisions aligned to business strategy and policy/regulatory requirements."
+  },
+  {
+    key: "operating_model",
+    title: "Operating Model & Ways of Working",
+    body: "Manages multiple programs/projects simultaneously; resolves conflicting priorities and objectives. Operates at a group/enterprise-wide level and serves as a specialist resource to senior leaders and stakeholders. Strong analytical and problem-solving skills; ability to compile, synthesize, and draw insights from a variety of sources; data-driven decision making. Excellent verbal and written communication skills; influence skills; proven ability to communicate recommendations/results to all managerial levels."
+  }
+];
+
+var jdPanelVisible = true;
+
+function renderJdPanel(activeKeys) {
+  var container = document.getElementById('jdSections');
+  if (!container) return;
+  var hasActive = activeKeys && activeKeys.length > 0;
+  var html = '';
+
+  if (!hasActive && (currentStage === 'hr' || currentStage === 'hm' || currentStage === 'tp' || currentStage === 'vp')) {
+    var qs = getQs();
+    var q = qs[currentQ];
+    var hasKeys = q && q.jdKeys && q.jdKeys.length > 0;
+    if (hasKeys && mode === 'practice' && !revealed) {
+      html += '<div style="background:#fff5f5;border:1px solid #f7c1c1;border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:10px;font-size:12px;color:#a32d2d;line-height:1.5">' +
+        '<strong>JD references hidden</strong><br>Reveal the answer to see which requirements this question targets.' +
+        '</div>';
+    }
+  }
+
+  JD_SECTIONS.forEach(function(s) {
+    var isActive = hasActive && activeKeys.indexOf(s.key) > -1;
+    html += '<div class="jd-section' + (isActive ? ' highlighted' : '') + '">';
+    if (isActive) html += '<div class="jd-highlight-label">&#10003; Referenced in answer</div>';
+    html += '<div class="jd-section-title">' + s.title + '</div>';
+    html += '<div class="jd-section-body">' + s.body + '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function toggleJdPanel() {
+  jdPanelVisible = !jdPanelVisible;
+  var panel = document.getElementById('jdPanel');
+  var btn = document.querySelector('.jd-toggle-btn');
+  var handle = document.getElementById('jdResizeHandle');
+  if (panel) panel.classList.toggle('collapsed', !jdPanelVisible);
+  if (btn) btn.textContent = jdPanelVisible ? 'Collapse' : '';
+  if (handle) handle.style.display = jdPanelVisible ? '' : 'none';
+}
+
+(function() {
+  var handle = document.getElementById('jdResizeHandle');
+  var panel  = document.getElementById('jdPanel');
+  var wrap   = document.getElementById('pageWrap');
+  if (!handle || !panel || !wrap) return;
+  var dragging = false, startX = 0, startW = 0;
+  handle.addEventListener('mousedown', function(e) {
+    if (!jdPanelVisible) return;
+    dragging = true; startX = e.clientX; startW = panel.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    var delta = startX - e.clientX;
+    var newW = Math.min(Math.max(startW + delta, 180), wrap.offsetWidth * 0.6);
+    panel.style.width = newW + 'px';
+    panel.style.minWidth = newW + 'px';
+  });
+  document.addEventListener('mouseup', function() {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+})();
+
+(function() {
+  var handle = document.getElementById('resizeHandle');
+  var panel  = document.getElementById('resumePanel');
+  var wrap   = document.getElementById('pageWrap');
+  if (!handle || !panel || !wrap) return;
+
+  var dragging = false;
+  var startX   = 0;
+  var startW   = 0;
+
+  handle.addEventListener('mousedown', function(e) {
+    dragging = true;
+    startX   = e.clientX;
+    startW   = panel.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor    = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    var delta  = e.clientX - startX;
+    var newW   = Math.min(Math.max(startW + delta, 180), wrap.offsetWidth * 0.75);
+    panel.style.width    = newW + 'px';
+    panel.style.minWidth = newW + 'px';
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor     = '';
+    document.body.style.userSelect = '';
+  });
+
+  handle.addEventListener('touchstart', function(e) {
+    dragging = true;
+    startX   = e.touches[0].clientX;
+    startW   = panel.offsetWidth;
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('touchmove', function(e) {
+    if (!dragging) return;
+    var delta = e.touches[0].clientX - startX;
+    var newW  = Math.min(Math.max(startW + delta, 180), wrap.offsetWidth * 0.75);
+    panel.style.width    = newW + 'px';
+    panel.style.minWidth = newW + 'px';
+  }, { passive: true });
+
+  document.addEventListener('touchend', function() {
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor     = '';
+    document.body.style.userSelect = '';
+  });
+})();
+
 renderResumePanel([]);
+renderJdPanel([]);
 renderNav();
 renderMain();
 </script>
