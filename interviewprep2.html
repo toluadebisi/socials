@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Coach — Tolulope Adebisi | GE Healthcare Sourcing Integration</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f6f3; color: #1a1a1a; min-height: 100vh; }
+  
+  .app-header { background: #3c1053; color: #fff; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+  .app-header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .app-header p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .role-badge { background: #8132b8; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .nav-tabs { display: flex; gap: 0; background: #fff; border-bottom: 1px solid #e0ddd6; overflow-x: auto; padding: 0 1.5rem; }
+  .tab-btn { padding: 0.85rem 1.2rem; font-size: 13px; font-weight: 500; color: #888; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.15s; }
+  .tab-btn:hover { color: #1a1a1a; }
+  .tab-btn.active { color: #3c1053; border-bottom-color: #3c1053; font-weight: 600; }
+
+  .stage-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: 6px; vertical-align: middle; letter-spacing: 0.03em; }
+  .badge-hr { background: #e8f4e8; color: #2e7d32; }
+  .badge-hm { background: #e3f0fb; color: #185fa5; }
+  .badge-tp { background: #faeeda; color: #854f0b; }
+  .badge-vp { background: #fbeaf0; color: #993556; }
+  .badge-tip { background: #f1effe; color: #534ab7; }
+  .badge-search { background: #e1f5ee; color: #0f6e56; }
+
+  .page-wrap { display: flex; gap: 0; min-height: calc(100vh - 140px); overflow: hidden; }
+
+  .resume-panel { width: 560px; min-width: 180px; max-width: 75vw; background: #fff; border-right: none; overflow-y: auto; padding: 1.25rem 1.5rem; flex-shrink: 0; position: relative; }
+  .resume-panel-header { font-size: 11px; font-weight: 700; color: #0a2d5e; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f0ede8; display: flex; align-items: center; justify-content: space-between; }
+
+  .resize-handle { width: 6px; min-width: 6px; background: #e0ddd6; cursor: col-resize; flex-shrink: 0; position: relative; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+  .resize-handle:hover, .resize-handle.dragging { background: #0a2d5e; }
+  .resize-handle::after { content: ''; display: block; width: 2px; height: 32px; background: rgba(255,255,255,0.5); border-radius: 2px; pointer-events: none; }
+  .resume-toggle { font-size: 11px; font-weight: 500; color: #888; cursor: pointer; background: none; border: none; text-decoration: underline; }
+
+  .resume-section { border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 8px; border: 1px solid #e8e5e0; transition: background 0.25s, border-color 0.25s; background: #fafaf8; }
+  .resume-section.highlighted { background: #eeff80; border-color: #c8e600; }
+  .resume-section-title { font-size: 13px; font-weight: 700; color: #0a2d5e; margin-bottom: 3px; }
+  .resume-section.highlighted .resume-section-title { color: #2d4a00; }
+  .resume-section-body { font-size: 12.5px; color: #555; line-height: 1.6; }
+  .resume-section.highlighted .resume-section-body { color: #2d3a00; }
+  .resume-highlight-label { font-size: 10.5px; font-weight: 700; color: #5a7a00; background: #d4f000; padding: 2px 8px; border-radius: 6px; margin-bottom: 5px; display: inline-block; }
+  .resume-section.highlighted { background: #eeff80; border-color: #c8e600; animation: highlightFlash 0.4s ease-out; }
+  @keyframes highlightFlash { 0% { background: #fff9a0; } 100% { background: #eeff80; } }
+
+  .main-area { flex: 1; min-width: 0; padding-left: 2rem; }
+  .main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .stage-intro { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+  .stage-intro h2 { font-size: 16px; font-weight: 600; color: #0a2d5e; margin-bottom: 0.4rem; }
+  .stage-intro p { font-size: 13.5px; color: #555; line-height: 1.6; }
+  .stage-intro .tips { margin-top: 0.75rem; display: flex; gap: 8px; flex-wrap: wrap; }
+  .tip-chip { font-size: 11.5px; background: #f0f4ff; color: #185fa5; padding: 3px 10px; border-radius: 20px; border: 0.5px solid #b5d4f4; }
+
+  .progress-bar-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
+  .progress-bar { flex: 1; height: 4px; background: #e0ddd6; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #0a2d5e; border-radius: 2px; transition: width 0.3s; }
+  .progress-label { font-size: 12px; color: #888; white-space: nowrap; }
+
+  .card { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 14px; padding: 1.75rem; min-height: 340px; display: flex; flex-direction: column; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; gap: 12px; }
+  .q-number { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; }
+  .q-category { font-size: 11px; color: #888; background: #f5f4f0; padding: 3px 9px; border-radius: 10px; white-space: nowrap; }
+  
+  .question-text { font-size: 17px; font-weight: 500; line-height: 1.55; color: #111; flex: 1; }
+  
+  .reveal-btn { margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: #0a2d5e; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; align-self: flex-start; }
+  .reveal-btn:hover { background: #0d3a7a; }
+
+  .answer-block { margin-top: 1.25rem; border-top: 1px solid #f0ede8; padding-top: 1.25rem; display: none; }
+  .answer-block.visible { display: block; }
+  .answer-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; color: #2e7d32; text-transform: uppercase; margin-bottom: 0.6rem; }
+  .answer-text { font-size: 14.5px; line-height: 1.75; color: #222; }
+
+  .coaching-note { margin-top: 1rem; background: #f9f6ff; border: 0.5px solid #cdc8f5; border-radius: 8px; padding: 0.85rem 1rem; font-size: 13px; color: #534ab7; line-height: 1.6; }
+  .coaching-note span { font-weight: 600; }
+
+  .nav-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 1.5rem; }
+  .nav-btn { padding: 0.65rem 1.25rem; border: 1px solid #d0cdc8; background: #fff; border-radius: 8px; font-size: 13px; font-weight: 500; color: #444; cursor: pointer; transition: all 0.15s; }
+  .nav-btn:hover:not(:disabled) { background: #f5f4f0; border-color: #aaa; }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-btn.primary { background: #0a2d5e; color: #fff; border-color: #0a2d5e; }
+  .nav-btn.primary:hover:not(:disabled) { background: #0d3a7a; }
+
+  .mode-toggle { display: flex; gap: 8px; align-items: center; background: #f5f4f0; border-radius: 8px; padding: 4px; margin-bottom: 1.25rem; }
+  .mode-btn { padding: 0.45rem 1rem; font-size: 13px; font-weight: 500; border: none; background: none; border-radius: 6px; cursor: pointer; color: #888; transition: all 0.15s; }
+  .mode-btn.active { background: #fff; color: #0a2d5e; box-shadow: 0 1px 3px rgba(0,0,0,0.08); font-weight: 600; }
+
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .stat-card { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 10px; padding: 1rem; }
+  .stat-card .stat-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-card .stat-val { font-size: 22px; font-weight: 600; color: #0a2d5e; }
+  .stat-card .stat-sub { font-size: 12px; color: #888; margin-top: 2px; }
+
+  .completed-check { display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: #2e7d32; color: #fff; text-align: center; line-height: 18px; font-size: 11px; margin-left: 6px; }
+  
+  .score-row { display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
+  .score-btn { padding: 0.45rem 1rem; font-size: 12px; border-radius: 20px; border: 1px solid; cursor: pointer; font-weight: 500; transition: all 0.12s; }
+  .score-btn.easy { border-color: #2e7d32; color: #2e7d32; background: #f0f8f0; }
+  .score-btn.easy:hover, .score-btn.easy.picked { background: #2e7d32; color: #fff; }
+  .score-btn.medium { border-color: #ba7517; color: #ba7517; background: #fef8ee; }
+  .score-btn.medium:hover, .score-btn.medium.picked { background: #ba7517; color: #fff; }
+  .score-btn.hard { border-color: #a32d2d; color: #a32d2d; background: #fef0f0; }
+  .score-btn.hard:hover, .score-btn.hard.picked { background: #a32d2d; color: #fff; }
+
+  .done-screen { text-align: center; padding: 3rem 2rem; }
+  .done-screen h3 { font-size: 22px; font-weight: 600; color: #0a2d5e; margin-bottom: 0.75rem; }
+  .done-screen p { font-size: 15px; color: #666; line-height: 1.7; max-width: 480px; margin: 0 auto 1.5rem; }
+  .done-stats { display: flex; gap: 16px; justify-content: center; margin: 1.5rem 0; flex-wrap: wrap; }
+  .done-stat { text-align: center; }
+  .done-stat .n { font-size: 28px; font-weight: 700; color: #0a2d5e; }
+  .done-stat .l { font-size: 12px; color: #888; }
+
+  .search-wrap { position: relative; margin-bottom: 1.25rem; }
+  .search-input { width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem; font-size: 15px; border: 1px solid #d0cdc8; border-radius: 10px; background: #fff; color: #1a1a1a; outline: none; transition: border-color 0.15s; }
+  .search-input:focus { border-color: #0a2d5e; }
+  .search-icon { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 16px; pointer-events: none; }
+  .search-clear { position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: #aaa; font-size: 18px; cursor: pointer; line-height: 1; padding: 0; }
+  .search-results-label { font-size: 12px; color: #888; margin-bottom: 0.75rem; font-weight: 500; }
+  .search-result-card { background: #fff; border: 0.5px solid #e0ddd6; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+  .search-result-card:hover { border-color: #0a2d5e; box-shadow: 0 0 0 2px rgba(10,45,94,0.07); }
+  .search-result-card .sr-stage { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #888; margin-bottom: 4px; }
+  .search-result-card .sr-q { font-size: 14.5px; font-weight: 500; color: #111; line-height: 1.5; margin-bottom: 6px; }
+  .search-result-card .sr-preview { font-size: 13px; color: #666; line-height: 1.55; }
+  .search-result-card .sr-cat { display: inline-block; font-size: 10px; background: #f5f4f0; color: #777; padding: 2px 8px; border-radius: 8px; margin-top: 6px; }
+  .no-results { text-align: center; padding: 2.5rem 1rem; }
+  .no-results h3 { font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem; }
+  .no-results p { font-size: 14px; color: #666; margin-bottom: 1.5rem; line-height: 1.6; }
+  .ai-generate-box { background: #fff; border: 1px dashed #b5d4f4; border-radius: 12px; padding: 1.5rem; margin-top: 0.5rem; }
+  .ai-generate-box h4 { font-size: 15px; font-weight: 600; color: #0a2d5e; margin-bottom: 0.4rem; }
+  .ai-generate-box p { font-size: 13px; color: #666; margin-bottom: 1rem; line-height: 1.6; }
+  .ai-generate-btn { padding: 0.7rem 1.5rem; background: #0a2d5e; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+  .ai-generate-btn:hover:not(:disabled) { background: #0d3a7a; }
+  .ai-generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ai-result-card { background: #f8fbff; border: 1px solid #b5d4f4; border-radius: 12px; padding: 1.5rem; margin-top: 1rem; }
+  .ai-result-card .ai-q-label { font-size: 11px; font-weight: 700; color: #185fa5; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .ai-result-card .ai-q-text { font-size: 16px; font-weight: 500; color: #111; margin-bottom: 1rem; line-height: 1.5; }
+  .ai-result-card .ai-a-label { font-size: 11px; font-weight: 700; color: #2e7d32; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .ai-result-card .ai-save-row { display: flex; gap: 10px; margin-top: 1.25rem; flex-wrap: wrap; }
+  .ai-save-btn { padding: 0.6rem 1.2rem; font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; border: 1px solid #3c1053; background: #3c1053; color: #fff; }
+  .ai-save-btn:hover { background: #2a0b3a; }
+  .ai-discard-btn { padding: 0.6rem 1.2rem; font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; border: 1px solid #d0cdc8; background: #fff; color: #666; }
+  .ai-discard-btn:hover { background: #f5f4f0; }
+  .api-key-bar { background: #fff; border-bottom: 1px solid #e0ddd6; padding: 0.65rem 2rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .api-key-bar label { font-size: 12px; font-weight: 600; color: #555; white-space: nowrap; }
+  .api-key-input-wrap { position: relative; flex: 1; min-width: 220px; max-width: 380px; }
+  .api-key-input { width: 100%; padding: 0.45rem 2.5rem 0.45rem 0.75rem; font-size: 13px; border: 1px solid #d0cdc8; border-radius: 6px; color: #1a1a1a; background: #fafaf8; font-family: monospace; outline: none; }
+  .api-key-input:focus { border-color: #0a2d5e; }
+  .api-key-toggle { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 13px; cursor: pointer; color: #888; }
+  .api-key-status { font-size: 11.5px; font-weight: 500; padding: 3px 10px; border-radius: 10px; }
+  .api-key-status.set { background: #e8f4e8; color: #2e7d32; }
+  .api-key-status.unset { background: #fef0f0; color: #a32d2d; }
+  .api-key-save-btn { padding: 0.4rem 1rem; font-size: 12px; font-weight: 500; border: 1px solid #0a2d5e; background: #0a2d5e; color: #fff; border-radius: 6px; cursor: pointer; }
+  .api-key-save-btn:hover { background: #0d3a7a; }
+  .api-key-note { font-size: 11px; color: #999; flex-basis: 100%; margin-top: 2px; }
+  .generating-indicator { display: flex; align-items: center; gap: 10px; padding: 1.25rem; font-size: 14px; color: #185fa5; }
+  .dot-pulse { display: flex; gap: 4px; }
+  .dot-pulse span { width: 6px; height: 6px; border-radius: 50%; background: #185fa5; animation: pulse 1.2s infinite; }
+  .dot-pulse span:nth-child(2) { animation-delay: 0.2s; }
+  .dot-pulse span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+  .search-expanded-card { background: #fff; border: 1px solid #0a2d5e; border-radius: 14px; padding: 1.5rem; margin-bottom: 10px; }
+  .search-expanded-card .se-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; gap: 12px; }
+  .search-expanded-card .se-close { background: none; border: none; font-size: 20px; color: #aaa; cursor: pointer; line-height: 1; padding: 0; }
+  .search-expanded-card .se-coaching { margin-top: 0.85rem; background: #f9f6ff; border: 0.5px solid #cdc8f5; border-radius: 8px; padding: 0.75rem 1rem; font-size: 13px; color: #534ab7; line-height: 1.6; }
+
+
+  .jd-resize-handle { width: 6px; min-width: 6px; background: #e0ddd6; cursor: col-resize; flex-shrink: 0; position: relative; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+  .jd-resize-handle:hover, .jd-resize-handle.dragging { background: #0f6e56; }
+  .jd-resize-handle::after { content: ''; display: block; width: 2px; height: 32px; background: rgba(255,255,255,0.5); border-radius: 2px; pointer-events: none; }
+
+  .jd-panel { width: 420px; min-width: 180px; max-width: 60vw; background: #fff; border-left: none; overflow-y: auto; padding: 1.25rem 1.5rem; flex-shrink: 0; transition: width 0.2s; }
+  .jd-panel.collapsed { width: 44px !important; min-width: 44px; overflow: hidden; padding: 0; }
+  .jd-panel-header { font-size: 11px; font-weight: 700; color: #0f6e56; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f0ede8; display: flex; align-items: center; justify-content: space-between; white-space: nowrap; }
+  .jd-toggle-btn { font-size: 11px; font-weight: 500; color: #888; cursor: pointer; background: none; border: none; text-decoration: underline; white-space: nowrap; }
+  .jd-collapsed-tab { display: none; writing-mode: vertical-rl; text-orientation: mixed; font-size: 11px; font-weight: 700; color: #0f6e56; letter-spacing: 0.1em; text-transform: uppercase; padding: 1rem 0.6rem; cursor: pointer; white-space: nowrap; height: 100%; align-items: center; justify-content: center; }
+  .jd-panel.collapsed .jd-collapsed-tab { display: flex; }
+  .jd-panel.collapsed .jd-panel-inner { display: none; }
+
+  .jd-section { border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 8px; border: 1px solid #e8e5e0; background: #fafaf8; transition: background 0.25s, border-color 0.25s; }
+  .jd-section.highlighted { background: #eeff80; border-color: #c8e600; animation: highlightFlash 0.4s ease-out; }
+  .jd-section-title { font-size: 12px; font-weight: 700; color: #0f6e56; margin-bottom: 4px; }
+  .jd-section.highlighted .jd-section-title { color: #5a7a00; }
+  .jd-section-body { font-size: 12px; color: #555; line-height: 1.6; }
+  .jd-section.highlighted .jd-section-body { color: #2d3a00; }
+  .jd-highlight-label { font-size: 10.5px; font-weight: 700; color: #5a7a00; background: #d4f000; padding: 2px 8px; border-radius: 6px; margin-bottom: 5px; display: inline-block; }
+
+  @media (max-width: 768px) {
+    .resume-panel { display: none; }
+    .jd-panel { display: none; }
+    .jd-resize-handle { display: none; }
+    .app-header { padding: 1rem; }
+    .main { padding: 1rem; }
+    .card { padding: 1.25rem; }
+    .question-text { font-size: 15px; }
+    .nav-tabs { padding: 0 0.5rem; }
+    .tab-btn { padding: 0.75rem 0.85rem; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div>
+    <h1>Interview Coach — Tolulope Adebisi</h1>
+    <p>GE Healthcare · Sourcing Integration Project Lead · IT & Indirect</p>
+  </div>
+  <div class="role-badge">GE HealthCare</div>
+</div>
+
+<div class="nav-tabs" id="navTabs"></div>
+
+<div class="api-key-bar" id="apiKeyBar">
+  <label>Anthropic API Key</label>
+  <div class="api-key-input-wrap">
+    <input class="api-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off" />
+    <button class="api-key-toggle" onclick="toggleKeyVisibility()" id="keyToggleBtn" title="Show/hide key">&#128065;</button>
+  </div>
+  <button class="api-key-save-btn" onclick="saveApiKey()">Save key</button>
+  <span class="api-key-status unset" id="apiKeyStatus">No key saved</span>
+  <span class="api-key-note">Your key is stored only in this browser session — never sent anywhere except directly to Anthropic's API.</span>
+</div>
+
+<div class="page-wrap" id="pageWrap">
+  <div class="resume-panel" id="resumePanel">
+    <div class="resume-panel-header">
+      Resume
+      <button class="resume-toggle" onclick="toggleResumePanel()">Hide</button>
+    </div>
+    <div id="resumeSections"></div>
+  </div>
+  <div class="resize-handle" id="resizeHandle" title="Drag to resize"></div>
+  <div class="main-area">
+    <div class="main" id="mainContent"></div>
+  </div>
+  <div class="jd-resize-handle" id="jdResizeHandle" title="Drag to resize JD panel"></div>
+  <div class="jd-panel" id="jdPanel">
+    <div class="jd-collapsed-tab" onclick="toggleJdPanel()">Job Description</div>
+    <div class="jd-panel-inner">
+      <div class="jd-panel-header">
+        Job Description
+        <button class="jd-toggle-btn" onclick="toggleJdPanel()">Collapse</button>
+      </div>
+      <div id="jdSections"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CANDIDATE = {
+  name: "Tolulope Adebisi",
+  current: "Senior Procurement Manager, Maestrogrid (Toronto, Sept 2023–present)",
+  years: "10+ years across strategic sourcing, IT software, external labour, and complex vendor governance",
+  education: "B.Eng Mechanical Engineering, University of Ilorin + Algonquin College"
+};
+
+const STAGES = [
+  { id: "overview", label: "Overview", badge: null },
+  { id: "hr", label: "HR Screen", badge: "HR", badgeClass: "badge-hr" },
+  { id: "hm", label: "Hiring Manager", badge: "HM", badgeClass: "badge-hm" },
+  { id: "tp", label: "Team Presentation", badge: "Panel", badgeClass: "badge-tp" },
+  { id: "vp", label: "VP / Executive", badge: "VP", badgeClass: "badge-vp" },
+  { id: "tips", label: "Power Tips", badge: "Pro", badgeClass: "badge-tip" },
+  { id: "search", label: "Ask AI", badge: "AI", badgeClass: "badge-search" }
+];
+
+const QUESTIONS = {
+  hr: [
+    {
+      category: "Elevator Pitch",
+      q: "Tell me about yourself and your sourcing background.",
+      a: `I'm a strategic sourcing professional with over ten years of experience, specializing in complex enterprise categories—specifically IT software, professional services, and external labour. I've spent my career navigating highly fragmented supplier landscapes and building structure out of them.
+
+Currently, I'm a Senior Procurement Manager at Maestrogrid here in Toronto, where I built the enterprise category management framework for IT software and external labour from scratch. Before that, I managed multi-region portfolios at Rhea Carrison, delivering 12% cost savings across strategic technology contracts, and handled IT procurement in a heavily regulated healthcare environment at Plural Health.
+
+What makes me a strong fit for this Integration Lead role is my background in driving cross-functional alignment. In M&A integration, you inherit a fragmented, overlapping supplier base and have to work with Legal, Finance, and legacy IT owners to figure out what stays and what goes. I've spent years running exactly those kinds of data-driven supplier rationalization exercises, negotiating complex software licensing, and managing the risks associated with transitioning vendors.`,
+      coaching: "Highlight your ability to build structure out of fragmentation. M&A is chaotic; show that your experience at Maestrogrid (building from scratch) and Rhea Carrison (multi-region) translates perfectly to standardizing acquired supplier lists.",
+      resumeKeys: ["maestrogrid", "rhea", "plural"],
+      jdKeys: ["integration_scope", "disposition_strategy", "project_mgmt"]
+    },
+    {
+      category: "Motivations",
+      q: "Why are you interested in a Sourcing Integration Project Lead role specifically?",
+      a: `M&A integration is one of the most complex and high-stakes environments in sourcing, and that's exactly where I want to operate. 
+
+In a standard steady-state procurement role, you are managing a defined cycle. In an integration, you are inheriting a puzzle. You have overlapping IT systems, redundant software licenses, and legacy business leaders who are protective of their existing vendors. The challenge isn't just negotiating a contract; it's triangulating data to build a master supplier list, running a strategic disposition analysis—deciding whether to consolidate, retain, or exit—and then bringing cross-functional teams along on that journey.
+
+I'm drawn to this role because it requires an equal mix of hard sourcing skills—like IT contract renewals and risk mitigation—and project management leadership. That cross-functional, highly visible project execution is where my strengths lie.`,
+      coaching: "Use the language of the JD explicitly: 'master supplier list', 'disposition analysis', 'consolidate, retain, exit'. This shows you aren't just looking for any sourcing job, but understand the specific mechanics of an integration.",
+      resumeKeys: ["skills"],
+      jdKeys: ["integration_scope", "disposition_strategy"]
+    },
+    {
+      category: "Experience Scope",
+      q: "This role requires managing IT and software categories. Can you talk about your experience there?",
+      a: `IT and software have been core to my sourcing portfolio for my entire career. 
+
+At Maestrogrid, I architected the category framework for our IT software portfolio, which meant moving away from decentralized, ad-hoc purchasing into a governed model. I've led competitive RFPs for enterprise platforms, but more importantly for an integration context, I've managed complex renewals and licensing amendments. 
+
+When you acquire a company, the biggest hidden risks are often in IT software—assignment clauses, enterprise versus entity-specific licensing, and true-up penalties. I'm very comfortable reading those schedules, understanding the commercial gaps, and partnering with the CIO's office to execute a software consolidation strategy without breaking business continuity.`,
+      coaching: "Don't just say you buy software. Talk about the *complexities* of software (assignment clauses, enterprise licensing) because those are the exact nightmares an Integration Lead has to solve during an M&A event.",
+      resumeKeys: ["maestrogrid", "fitc", "skills"],
+      jdKeys: ["execution", "risk_mgmt"]
+    },
+    {
+      category: "Timeline & Logistics",
+      q: "Are you comfortable managing multiple competing priorities in a fast-paced environment? What is your notice period?",
+      a: `Absolutely. At Rhea Carrison, I managed a multi-region portfolio where I was simultaneously running rate card benchmarking, executing enterprise RFPs, and building vendor governance frameworks. Integrating an acquisition is inherently fast-paced and ambiguous, and I rely on strong project management discipline to keep the workstreams moving.
+
+Regarding my notice period, I require four weeks to ensure a clean handoff at my current role, which is how I'd manage any transition. I am fully authorized to work in Canada and ready to dive into this project.`,
+      coaching: "Keep this brief and confident. M&A requires high adaptability; your multi-region experience proves you can handle spinning plates.",
+      resumeKeys: ["rhea"],
+      jdKeys: ["project_mgmt"]
+    }
+  ],
+
+  hm: [
+    {
+      category: "Disposition Strategy",
+      q: "Walk me through how you would develop a strategic disposition recommendation (consolidate, retain, exit) for an acquired company's supplier base.",
+      a: `It starts with data triangulation, because in an acquisition, the acquired company's contract repository rarely matches their actual AP spend. 
+
+Phase one is building the master supplier list. I pull AP data for the last 12 months, cross-reference it with whatever contract database they have, and map it against our own enterprise supplier list. 
+
+Phase two is categorization and overlap analysis. If we both use Salesforce, but on different instances, that’s a 'Consolidate' recommendation driven by IT architecture. If they use a niche clinical or operational vendor that we don't have an equivalent for, and the business critical path relies on it, that's a 'Retain'. If they are using a secondary software tool where our enterprise already has a global site license for a competitor, that's an 'Exit/Re-source'.
+
+Phase three is assessing the contract mechanics. A disposition strategy isn't just what we *want* to do; it's what the contract *allows*. I review the assignment clauses, termination-for-convenience rights, and expiration dates. 
+
+Finally, I take these draft recommendations to the integration governance committee—Legal, IT, Finance, and the business owners—to get alignment. The output is a prioritized integration roadmap where every supplier has a defined action plan.`,
+      coaching: "This is the core of the job. Show the step-by-step process: Data Triangulation -> Overlap Analysis -> Contract Mechanics -> Governance Alignment. Use the exact words: Consolidate, Retain, Exit.",
+      resumeKeys: ["maestrogrid", "krystal"],
+      jdKeys: ["disposition_strategy", "project_mgmt"]
+    },
+    {
+      category: "IT & Software Sourcing",
+      q: "IT and software represent a substantial share of this integration. What are the specific risks you look for when integrating software vendors?",
+      a: `Software is where the most expensive integration mistakes happen. There are three specific risks I immediately hunt for.
+
+First is 'Assignment and Change of Control' clauses. Many software vendors use an acquisition as a trigger to force a renegotiation. I need to know immediately if the acquired company’s contracts require vendor consent to assign the licenses to the parent company.
+
+Second is licensing scope and metrics. If the parent company has an 'Enterprise' license, does the definition of 'Enterprise' automatically cover newly acquired entities? Conversely, if the acquired company pays by user/seat, and we want to consolidate, what are the true-up costs and early termination penalties?
+
+Third is data security and compliance. In my experience at Plural Health in a regulated environment, integrating a new IT vendor means integrating their risk posture. If we are retaining an acquired company's software, I need to ensure their SOC 2 or ISO certifications meet our enterprise standards before we connect them to our network.
+
+I mitigate these by partnering with IT Architecture on day one to understand the target end-state, and with Legal to audit the high-spend software agreements for those specific commercial traps.`,
+      coaching: "Software integration is a minefield. Name the specific mines: Change of Control clauses, Enterprise true-ups, and Data Security. This proves you aren't just a generalist, but deeply understand the IT category.",
+      resumeKeys: ["maestrogrid", "plural", "skills"],
+      jdKeys: ["integration_scope", "risk_mgmt"]
+    },
+    {
+      category: "Cross-functional Governance",
+      q: "In an integration, you have to align Legal, Finance, IT, and Category Managers. Tell me about a time you facilitated alignment among competing cross-functional priorities.",
+      a: `At Rhea Carrison, I led a major technology sourcing initiative where the priorities were in direct conflict. IT wanted the fastest implementation possible. Finance wanted a 10% cost reduction. Legal and Risk required stringent compliance terms because of the data involved. 
+
+If I just acted as a messenger between them, the project would have stalled. Instead, I established a formal governance framework. I built an Excel-based TCO model that quantified the trade-offs. I brought the leaders into a single room and presented the data: 'Option A gets IT their timeline but misses the Finance target by 4%. Option B hits the savings target but extends implementation by three weeks.' 
+
+By putting the data on the table and forcing a shared view of the trade-offs, we moved away from departmental silos. Finance agreed to a slightly lower savings yield in exchange for Legal securing stronger liability caps, and IT got their deployment. 
+
+In an M&A context, this is exactly how I operate. I don't dictate the disposition strategy; I facilitate the governance discussions using data, ensuring that when we decide to exit or retain a supplier, all functional leaders own the decision.`,
+      coaching: "M&A requires supreme diplomacy. Show that you don't just 'schedule meetings'—you build frameworks and use data to force shared decisions across competing priorities.",
+      resumeKeys: ["rhea"],
+      jdKeys: ["governance", "project_mgmt"]
+    },
+    {
+      category: "Execution & Negotiations",
+      q: "You'll be executing straightforward actions (renewals, simple RFPs) but also supporting senior leaders on complex deals. How do you prepare for a critical negotiation?",
+      a: `Preparation is everything, and I use a very structured approach, particularly for complex IT/software negotiations.
+
+First, I establish the baseline and the objective. I pull the historical spend, current utilization rates, and identify the exact commercial gaps we need to close—for instance, removing a rigid volume floor.
+
+Second, I define our BATNA (Best Alternative to a Negotiated Agreement). In an integration, the BATNA is often moving the acquired company's users onto our existing enterprise platform. I calculate the exact cost and timeline of that migration. If the migration costs $200k and takes 3 months, that is my leverage threshold.
+
+Third, I map the supplier's incentives. Do they want the logo of the newly combined enterprise? Are they at the end of their fiscal quarter? 
+
+When I'm supporting a senior sourcing leader on a high-complexity deal, my job is to arm them with this intelligence. I prepare the briefing document: the financial model, the contract levers, the risk assessment, and the proposed 'gives and gets'. Whether I am leading a straightforward renewal or acting as the strategic second-chair on a multi-million dollar software consolidation, the analytical rigor is identical.`,
+      coaching: "Use the term BATNA. Show that you can execute the tactical work independently, but also possess the analytical chops to be the 'second-in-command' for massive executive negotiations.",
+      resumeKeys: ["maestrogrid", "fitc", "skills"],
+      jdKeys: ["execution", "disposition_strategy"]
+    },
+    {
+      category: "Handling Resistance",
+      q: "What do you do when an acquired business leader insists on keeping a legacy supplier that you have recommended for consolidation?",
+      a: `This is the most common friction point in any integration. The acquired leader has a trusted relationship with their legacy supplier, and procurement looks like the 'corporate bad guy' coming in to break it.
+
+My first step is to listen, not argue. I sit down with that leader and ask them to walk me through exactly what makes this supplier critical. Is it a unique SLA? A customized API? Or just comfort? 
+
+Once I understand their operational requirements, I pull the data. I compare their legacy supplier against our enterprise standard on a capability matrix and a TCO model. If our enterprise supplier truly cannot meet their unique operational requirement, I will change my recommendation to 'Retain'—because business continuity trumps synergy savings.
+
+However, if our enterprise supplier *can* meet the requirement, I present the side-by-side comparison. I show them the commercial gaps and the compliance risks of their legacy vendor. I frame the transition not as a loss of their vendor, but as an upgrade to a more robust, compliant enterprise platform. 
+
+You win them over with empathy for their operational needs, backed by undeniable commercial and risk data.`,
+      coaching: "Never say 'I enforce the corporate policy.' M&A is highly emotional for acquired employees. Show empathy first, capture their requirements, then use data to either justify the transition or pivot the strategy.",
+      resumeKeys: ["rhea", "plural"],
+      jdKeys: ["governance", "disposition_strategy"]
+    },
+    {
+      category: "Healthcare Compliance",
+      q: "When integrating clinical software or IT systems in a healthcare environment, how do you handle the unique compliance risks?",
+      a: `Coming from Plural Health, I know that integrating IT in a clinical environment is fundamentally different from a standard corporate integration because of patient data and care continuity.
+
+When we acquire a company with software that touches Protected Health Information (PHI), my risk mitigation strategy kicks in on day one. I don't just look at standard SOC 2 reports; I partner directly with the Data Privacy and InfoSec teams to audit their compliance with PIPEDA, HIPAA, and depending on the software, ISO 13485 for medical devices.
+
+If an acquired vendor’s IT infrastructure lacks the necessary Business Associate Agreements (BAAs) or data residency controls, that isn't just a commercial gap—it's a critical regulatory risk. In those cases, the disposition strategy is forced: we either execute an emergency compliance amendment with the vendor, or we accelerate the timeline to consolidate that software into our secure, GE Healthcare-approved enterprise systems. 
+
+You cannot capture synergy savings at the expense of patient data security. Compliance is the ultimate gatekeeper for what we retain versus what we consolidate.`,
+      coaching: "GE Healthcare operates in a highly regulated space. Mentioning PHI, PIPEDA/HIPAA, and InfoSec alignment proves you understand the stakes of MedTech integrations.",
+      resumeKeys: ["plural", "skills"],
+      jdKeys: ["risk_mgmt", "integration_scope"]
+    }
+  ],
+
+  tp: [
+    {
+      category: "Opening",
+      q: "Tell us about your background and how it applies to this Sourcing Integration project.",
+      a: `Thank you for having me. I know we have a mix of functional leaders here today, so I’ll keep my introduction focused on how my experience aligns with what this team needs to execute this integration.
+
+I have over 10 years of experience in strategic sourcing, with deep expertise in IT software, professional services, and complex indirect categories. My career has been defined by building governance and driving vendor rationalization in messy, fragmented environments.
+
+At Maestrogrid, I built the enterprise category management framework from the ground up, reducing time-to-award by 20%. At Rhea Carrison, I managed multi-region portfolios, executing commercial models that delivered 12% cost savings while aligning heavily with HR and workforce planning. And at Plural Health, I navigated highly regulated environments, which taught me how to embed risk mitigation directly into the sourcing process.
+
+In an M&A integration, you aren't just running RFPs; you are building a master supplier list out of incomplete data, driving disposition strategies (consolidate, retain, exit), and managing change across resistant business units. My background is in executing exactly this kind of cross-functional, data-driven sourcing strategy. I’m eager to learn more about the specific challenges this acquisition presents for your respective teams today.`,
+      coaching: "Panel intros must be confident and touch on the specific pain points of the audience. Hit the buzzwords: vendor rationalization, master supplier list, disposition strategies, cross-functional alignment.",
+      resumeKeys: ["maestrogrid", "rhea", "plural"],
+      jdKeys: ["integration_scope", "governance"]
+    },
+    {
+      category: "90-Day Plan",
+      q: "Walk us through your 90-day plan as the Sourcing Integration Project Lead.",
+      a: `My 90-day plan is phased: Discover, Strategize, and Execute.
+
+**Days 1-30: Discover & Baseline.** My immediate priority is establishing the single source of truth. I will build the master supplier list by triangulating the acquired company's AP spend data, contract repository, and IT architecture maps. I'll spend heavy time with Legal and IT to identify immediate "Change of Control" risks and critical software renewals happening in the next 6 months.
+
+**Days 31-60: Strategize & Align.**
+Once the data is clean, I categorize the suppliers and develop the initial disposition recommendations—consolidate, retain, exit, or re-source. This is when I heavily engage this governance team. We will review the major IT and indirect suppliers, assess the business continuity risks, and lock in the integration roadmap. 
+
+**Days 61-90: Execute & Communicate.**
+In month three, we move into execution. I'll begin processing the straightforward renewals and amendments to secure continuity. For the complex IT consolidations, I'll support our senior sourcing leaders by building the negotiation briefs and BATNA models. Throughout all of this, I’ll establish a weekly reporting cadence so every stakeholder has visibility into our progress, synergies captured, and critical risks mitigated.`,
+      coaching: "A 90-day plan shows executive maturity. Break it down logically. Day 1-30 is data/baseline. Day 31-60 is governance/disposition. Day 61-90 is execution/reporting.",
+      resumeKeys: ["maestrogrid", "krystal"],
+      jdKeys: ["integration_scope", "disposition_strategy", "project_mgmt"]
+    },
+    {
+      category: "Risk Mitigation",
+      q: "During integration, how do you identify and mitigate risks like commercial gaps, licensing issues, or compliance concerns?",
+      a: `Risk in an integration isn't something you look at after the strategy is built; it's the lens you use to build the strategy.
+
+For **licensing issues**, the immediate risk is shelfware or true-up penalties. I partner with IT asset management to map the acquired company’s user base against our enterprise agreements. If their legacy software contract has a strict volume floor and they are shedding users post-acquisition, we have a commercial gap. Mitigation means negotiating an early termination or a volume tier adjustment before the renewal window closes.
+
+For **compliance concerns**, particularly coming from my experience in regulated environments like Plural Health, I look at data security. If we are retaining an acquired vendor, they must meet our InfoSec standards. I initiate a gap analysis against our SOC 2 / ISO requirements. If they fail, they move from the 'Retain' list to the 'Exit/Re-source' list, and we immediately begin a transition plan.
+
+For **business continuity**, the risk is a vendor turning off service during the transition. Mitigation here is entirely about proactive communication—issuing formal assignment notices to suppliers, assuring them of the new parent company's financial stability, and securing short-term bridging amendments where necessary.`,
+      coaching: "Address the prompt directly by breaking down the three types of risk requested: Licensing (true-ups), Compliance (InfoSec/SOC2), and Continuity (service interruption).",
+      resumeKeys: ["plural", "maestrogrid", "skills"],
+      jdKeys: ["risk_mgmt", "execution"]
+    },
+    {
+      category: "Best Practices",
+      q: "The JD mentions applying 'sourcing best practices'. What does that mean to you in the context of an acquisition?",
+      a: `In an acquisition, applying sourcing best practices means applying rigorous, standardized frameworks to a chaotic environment. 
+
+Specifically, I rely on the 7-step strategic sourcing framework. Even in an integration, you don't skip steps; you accelerate them. 
+
+1. **Assessment:** Validating the acquired spend data, not just accepting their reports.
+2. **Strategy:** Building the disposition matrix based on TCO, not just unit price.
+3. **Execution:** Using structured RFPs even for consolidation efforts, forcing incumbents to sharpen their pencils rather than assuming they get the combined volume by default.
+
+Another best practice is separating the negotiation of commercial terms from legal/risk terms. When we integrate a vendor, I ensure we negotiate the liability caps, SLA penalties, and data privacy schedules alongside the rate cards. 
+
+Finally, a best practice is rigorous tracking. Synergies only count if they hit the bottom line. I ensure that every 'Exit' or 'Consolidate' action is tracked through to the actual budget reduction or cost avoidance metric, aligned with Finance.`,
+      coaching: "We kept the 7-step framework! Frame it as your methodology for bringing order to the chaos of M&A. Highlight that you don't just do deals; you track the synergies to the bottom line.",
+      resumeKeys: ["fitc", "rhea", "skills"],
+      jdKeys: ["integration_scope", "execution", "project_mgmt"]
+    },
+    {
+      category: "Transition Service Agreements",
+      q: "Often in acquisitions or divestitures, there are Transition Service Agreements (TSAs) in place where a former parent company still provides IT services. How do you manage exiting these?",
+      a: `TSAs are the ticking clocks of an integration. Because TSAs usually have strict end dates and punitive extension fees, exiting them is a high-stakes project management exercise.
+
+My approach is to treat a TSA exit like a hard-deadline sourcing event. First, I map all the IT vendors and software licenses bound up in the TSA. We have to identify which software licenses belong to the parent company and cannot be assigned to us, meaning we have to negotiate 'net new' agreements with those vendors immediately to prevent the software from being shut off on the TSA expiration date.
+
+Second, I work backwards from the TSA end date with IT and the business. If we have to stand up a new ERP module or migrate a clinical software platform, I ensure the sourcing and negotiation timelines are completed months in advance to allow for data migration. 
+
+I know GE Healthcare has deep experience on both sides of this—both from the recent spin-off from GE and through acquiring new entities. Managing TSAs requires ruthless prioritization and leveraging our enterprise scale to secure favorable standalone terms for the acquired business before the clock runs out.`,
+      coaching: "GE Healthcare just completed a massive spin-off from GE and dealt heavily with TSAs. Speaking knowledgeably about TSA expiration risks and 'net new' licensing shows incredible situational awareness.",
+      resumeKeys: ["maestrogrid", "skills"],
+      jdKeys: ["project_mgmt", "disposition_strategy", "execution"]
+    }
+  ],
+
+  vp: [
+    {
+      category: "Strategic Vision",
+      q: "How do you view the role of Sourcing Integration within the broader context of an M&A transaction?",
+      a: `Sourcing integration is often viewed primarily as a synergy capture mechanism—a way to deliver the cost savings promised in the deal thesis. While driving improvements in cost and supplier consolidation is absolutely critical, I view the role as much broader: it is a fundamental pillar of business continuity and risk management.
+
+When an acquisition closes, the acquired company's operations are incredibly fragile. If a critical software license doesn't transfer, or a key services vendor walks away due to an assignment clause dispute, the operational disruption can destroy value far faster than synergy savings can create it.
+
+Therefore, my role as the Integration Lead is to act as the commercial bridge. I have to protect the continuity of the acquired business, mitigate the compliance and legal risks of their legacy supply base, and *then* aggressively pursue the consolidation and cost-reduction opportunities. By building a rigorous master supplier list, driving cross-functional governance, and executing strategic dispositions, Sourcing transitions from being a back-office execution function into a strategic enabler of the acquisition's success.`,
+      coaching: "VP level requires executive perspective. Elevate the function: Sourcing in M&A isn't just about saving money; it's about business continuity, risk management, and protecting the deal thesis.",
+      resumeKeys: ["maestrogrid", "rhea"],
+      jdKeys: ["integration_scope", "risk_mgmt", "disposition_strategy"]
+    },
+    {
+      category: "Executive Alignment",
+      q: "In an integration, you will have senior leaders with heavily competing priorities. How do you drive consensus on the integration roadmap?",
+      a: `Consensus at the executive level is rarely achieved through debate; it is achieved through transparent, data-driven frameworks. 
+
+In my experience, when Legal, Finance, IT, and Business unit leaders clash over a supplier disposition, it’s because they are weighing different variables. IT wants architecture alignment, Finance wants synergy capture, the Business wants zero disruption. 
+
+My approach is to take the emotion out of the disposition strategy by building a weighted scorecard for critical suppliers. We evaluate the supplier on technical fit, commercial value, integration cost, and risk/compliance posture. If a legacy business leader wants to retain a supplier that IT wants to exit, I put the TCO model and the risk assessment on the table. 
+
+I don’t mandate the decision; I clarify the trade-offs. 'Retaining this supplier means we carry $500k in redundant licensing and accept a SOC 2 compliance gap. Consolidating means a 4-month transition pain for the business unit.' I facilitate that governance discussion so that when the executive committee makes the call, it is an informed, shared decision. My job is to orchestrate that alignment and then relentlessly execute the resulting roadmap.`,
+      coaching: "Show that you manage executives by providing frameworks, not ultimatums. Using weighted scorecards and TCO models to clarify trade-offs is exactly how senior procurement leaders drive consensus.",
+      resumeKeys: ["krystal", "fitc"],
+      jdKeys: ["governance", "project_mgmt"]
+    },
+    {
+      category: "Value Creation",
+      q: "What is your approach to capturing synergy savings from software and IT vendors post-acquisition?",
+      a: `Capturing IT synergies requires moving fast, but moving with precision, because leverage decays quickly post-acquisition.
+
+My first step is identifying the immediate 'quick wins'—overlapping SaaS tools, redundant data subscriptions, and hardware suppliers where our enterprise volume automatically qualifies the acquired entity for our tier pricing. I execute those straightforward amendments and consolidations immediately.
+
+The larger value creation comes from the complex enterprise software platforms. Suppliers will often try to treat the acquired entity as 'net new' users to force a true-up at list price. My approach is to leverage the combined scale of the new enterprise. I don't just negotiate the acquired company's licenses; I put our entire global enterprise agreement on the table. I tell the supplier, 'We are rationalizing our architecture. You can either partner with us to absorb these new users at our heavily discounted enterprise rate, or we will pivot the acquired entity to your competitor.' 
+
+You capture IT synergies by asserting the leverage of the parent company immediately, maintaining strict commercial discipline, and partnering lock-step with the CIO's office to ensure our consolidation threats are credible.`,
+      coaching: "Software vendors are predatory during M&A. Show that you know how to play hardball: combining volume, putting the whole enterprise agreement in play, and making credible threats to shift volume.",
+      resumeKeys: ["maestrogrid", "skills"],
+      jdKeys: ["execution", "disposition_strategy", "integration_scope"]
+    },
+    {
+      category: "Precision Care Strategy",
+      q: "GE Healthcare is heavily focused on 'Precision Care' and acquiring AI and digital health companies. How does your sourcing strategy adapt to acquiring cutting-edge technology firms?",
+      a: `When acquiring AI and digital health companies, the integration strategy has to fundamentally shift. You aren't buying them to strip costs; you are buying them to accelerate innovation. If Sourcing comes in with a heavy-handed, purely cost-reduction mandate, we risk breaking the agile engineering culture we just paid a premium to acquire.
+
+My strategy here is 'Enablement over Interruption.' For core back-office IT (like HR systems or basic cloud storage), we aggressively consolidate to GE Healthcare's enterprise standards to capture synergies. 
+
+But for their core R&D tech stack—specialized AI development platforms, clinical data repositories, or niche engineering services—my disposition strategy leans toward 'Retain'. I partner with their CTO to understand what tools their developers need to maintain velocity. I focus my sourcing efforts on risk mitigation—ensuring their vendors meet our InfoSec and FDA/Health Canada compliance standards—rather than disrupting their workflows to save a few points on a license.
+
+Sourcing's role in a 'Precision Care' acquisition is to build a compliant, scalable foundation so their engineers can build software faster, not to slow them down with legacy procurement red tape.`,
+      coaching: "This is the ultimate 'Executive Vision' answer for GEHC. Recognize their strategic goals (Precision Care/AI) and demonstrate that you know when to be aggressive on synergies (back office) and when to protect the acquired company's agility (R&D).",
+      resumeKeys: ["rhea", "plural"],
+      jdKeys: ["integration_scope", "governance", "disposition_strategy"]
+    }
+  ]
+};
+
+const TIPS = [
+  { title: "Mention the GE Spin-off Context", body: "GE Healthcare became an independent public company in early 2023. Their leaders lived through massive IT separation and Transition Service Agreements (TSAs). When discussing integration risks, mentioning the unwinding of TSAs and shared services will resonate deeply." },
+  { title: "Speak to 'Precision Care' & AI", body: "GEHC's M&A strategy targets AI, imaging software, and digital health (e.g., Caption Health, MIM Software). Integration here means integrating clinical tech, not just back-office ERPs. Show you understand that R&D speed matters as much as cost synergy." },
+  { title: "Highlight Healthcare IT Compliance", body: "You aren't just buying SaaS; you are managing software that touches patient data. Frequently mention PIPEDA, HIPAA, InfoSec, and SOC 2. Prove you know how to audit an acquired company's vendor risk posture." },
+  { title: "Master the 'Disposition' Language", body: "In M&A integration, every supplier falls into a bucket: Consolidate, Retain, Exit, or Re-source. Use these exact terms to show you understand the mechanics of building an integration roadmap." },
+  { title: "Empathy + Data for Resistance", body: "When dealing with legacy business owners who want to keep their old vendors, don't play the 'corporate cop'. Frame your approach as listening to their needs, then using TCO models and risk data to guide the transition." },
+  { title: "Leverage your Plural Health Experience", body: "Your time at Plural Health is your golden ticket for this role. Use it to prove you are comfortable in heavily regulated, clinical environments where procurement errors carry massive risk." }
+];
+
+let currentStage = "overview";
+let currentQ = 0;
+let mode = "practice";
+let revealed = false;
+let scores = {};
+let stageProgress = { hr: 0, hm: 0, tp: 0, vp: 0 };
+let searchQuery = '';
+let expandedSearchResult = null;
+let aiResult = null;
+let aiGenerating = false;
+let aiDraftQuestion = '';
+let aiSelectedStage = 'hm';
+let apiKey = '';
+let keyVisible = false;
+let customQuestions = { hr: [], hm: [], tp: [], vp: [] };
+
+function getQs() { return QUESTIONS[currentStage] || []; }
+
+function renderNav() {
+  const nav = document.getElementById("navTabs");
+  if (!nav) return;
+  nav.innerHTML = STAGES.map(s => {
+    const qs = QUESTIONS[s.id];
+    const done = qs && qs.length > 0 && stageProgress[s.id] >= qs.length;
+    return '<button class="tab-btn ' + (currentStage === s.id ? 'active' : '') + '" onclick="setStage(\'' + s.id + '\')">' +
+      s.label + (s.badge ? '<span class="stage-badge ' + s.badgeClass + '">' + s.badge + '</span>' : '') +
+      (done ? '<span class="completed-check">&#10003;</span>' : '') +
+      '</button>';
+  }).join('');
+}
+
+function setStage(id) {
+  currentStage = id;
+  currentQ = 0;
+  revealed = false;
+  renderNav();
+  renderMain();
+}
+
+function renderMain() {
+  var el = document.getElementById("mainContent");
+  if (!el) return;
+  if (currentStage === "overview") { el.innerHTML = renderOverview(); renderResumePanel([]); renderJdPanel([]); return; }
+  if (currentStage === "tips") { el.innerHTML = renderTips(); renderResumePanel([]); renderJdPanel([]); return; }
+  if (currentStage === "search") { renderSearch(); renderResumePanel([]); renderJdPanel([]); return; }
+  var qs = getQs();
+  if (!qs.length) { el.innerHTML = "<p>No questions.</p>"; return; }
+  if (currentQ >= qs.length) { el.innerHTML = renderDone(); renderResumePanel([]); renderJdPanel([]); return; }
+
+  var q = qs[currentQ];
+  var pct = Math.round((currentQ / qs.length) * 100);
+  var scoreKey = currentStage + "-" + currentQ;
+  var picked = scores[scoreKey];
+  var rKeys = q.resumeKeys || [];
+
+  // Study mode: always show highlights. Practice mode: only show if answer already revealed
+  var showKeys = (mode === 'study' || revealed) ? rKeys : [];
+  renderResumePanel(showKeys);
+  renderJdPanel(showKeys.length > 0 ? (q.jdKeys || []) : []);
+
+  var revealBtnHtml = mode === "practice"
+    ? '<button class="reveal-btn" onclick="revealAnswer()">' + (revealed ? "Hide answer" : "Reveal answer") + "</button>"
+    : "";
+  var answerVisible = (mode === "study" || revealed) ? " visible" : "";
+  var scoreHtml = mode === "practice"
+    ? '<div class="score-row"><span style="font-size:12px;color:#888;align-self:center;">How did you do?</span>' +
+      '<button class="score-btn easy' + (picked === "easy" ? " picked" : "") + '" onclick="markScore(&apos;easy&apos;)">Nailed it</button>' +
+      '<button class="score-btn medium' + (picked === "medium" ? " picked" : "") + '" onclick="markScore(&apos;medium&apos;)">Getting there</button>' +
+      '<button class="score-btn hard' + (picked === "hard" ? " picked" : "") + '" onclick="markScore(&apos;hard&apos;)">Need more work</button></div>'
+    : "";
+
+  el.innerHTML =
+    '<div class="stage-intro">' + getStageIntro(currentStage) + "</div>" +
+    '<div class="mode-toggle">' +
+      '<button class="mode-btn ' + (mode === "practice" ? "active" : "") + '" onclick="setMode(&apos;practice&apos;)">Practice Mode</button>' +
+      '<button class="mode-btn ' + (mode === "study" ? "active" : "") + '" onclick="setMode(&apos;study&apos;)">Study Mode</button>' +
+    "</div>" +
+    '<div class="progress-bar-wrap">' +
+      '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+      '<span class="progress-label">' + (currentQ + 1) + " / " + qs.length + "</span>" +
+    "</div>" +
+    '<div class="card">' +
+      '<div class="card-header">' +
+        '<div><div class="q-number">Question ' + (currentQ + 1) + "</div></div>" +
+        '<div class="q-category">' + q.category + "</div>" +
+      "</div>" +
+      '<div class="question-text">' + esc(q.q) + "</div>" +
+      revealBtnHtml +
+      '<div class="answer-block' + answerVisible + '">' +
+        '<div class="answer-label">Strong answer</div>' +
+        '<div class="answer-text">' + formatAnswer(q.a) + "</div>" +
+        '<div class="coaching-note"><span>Coaching note:</span> ' + esc(q.coaching) + "</div>" +
+        scoreHtml +
+      "</div>" +
+    "</div>" +
+    '<div class="nav-controls">' +
+      '<button class="nav-btn" onclick="prevQ()" ' + (currentQ === 0 ? "disabled" : "") + ">&larr; Previous</button>" +
+      '<button class="nav-btn primary" onclick="nextQ()">' + (currentQ < qs.length - 1 ? "Next question &rarr;" : "Finish stage &rarr;") + "</button>" +
+    "</div>";
+}
+
+function formatAnswer(text) {
+  return text.split('\n\n').map(p => `<p style="margin-bottom:0.85rem">${p.trim()}</p>`).join('');
+}
+
+function getStageIntro(stage) {
+  const intros = {
+    hr: {
+      title: "Stage 1 — HR Screening Interview",
+      desc: "This is typically a 30-45 minute call with Talent Acquisition. They're assessing fit, project management experience, logistics, and whether to move you forward. Be confident and specific about your M&A/Integration experience and your comfort in MedTech.",
+      tips: ["Keep answers concise — 90 seconds max", "Highlight IT/Software and clinical cross-functional experience", "Show enthusiasm for GEHC's 'Precision Care' mission"]
+    },
+    hm: {
+      title: "Stage 2 — Hiring Manager Interview",
+      desc: "Your most important interview. They are assessing your technical sourcing depth, how you handle supplier disposition strategy (Consolidate/Retain/Exit), and your ability to mitigate IT licensing and clinical compliance risks.",
+      tips: ["Use STAR structure", "Walk through data triangulation for master supplier lists", "Reference healthcare compliance (HIPAA/PIPEDA)"]
+    },
+    tp: {
+      title: "Stage 3 — Team / Panel Presentation",
+      desc: "You may present to a cross-functional panel (Legal, Finance, IT). They're assessing executive presence, communication clarity, and how you drive governance and alignment across competing priorities.",
+      tips: ["Provide a clear 90-day plan", "Acknowledge competing priorities across departments", "Mention TSA (Transition Service Agreement) management"]
+    },
+    vp: {
+      title: "Stage 4 — VP / Executive Interview",
+      desc: "This is typically a 30-45 minute conversation with a VP or CPO. They're assessing strategic maturity, enterprise thinking, and how sourcing integration protects the overall value of an acquisition.",
+      tips: ["Think out loud on complex questions", "Elevate sourcing to a business continuity enabler", "Align sourcing strategy with GEHC's AI/Digital Health acquisitions"]
+    }
+  };
+  const i = intros[stage];
+  if (!i) return '';
+  return `<h2>${i.title}</h2><p>${i.desc}</p><div class="tips">${i.tips.map(t => `<span class="tip-chip">${t}</span>`).join('')}</div>`;
+}
+
+function renderOverview() {
+  const totalQ = Object.values(QUESTIONS).reduce((a, b) => a + b.length, 0);
+  const attempted = Object.keys(scores).length;
+  const nailed = Object.values(scores).filter(s => s === 'easy').length;
+  const working = Object.values(scores).filter(s => s === 'medium').length;
+  const tough = Object.values(scores).filter(s => s === 'hard').length;
+
+  return `
+    <div class="stage-intro">
+      <h2>Welcome, Tolulope</h2>
+      <p>This is your personal interview preparation coach for the <strong>Sourcing Integration Project Lead</strong> role. All answers are grounded in your actual resume, the integration/M&A job description, and strategic sourcing best practices. Work through each stage in order, or jump to any stage you want to focus on.</p>
+    </div>
+    <div class="overview-grid">
+      <div class="stat-card"><div class="stat-label">Total questions</div><div class="stat-val">${totalQ}</div><div class="stat-sub">across 4 interview stages</div></div>
+      <div class="stat-card"><div class="stat-label">Attempted</div><div class="stat-val">${attempted}</div><div class="stat-sub">questions practiced</div></div>
+      <div class="stat-card"><div class="stat-label">Nailed it</div><div class="stat-val" style="color:#2e7d32">${nailed}</div><div class="stat-sub">strong answers</div></div>
+      <div class="stat-card"><div class="stat-label">Need work</div><div class="stat-val" style="color:#a32d2d">${tough}</div><div class="stat-sub">flag for review</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:1.5rem">
+      ${["hr","hm","tp","vp"].map(s => {
+        const qs = QUESTIONS[s];
+        const done = Object.keys(scores).filter(k => k.startsWith(s+'-')).length;
+        const pct = Math.round((done / qs.length) * 100);
+        const labels = { hr: "HR Screen", hm: "Hiring Manager", tp: "Team Panel", vp: "VP Executive" };
+        return `<div class="stat-card" style="cursor:pointer" onclick="setStage('${s}')">
+          <div class="stat-label">${labels[s]}</div>
+          <div class="stat-val">${qs.length} <span style="font-size:14px;font-weight:400;color:#888">questions</span></div>
+          <div style="margin-top:8px;height:4px;background:#e0ddd6;border-radius:2px;overflow:hidden"><div style="width:${pct}%;height:100%;background:#0a2d5e;border-radius:2px"></div></div>
+          <div class="stat-sub" style="margin-top:4px">${done}/${qs.length} attempted</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="stage-intro" style="background:#f0f4ff;border-color:#b5d4f4">
+      <h2 style="color:#185fa5">How to use this coach</h2>
+      <p><strong>Practice Mode:</strong> Question appears first. Think through your answer mentally, then reveal the strong answer and score yourself. <strong>Study Mode:</strong> Question and answer appear together for review. Use the Power Tips tab for Integration-specific coaching notes.</p>
+    </div>
+  `;
+}
+
+function renderTips() {
+  return `
+    <div class="stage-intro">
+      <h2>Power Tips — M&A Integration Specific Coaching</h2>
+      <p>These are the insider observations that will separate you from generic procurement candidates. Speak the language of integrations, dispositions, and cross-functional alignment.</p>
+    </div>
+    ${TIPS.map((t, i) => `
+      <div class="card" style="min-height:auto;margin-bottom:12px;padding:1.25rem 1.5rem">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="min-width:28px;height:28px;border-radius:50%;background:#0a2d5e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:2px">${i+1}</div>
+          <div>
+            <div style="font-weight:600;font-size:15px;color:#0a2d5e;margin-bottom:6px">${t.title}</div>
+            <div style="font-size:14px;line-height:1.7;color:#333">${t.body}</div>
+          </div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderDone() {
+  const qs = getQs();
+  const stageLabels = { hr: "HR Screen", hm: "Hiring Manager", tp: "Team Panel", vp: "VP Executive" };
+  const nailed = Object.keys(scores).filter(k => k.startsWith(currentStage+'-') && scores[k] === 'easy').length;
+  const working = Object.keys(scores).filter(k => k.startsWith(currentStage+'-') && scores[k] === 'medium').length;
+  const hard = Object.keys(scores).filter(k => k.startsWith(currentStage+'-') && scores[k] === 'hard').length;
+  
+  return `
+    <div class="done-screen">
+      <div style="font-size:40px;margin-bottom:1rem">✓</div>
+      <h3>${stageLabels[currentStage]} — Complete</h3>
+      <p>You've worked through all ${qs.length} questions for this stage. Here's how you scored yourself.</p>
+      <div class="done-stats">
+        <div class="done-stat"><div class="n" style="color:#2e7d32">${nailed}</div><div class="l">Nailed it</div></div>
+        <div class="done-stat"><div class="n" style="color:#ba7517">${working}</div><div class="l">Getting there</div></div>
+        <div class="done-stat"><div class="n" style="color:#a32d2d">${hard}</div><div class="l">Need work</div></div>
+      </div>
+      ${hard > 0 ? `<p style="color:#a32d2d;font-size:13px">You flagged ${hard} question${hard>1?'s':''} as needing more work. Use Study Mode to review those answers until they feel natural.</p>` : ''}
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:1rem">
+        <button class="nav-btn primary" onclick="restartStage()">Restart this stage</button>
+        <button class="nav-btn" onclick="setStage(&apos;overview&apos;)">Back to overview</button>
+      </div>
+    </div>
+  `;
+}
+
+function setMode(m) {
+  mode = m;
+  revealed = false;
+  if (m === 'practice') { renderResumePanel([]); renderJdPanel([]); }
+  renderMain();
+}
+
+function revealAnswer() {
+  revealed = !revealed;
+  var qs = getQs();
+  var q = qs[currentQ];
+  if (q) {
+    renderResumePanel(revealed ? (q.resumeKeys || []) : []);
+    renderJdPanel(revealed ? (q.jdKeys || []) : []);
+  }
+  renderMain();
+}
+
+function markScore(s) {
+  scores[`${currentStage}-${currentQ}`] = s;
+  renderMain();
+}
+
+function nextQ() {
+  const qs = getQs();
+  if (currentQ < qs.length - 1) {
+    currentQ++;
+    revealed = false;
+    renderMain();
+  } else {
+    currentQ = qs.length;
+    renderMain();
+  }
+  if (currentStage in stageProgress) {
+    stageProgress[currentStage] = Math.max(stageProgress[currentStage], currentQ);
+  }
+}
+
+function prevQ() {
+  if (currentQ > 0) {
+    currentQ--;
+    revealed = false;
+    renderMain();
+  }
+}
+
+function restartStage() {
+  currentQ = 0;
+  revealed = false;
+  renderMain();
+}
+
+function renderSearch() {
+  const el = document.getElementById("mainContent");
+  if (!el) return;
+  const results = searchQuestions(searchQuery);
+  const hasQuery = searchQuery.trim().length >= 2;
+
+  var html = '<div class="stage-intro"><h2>Search &amp; Ask AI</h2><p>Search the full question bank by keyword. If your question is not covered, type it below — Claude will generate a tailored answer using your resume and the Integration knowledge base, then save it to your bank.</p></div>';
+
+  html += '<div class="search-wrap">';
+  html += '<span class="search-icon">&#128269;</span>';
+  html += '<input class="search-input" type="text" id="searchField" placeholder="Search by keyword e.g. disposition, software, negotiation, STAR..." oninput="handleSearchInput(this.value)" />';
+  if (searchQuery) html += '<button class="search-clear" onclick="clearSearch()">&#215;</button>';
+  html += '</div>';
+
+  if (hasQuery && results.length > 0) {
+    html += renderSearchResults(results);
+    html += '<div style="margin-top:1.5rem">' + renderAiBox() + '</div>';
+  } else if (hasQuery && results.length === 0) {
+    html += '<div class="no-results"><h3>No matching questions found</h3><p>No existing questions match that search. Use the Claude generator below to create and save a new answer.</p></div>';
+    html += renderAiBox();
+  } else {
+    html += renderAiBox();
+  }
+
+  el.innerHTML = html;
+
+  var sf = document.getElementById("searchField");
+  if (sf) {
+    sf.value = searchQuery;
+    sf.focus();
+    var len = sf.value.length;
+    sf.setSelectionRange(len, len);
+  }
+}
+
+function renderSearchResults(results) {
+  var expanded = expandedSearchResult;
+  var html = '<div class="search-results-label">' + results.length + ' result' + (results.length !== 1 ? 's' : '') + ' found</div>';
+  results.forEach(function(r, i) {
+    var isOpen = expanded === i;
+    if (isOpen) {
+      html += '<div class="search-expanded-card">';
+      html += '<div class="se-header"><div>';
+      html += '<div class="sr-stage">' + r.stageLabel + ' &middot; ' + r.category + (r.isCustom ? ' &middot; <span style="color:#0f6e56;font-weight:700">AI Generated</span>' : '') + '</div>';
+      html += '<div style="font-size:16px;font-weight:500;color:#111;line-height:1.5">' + esc(r.q) + '</div>';
+      html += '</div><button class="se-close" onclick="collapseResult()">&#215;</button></div>';
+      html += '<div style="font-size:10.5px;font-weight:700;color:#2e7d32;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:1rem;border-top:1px solid #f0ede8;padding-top:1rem">Strong answer</div>';
+      html += '<div style="font-size:14px;line-height:1.75;color:#222">' + formatAnswer(r.a) + '</div>';
+      html += '<div class="se-coaching"><strong style="color:#534ab7">Coaching note:</strong> ' + esc(r.coaching) + '</div>';
+      html += '<div style="margin-top:1rem;display:flex;gap:8px">';
+      html += '<button class="nav-btn" onclick="goToQuestion(\'' + r.stage + '\',' + r.idx + ')">Go to this question &rarr;</button>';
+      html += '<button class="nav-btn" onclick="collapseResult()">Collapse</button></div>';
+      html += '</div>';
+    } else {
+      var preview = r.a.replace(/\n/g,' ').substring(0, 130) + '...';
+      html += '<div class="search-result-card" onclick="expandResult(' + i + ')">';
+      html += '<div class="sr-stage">' + r.stageLabel + ' &middot; ' + r.category + (r.isCustom ? ' &middot; <span style="color:#0f6e56;font-weight:700">AI Generated</span>' : '') + '</div>';
+      html += '<div class="sr-q">' + esc(r.q) + '</div>';
+      html += '<div class="sr-preview">' + esc(preview) + '</div>';
+      html += '<span class="sr-cat">Click to expand answer</span>';
+      html += '</div>';
+    }
+  });
+  return html;
+}
+
+function renderAiBox() {
+  var hasKey = apiKey && apiKey.trim().startsWith('sk-');
+  var html = '<div class="ai-generate-box">';
+  html += '<h4>Ask Claude a new question</h4>';
+  html += '<p>Type any interview question you want answered. Claude will respond using your resume, Sourcing Integration methodology, and relevant market context. Save the answer directly to your question bank.</p>';
+
+  if (!hasKey) {
+    html += '<div style="background:#fff8e8;border:1px solid #fac775;border-radius:8px;padding:0.75rem 1rem;font-size:13px;color:#633806;margin-bottom:1rem"><strong>API key required.</strong> Enter your Anthropic API key in the bar at the top of the page, then click Save key.</div>';
+  }
+
+  html += '<div style="margin-bottom:0.85rem"><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:6px">Your question</label>';
+  html += '<div id="aiQuestionDisplay" style="min-height:80px;padding:0.75rem;font-size:14px;border:1px solid #d0cdc8;border-radius:8px;background:#fff;color:#1a1a1a;line-height:1.6;cursor:text;white-space:pre-wrap" contenteditable="true" oninput="syncAiQ(this)">' + esc(aiDraftQuestion) + '</div></div>';
+
+  html += '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:0.85rem">';
+  html += '<div><label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:4px">Stage / Interviewer</label>';
+  html += '<select id="aiStageSelect" style="padding:0.55rem 0.85rem;border:1px solid #d0cdc8;border-radius:8px;font-size:13px;color:#1a1a1a;background:#fff;outline:none">';
+  ['hr','hm','tp','vp'].forEach(function(s) {
+    var labels = {hr:'HR Screen',hm:'Hiring Manager',tp:'Team Panel',vp:'VP / Executive'};
+    html += '<option value="' + s + '"' + (aiSelectedStage === s ? ' selected' : '') + '>' + labels[s] + '</option>';
+  });
+  html += '</select></div>';
+  html += '<div style="align-self:flex-end"><button class="ai-generate-btn" onclick="generateAiAnswer()" ' + (!hasKey || aiGenerating ? 'disabled' : '') + '>' + (aiGenerating ? 'Generating...' : 'Generate answer with Claude') + '</button></div>';
+  html += '</div>';
+
+  if (aiGenerating) {
+    html += '<div class="generating-indicator"><div class="dot-pulse"><span></span><span></span><span></span></div>Claude is crafting your personalised answer...</div>';
+  }
+
+  if (aiResult) {
+    html += '<div class="ai-result-card">';
+    html += '<div class="ai-q-label">Question</div>';
+    html += '<div class="ai-q-text">' + esc(aiResult.q) + '</div>';
+    if (!aiResult.isError) {
+      html += '<div class="ai-a-label" style="margin-top:1rem;padding-top:1rem;border-top:1px solid #dce8f8">Strong answer</div>';
+      html += '<div class="ai-a-text">' + formatAnswer(aiResult.a) + '</div>';
+      if (aiResult.coaching) {
+        html += '<div style="margin-top:1rem;background:#f9f6ff;border:0.5px solid #cdc8f5;border-radius:8px;padding:0.75rem 1rem;font-size:13px;color:#534ab7;line-height:1.6"><strong>Coaching note:</strong> ' + esc(aiResult.coaching) + '</div>';
+      }
+      html += '<div class="ai-save-row"><button class="ai-save-btn" onclick="saveAiAnswer()">Save to question bank</button><button class="ai-discard-btn" onclick="discardAiAnswer()">Discard</button></div>';
+    } else {
+      html += '<div style="color:#a32d2d;font-size:13px;margin-top:0.5rem">' + esc(aiResult.a) + '</div>';
+      html += '<div class="ai-save-row"><button class="ai-discard-btn" onclick="discardAiAnswer()">Clear</button></div>';
+    }
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function syncAiQ(el) {
+  aiDraftQuestion = el.innerText || el.textContent || '';
+}
+
+function handleSearchInput(val) {
+  searchQuery = val;
+  expandedSearchResult = null;
+  renderSearch();
+}
+
+function clearSearch() {
+  searchQuery = '';
+  expandedSearchResult = null;
+  renderSearch();
+}
+
+function expandResult(i) {
+  expandedSearchResult = i;
+  renderSearch();
+}
+
+function collapseResult() {
+  expandedSearchResult = null;
+  renderSearch();
+}
+
+function goToQuestion(stage, idx) {
+  currentStage = stage;
+  currentQ = idx;
+  revealed = false;
+  renderNav();
+  renderMain();
+}
+
+function getAllQuestions() {
+  var all = [];
+  var SLABELS = {hr:'HR Screen',hm:'Hiring Manager',tp:'Team Panel',vp:'VP Executive'};
+  ['hr','hm','tp','vp'].forEach(function(stage) {
+    var base = QUESTIONS[stage] || [];
+    var custom = customQuestions[stage] || [];
+    var combined = base.concat(custom);
+    combined.forEach(function(q, idx) {
+      all.push(Object.assign({}, q, { stage: stage, stageLabel: SLABELS[stage], idx: idx, isCustom: idx >= base.length }));
+    });
+  });
+  return all;
+}
+
+function searchQuestions(query) {
+  if (!query || query.trim().length < 2) return [];
+  var q = query.toLowerCase();
+  return getAllQuestions().filter(function(item) {
+    return item.q.toLowerCase().includes(q) || item.a.toLowerCase().includes(q) || item.category.toLowerCase().includes(q) || item.stageLabel.toLowerCase().includes(q);
+  });
+}
+
+var RESUME_CONTEXT = "Tolulope Adebisi — Senior Procurement Manager, Toronto Canada. 10+ years sourcing.\n\nCurrent: Maestrogrid (Toronto, Sept 2023-present) — Architected enterprise category management framework for IT software, external labor, SOW portfolios. Reduced time-to-award by 20%. Designed and executed RFI/RFP events. Built rate card and markup frameworks benchmarked against market intelligence. Delivered executive-ready presentations. Applied Risk Management Framework to evaluate supplier viability.\n\nPrevious: Plural Health Ltd (Lagos, Sept 2020-present) — Managed IT procurement in regulated healthcare. Led RFI/RFP and contract negotiations. Milestone-based SOW pricing. Reduced contract discrepancy rates 25%.\n\nPrevious: Rhea Carrison Ltd / Vendar.co (Delaware Remote, July 2022-Sept 2023) — Multi-region vendor portfolio. Negotiated rate cards, markup structures, SOW commercial models delivering 12% cost savings. Built vendor governance frameworks reducing service disruptions 30%. Produced executive-ready risk summaries. Designed Excel-based TCO models.\n\nPrevious: FITC Nigeria (Aug 2019-Sept 2020) — RFP and competitive evaluation for enterprise IT (ERP, CRM, SOW software). TCO analysis.\n\nPrevious: Krystal Digital Network Solutions (Oct 2014-Aug 2019) — IT and capex procurement. Supplier concentration risk reporting. Power BI dashboards.\n\nEducation: B.Eng Mechanical Engineering, University of Ilorin. Algonquin College diploma.";
+
+var JD_CONTEXT = "Company: GE Healthcare (MedTech leader, recent spin-off from GE, heavily acquiring AI/Software companies for Precision Care. Strict regulatory environment: PIPEDA, HIPAA, SaMD).\n\nRole: Sourcing Integration Project Lead (M&A). Lead end-to-end sourcing integration across all supplier categories (heavy focus on IT and software) for a large acquisition. \n\nKey duties: Develop strategic disposition recommendations (consolidate, retain, exit, re-source). Create/manage master supplier list and integration roadmap. Facilitate cross-functional governance (Legal, Finance, IT). Execute straightforward sourcing actions (renewals, simple RFPs). Support senior leaders on complex IT negotiations. Identify/mitigate risks (commercial gaps, licensing, TSAs, continuity, compliance). Apply 7-step sourcing best practices.";
+
+async function generateAiAnswer() {
+  var stageSelect = document.getElementById('aiStageSelect');
+  var question = (aiDraftQuestion || '').trim();
+  if (!question) { alert('Please type a question first.'); return; }
+  if (!apiKey || !apiKey.trim().startsWith('sk-')) { alert('Please enter and save your Anthropic API key first.'); return; }
+
+  var stage = stageSelect ? stageSelect.value : 'hm';
+  aiSelectedStage = stage;
+  var stageCtx = {
+    hr: 'HR Screener / Talent Acquisition — assessing fit, project management, M&A readiness, logistics. Warm, narrative answers.',
+    hm: 'Hiring Manager / Director — assessing technical integration depth, disposition strategy (consolidate/retain/exit), IT licensing risks, compliance (SOC2/HIPAA), cross-functional alignment.',
+    tp: 'Cross-functional Panel (HR, Finance, Legal, IT) — assessing executive presence, governance facilitation, handling competing priorities, managing TSAs.',
+    vp: 'VP or Executive — assessing strategic maturity, enterprise thinking, viewing sourcing as a driver of business continuity and aligning with GEHC Precision Care M&A strategy.'
+  };
+
+  aiGenerating = true;
+  aiResult = null;
+  renderSearch();
+
+  var systemPrompt = "You are an expert interview coach helping Tolulope Adebisi prepare for a Sourcing Integration Project Lead role at GE Healthcare (focused on M&A, IT, Software, and MedTech compliance).\n\nCANDIDATE BACKGROUND:\n" + RESUME_CONTEXT + "\n\nROLE CONTEXT:\n" + JD_CONTEXT + "\n\nINTERVIEWER CONTEXT: " + stageCtx[stage] + "\n\nGenerate a strong, human, confident interview answer that:\n1. Sounds like Tolulope speaking naturally\n2. Draws on Tolulope\'s actual experience (especially Plural Health for healthcare compliance, plus Maestrogrid/Rhea)\n3. References GE Healthcare/M&A context naturally (master supplier list, disposition strategy, TSAs, PHI/compliance, Precision Care)\n4. Is calibrated for the specific interviewer type above\n5. Uses STAR structure for behavioral questions but leads with insight\n\nAlso generate:\n- A 1-2 sentence coaching note\n- resumeKeys: which resume sections this answer draws on. Choose ONLY from: [maestrogrid, rhea, plural, fitc, krystal, skills]\n- jdKeys: which JD sections this answer targets. Choose ONLY from: [integration_scope, disposition_strategy, governance, execution, risk_mgmt, project_mgmt]\n\nRespond ONLY with valid JSON — no markdown, no preamble:\n{\"answer\": \"answer text with \\\\n\\\\n for paragraph breaks\", \"coaching\": \"coaching note\", \"resumeKeys\": [\"plural\"], \"jdKeys\": [\"risk_mgmt\"]}"
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey.trim(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1200,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: 'Interview question to answer: "' + question + '"' }]
+      })
+    });
+
+    if (!resp.ok) {
+      var errData = await resp.json().catch(function() { return {}; });
+      throw new Error(errData.error ? errData.error.message : 'API error ' + resp.status);
+    }
+
+    var data = await resp.json();
+    var raw = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
+    var parsed;
+    try {
+      var match = raw.match(/\{[\s\S]*\}/);
+      parsed = JSON.parse(match ? match[0] : raw);
+    } catch(e) {
+      parsed = { answer: raw, coaching: 'Review and adapt this answer to your own voice.' };
+    }
+    aiResult = { q: question, a: parsed.answer || raw, coaching: parsed.coaching || '', stage: stage, resumeKeys: parsed.resumeKeys || [], jdKeys: parsed.jdKeys || [] };
+  } catch(e) {
+    aiResult = { q: question, a: 'Error: ' + e.message + '. Check your API key and try again.', coaching: '', stage: stage, isError: true, resumeKeys: [] };
+  }
+
+  aiGenerating = false;
+  if (aiResult && !aiResult.isError) {
+    renderResumePanel(aiResult.resumeKeys || []);
+    renderJdPanel(aiResult.jdKeys || []);
+  }
+  renderSearch();
+}
+
+function saveAiAnswer() {
+  if (!aiResult || aiResult.isError) return;
+  var entry = {
+    category: 'AI Generated',
+    q: aiResult.q,
+    a: aiResult.a,
+    coaching: aiResult.coaching || 'AI-generated answer — adapt to your own voice before using.',
+    resumeKeys: aiResult.resumeKeys || [],
+    jdKeys: aiResult.jdKeys || []
+  };
+  if (!customQuestions[aiResult.stage]) customQuestions[aiResult.stage] = [];
+  customQuestions[aiResult.stage].push(entry);
+  searchQuery = aiResult.q.substring(0, 50);
+  aiResult = null;
+  aiDraftQuestion = '';
+  renderResumePanel([]);
+  renderJdPanel([]);
+  renderSearch();
+}
+
+function discardAiAnswer() {
+  aiResult = null;
+  renderSearch();
+}
+
+function saveApiKey() {
+  var input = document.getElementById('apiKeyInput');
+  if (!input) return;
+  apiKey = input.value.trim();
+  var status = document.getElementById('apiKeyStatus');
+  if (!status) return;
+  if (apiKey && apiKey.startsWith('sk-')) {
+    status.textContent = 'Key saved \u2713';
+    status.className = 'api-key-status set';
+  } else if (apiKey) {
+    status.textContent = 'Invalid format';
+    status.className = 'api-key-status unset';
+    apiKey = '';
+  } else {
+    status.textContent = 'No key saved';
+    status.className = 'api-key-status unset';
+  }
+  if (currentStage === 'search') renderSearch();
+}
+
+function toggleKeyVisibility() {
+  keyVisible = !keyVisible;
+  var input = document.getElementById('apiKeyInput');
+  var btn = document.getElementById('keyToggleBtn');
+  if (input) input.type = keyVisible ? 'text' : 'password';
+  if (btn) btn.textContent = keyVisible ? '\uD83D\uDE48' : '\uD83D\uDC41';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.target && e.target.id === 'apiKeyInput' && e.key === 'Enter') saveApiKey();
+});
+
+var RESUME_SECTIONS = [
+  {
+    key: "maestrogrid",
+    title: "Maestrogrid — Senior Procurement Manager",
+    subtitle: "Toronto, ON · Sept 2023 – Present",
+    body: "Architected enterprise category management framework covering IT software, external labour, and SOW portfolios. Reduced time-to-award by 20%. Designed and executed competitive RFI/RFP events for contingent workforce and SOW. Built rate card and markup frameworks benchmarked against labour market intelligence. Delivered executive-ready category strategy presentations. Maintained category playbooks. Applied Risk Management Framework to evaluate supplier viability."
+  },
+  {
+    key: "rhea",
+    title: "Rhea Carrison Ltd / Vendar.co — Lead IT Sourcing Consultant",
+    subtitle: "Delaware (Remote) · July 2022 – Sept 2023",
+    body: "Directed multi-region external labour and IT vendor portfolio management. Negotiated rate cards, markup structures, and SOW commercial models delivering 12% cost savings. Partnered with HR and workforce planning to align contingent workforce strategies to demand signals. Built vendor governance frameworks reducing service disruptions by 30%. Produced executive-ready risk summaries. Designed Advanced Excel-based TCO and rate benchmarking models."
+  },
+  {
+    key: "plural",
+    title: "Plural Health Ltd — Sourcing Manager",
+    subtitle: "Lagos, Nigeria · Sept 2020 – Present",
+    body: "Managed IT and external labour procurement in a highly regulated healthcare environment. Led formal RFI/RFP events and contract negotiations for contingent workforce vendors. Constructed milestone-based SOW pricing frameworks ensuring regulatory compliance. Strengthened procurement governance and category playbook documentation, reducing contract discrepancy rates by 25%."
+  },
+  {
+    key: "fitc",
+    title: "FITC Nigeria — Sourcing Consultant ERP & IT",
+    subtitle: "Lagos, Nigeria · Aug 2019 – Sept 2020",
+    body: "Led structured RFP and competitive evaluation processes for enterprise IT platforms including ERP, CRM, and SOW-based software implementation services. Advised senior stakeholders on commercial risk, rate card benchmarking, and TCO analysis. Developed category playbooks and formal procurement documentation."
+  },
+  {
+    key: "krystal",
+    title: "Krystal Digital Network Solutions — Procurement Lead",
+    subtitle: "Lagos, Nigeria · Oct 2014 – Aug 2019",
+    body: "Oversaw IT and capital expenditure category procurement. Designed rate card structures and markup frameworks for staffing and niche technology provider engagements. Built foundational vendor governance including supplier concentration risk reporting and performance monitoring dashboards in Advanced Excel and Power BI."
+  },
+  {
+    key: "skills",
+    title: "Core Skills & Competencies",
+    subtitle: "Throughout career",
+    body: "Strategic Sourcing · M&A Integration · IT Software & SaaS Licensing · Supplier Rationalization · RFP/RFI Design & Execution · Vendor Governance · Risk Mitigation (SOC 2, InfoSec) · TCO Modelling · Advanced Excel · Stakeholder Management."
+  }
+];
+
+function renderResumePanel(activeKeys) {
+  var container = document.getElementById('resumeSections');
+  if (!container) return;
+  var hasActive = activeKeys && activeKeys.length > 0;
+  var html = '';
+
+  if (!hasActive && (currentStage === 'hr' || currentStage === 'hm' || currentStage === 'tp' || currentStage === 'vp')) {
+    var qs = getQs();
+    var q = qs[currentQ];
+    var hasKeys = q && q.resumeKeys && q.resumeKeys.length > 0;
+    if (hasKeys && mode === 'practice' && !revealed) {
+      html += '<div style="background:#f0f4ff;border:1px solid #b5d4f4;border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:10px;font-size:12px;color:#185fa5;line-height:1.5">' +
+        '<strong>Resume references hidden</strong><br>Reveal the answer to see which parts of your resume speak to this question.' +
+        '</div>';
+    }
+  }
+
+  RESUME_SECTIONS.forEach(function(s) {
+    var isActive = hasActive && activeKeys.indexOf(s.key) > -1;
+    html += '<div class="resume-section' + (isActive ? ' highlighted' : '') + '">';
+    if (isActive) {
+      html += '<div class="resume-highlight-label">&#10003; Referenced in answer</div>';
+    }
+    html += '<div class="resume-section-title">' + s.title + '</div>';
+    html += '<div class="resume-section-body" style="font-size:11.5px;color:#888;margin-bottom:4px">' + s.subtitle + '</div>';
+    html += '<div class="resume-section-body">' + s.body + '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+var resumePanelVisible = true;
+function toggleResumePanel() {
+  resumePanelVisible = !resumePanelVisible;
+  var panel = document.getElementById('resumePanel');
+  var btn = document.querySelector('.resume-toggle');
+  if (panel) panel.style.display = resumePanelVisible ? '' : 'none';
+  if (btn) btn.textContent = resumePanelVisible ? 'Hide' : 'Show resume';
+}
+
+
+var JD_SECTIONS = [
+  {
+    key: "integration_scope",
+    title: "Integration Scope & Sourcing Lead",
+    body: "Lead the end-to-end sourcing integration workstream across all categories (IT/software, services, indirect, clinical, capital, etc.) in support of a large acquisition. IT and software represent a substantial share of the work. Oversee supplier strategy and drive complex project execution."
+  },
+  {
+    key: "disposition_strategy",
+    title: "Master List & Disposition Recommendations",
+    body: "Create, manage, and continuously update the master supplier list, categorization, and integration roadmap. Develop strategic disposition recommendations for each supplier—consolidate, retain, exit, or re-source—based on business needs and cross-functional input."
+  },
+  {
+    key: "governance",
+    title: "Cross-Functional Governance & Alignment",
+    body: "Facilitate governance discussions with business leaders, legal, finance, IT, category managers, and integration teams. Ensure alignment on sourcing strategies and manage competing priorities across the diverse supplier landscape."
+  },
+  {
+    key: "execution",
+    title: "Sourcing Execution & Negotiation",
+    body: "Execute straightforward sourcing actions, including renewals, amendments, simple negotiations, and basic RFPs. Support senior sourcing leaders on high-complexity commercial or technical negotiations."
+  },
+  {
+    key: "risk_mgmt",
+    title: "Risk Identification & Mitigation",
+    body: "Identify and mitigate integration risks, including commercial gaps, licensing issues, continuity impacts, and compliance concerns. Ensure seamless transition without disrupting critical business operations."
+  },
+  {
+    key: "project_mgmt",
+    title: "Project Management & Communication",
+    body: "Lead stakeholder communications and reporting, ensuring visibility of progress, dependencies, and critical risks. Apply strategic sourcing best practices to drive improvements in cost, risk reduction, and operational efficiency."
+  }
+];
+
+var jdPanelVisible = true;
+
+function renderJdPanel(activeKeys) {
+  var container = document.getElementById('jdSections');
+  if (!container) return;
+  var hasActive = activeKeys && activeKeys.length > 0;
+  var html = '';
+
+  if (!hasActive && (currentStage === 'hr' || currentStage === 'hm' || currentStage === 'tp' || currentStage === 'vp')) {
+    var qs = getQs();
+    var q = qs[currentQ];
+    var hasKeys = q && q.jdKeys && q.jdKeys.length > 0;
+    if (hasKeys && mode === 'practice' && !revealed) {
+      html += '<div style="background:#fff5f5;border:1px solid #f7c1c1;border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:10px;font-size:12px;color:#a32d2d;line-height:1.5">' +
+        '<strong>JD references hidden</strong><br>Reveal the answer to see which requirements this question targets.' +
+        '</div>';
+    }
+  }
+
+  JD_SECTIONS.forEach(function(s) {
+    var isActive = hasActive && activeKeys.indexOf(s.key) > -1;
+    html += '<div class="jd-section' + (isActive ? ' highlighted' : '') + '">';
+    if (isActive) html += '<div class="jd-highlight-label">&#10003; Referenced in answer</div>';
+    html += '<div class="jd-section-title">' + s.title + '</div>';
+    html += '<div class="jd-section-body">' + s.body + '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function toggleJdPanel() {
+  jdPanelVisible = !jdPanelVisible;
+  var panel = document.getElementById('jdPanel');
+  var btn = document.querySelector('.jd-toggle-btn');
+  var handle = document.getElementById('jdResizeHandle');
+  if (panel) panel.classList.toggle('collapsed', !jdPanelVisible);
+  if (btn) btn.textContent = jdPanelVisible ? 'Collapse' : '';
+  if (handle) handle.style.display = jdPanelVisible ? '' : 'none';
+}
+
+(function() {
+  var handle = document.getElementById('jdResizeHandle');
+  var panel  = document.getElementById('jdPanel');
+  var wrap   = document.getElementById('pageWrap');
+  if (!handle || !panel || !wrap) return;
+  var dragging = false, startX = 0, startW = 0;
+  handle.addEventListener('mousedown', function(e) {
+    if (!jdPanelVisible) return;
+    dragging = true; startX = e.clientX; startW = panel.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    var delta = startX - e.clientX;
+    var newW = Math.min(Math.max(startW + delta, 180), wrap.offsetWidth * 0.6);
+    panel.style.width = newW + 'px';
+    panel.style.minWidth = newW + 'px';
+  });
+  document.addEventListener('mouseup', function() {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+})();
+
+(function() {
+  var handle = document.getElementById('resizeHandle');
+  var panel  = document.getElementById('resumePanel');
+  var wrap   = document.getElementById('pageWrap');
+  if (!handle || !panel || !wrap) return;
+
+  var dragging = false;
+  var startX   = 0;
+  var startW   = 0;
+
+  handle.addEventListener('mousedown', function(e) {
+    dragging = true;
+    startX   = e.clientX;
+    startW   = panel.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor    = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    var delta  = e.clientX - startX;
+    var newW   = Math.min(Math.max(startW + delta, 180), wrap.offsetWidth * 0.75);
+    panel.style.width    = newW + 'px';
+    panel.style.minWidth = newW + 'px';
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor     = '';
+    document.body.style.userSelect = '';
+  });
+
+  handle.addEventListener('touchstart', function(e) {
+    dragging = true;
+    startX   = e.touches[0].clientX;
+    startW   = panel.offsetWidth;
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('touchmove', function(e) {
+    if (!dragging) return;
+    var delta = e.touches[0].clientX - startX;
+    var newW  = Math.min(Math.max(startW + delta, 180), wrap.offsetWidth * 0.75);
+    panel.style.width    = newW + 'px';
+    panel.style.minWidth = newW + 'px';
+  }, { passive: true });
+
+  document.addEventListener('touchend', function() {
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor     = '';
+    document.body.style.userSelect = '';
+  });
+})();
+
+renderResumePanel([]);
+renderJdPanel([]);
+renderNav();
+renderMain();
+</script>
+</body>
+</html>
