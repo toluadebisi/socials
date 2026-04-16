@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Coach — AI-Powered</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f7f6f3;color:#1a1a1a;min-height:100vh}
+
+/* ── HEADER ── */
+.app-header{background:#0a2d5e;color:#fff;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.app-header-left h1{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.app-header-left p{font-size:11px;opacity:.65;margin-top:2px}
+.header-actions{display:flex;gap:8px;align-items:center}
+.hdr-btn{padding:.38rem .9rem;font-size:12px;font-weight:500;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;transition:background .15s}
+.hdr-btn:hover{background:rgba(255,255,255,.2)}
+.hdr-btn.danger{border-color:rgba(231,64,64,.5);background:rgba(231,64,64,.15)}
+.hdr-btn.danger:hover{background:rgba(231,64,64,.3)}
+.provider-pill{font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;background:#e8f4e8;color:#2e7d32}
+.provider-pill.openai{background:#e8f4e8;color:#2e7d32}
+.provider-pill.gemini{background:#e3f0fb;color:#185fa5}
+.provider-pill.claude{background:#f1effe;color:#534ab7}
+
+/* ── ONBOARDING ── */
+.onboard-wrap{max-width:720px;margin:0 auto;padding:2.5rem 1.5rem}
+.onboard-card{background:#fff;border:0.5px solid #e0ddd6;border-radius:16px;padding:2rem}
+.onboard-card h2{font-size:22px;font-weight:600;color:#0a2d5e;margin-bottom:.4rem}
+.onboard-card .sub{font-size:14px;color:#777;margin-bottom:2rem;line-height:1.6}
+.step-dots{display:flex;gap:6px;margin-bottom:2rem}
+.step-dot{width:8px;height:8px;border-radius:50%;background:#e0ddd6;transition:background .2s}
+.step-dot.active{background:#0a2d5e}
+.step-dot.done{background:#2e7d32}
+.field-label{font-size:12px;font-weight:600;color:#444;margin-bottom:6px;display:block}
+.field-sub{font-size:11.5px;color:#888;margin-bottom:8px}
+textarea.ob-field{width:100%;padding:.75rem 1rem;font-size:13.5px;border:1px solid #d0cdc8;border-radius:10px;resize:vertical;min-height:140px;font-family:inherit;color:#1a1a1a;outline:none;line-height:1.6;transition:border-color .15s}
+textarea.ob-field:focus{border-color:#0a2d5e}
+input.ob-input{width:100%;padding:.65rem 1rem;font-size:13.5px;border:1px solid #d0cdc8;border-radius:10px;color:#1a1a1a;outline:none;transition:border-color .15s;background:#fff}
+input.ob-input:focus{border-color:#0a2d5e}
+.provider-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+.provider-card{border:1.5px solid #e0ddd6;border-radius:10px;padding:1rem;cursor:pointer;text-align:center;transition:border-color .15s,background .15s}
+.provider-card:hover{border-color:#0a2d5e;background:#f0f4ff}
+.provider-card.selected{border-color:#0a2d5e;background:#e8eeff}
+.provider-card .p-name{font-size:13px;font-weight:600;margin-top:.4rem}
+.provider-card .p-model{font-size:11px;color:#888;margin-top:2px}
+.provider-icon{font-size:26px}
+.key-input-wrap{position:relative}
+.key-input-wrap input{padding-right:2.5rem;font-family:monospace;font-size:13px}
+.key-eye{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#888;font-size:14px}
+.stage-list{display:flex;flex-direction:column;gap:8px}
+.stage-item{display:flex;align-items:center;gap:8px;padding:.6rem .9rem;background:#f5f4f0;border-radius:8px;border:1px solid #e0ddd6}
+.stage-item input{flex:1;border:none;background:none;font-size:13.5px;color:#1a1a1a;outline:none;font-family:inherit}
+.stage-drag{cursor:grab;color:#bbb;font-size:16px}
+.stage-del{background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;line-height:1;padding:0}
+.stage-del:hover{color:#e31837}
+.add-stage-btn{display:flex;align-items:center;gap:6px;padding:.55rem .9rem;border:1px dashed #c0bdb8;background:none;border-radius:8px;font-size:13px;color:#888;cursor:pointer;width:100%;justify-content:center;margin-top:6px;transition:border-color .15s,color .15s}
+.add-stage-btn:hover{border-color:#0a2d5e;color:#0a2d5e}
+.ob-actions{display:flex;gap:10px;margin-top:1.75rem;align-items:center;flex-wrap:wrap}
+.ob-btn{padding:.7rem 1.5rem;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:background .15s}
+.ob-btn.primary{background:#0a2d5e;color:#fff}
+.ob-btn.primary:hover{background:#0d3a7a}
+.ob-btn.primary:disabled{opacity:.45;cursor:not-allowed}
+.ob-btn.secondary{background:#fff;color:#0a2d5e;border:1px solid #0a2d5e}
+.ob-btn.secondary:hover{background:#f0f4ff}
+.ob-error{font-size:12.5px;color:#a32d2d;margin-top:.5rem}
+.ob-hint{font-size:12px;color:#888;margin-top:.5rem}
+.upload-zone{border:1.5px dashed #c0bdb8;border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;position:relative}
+.upload-zone:hover,.upload-zone.drag-over{border-color:#0a2d5e;background:#f0f4ff}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-zone-icon{font-size:28px;margin-bottom:.5rem}
+.upload-zone p{font-size:13px;color:#666}
+.upload-zone .file-name{font-size:12.5px;color:#2e7d32;font-weight:600;margin-top:.4rem}
+
+/* ── GENERATING SCREEN ── */
+.gen-wrap{max-width:560px;margin:0 auto;padding:3rem 1.5rem;text-align:center}
+.gen-wrap h2{font-size:20px;font-weight:600;color:#0a2d5e;margin-bottom:.75rem}
+.gen-wrap p{font-size:14px;color:#666;line-height:1.7;margin-bottom:2rem}
+.gen-progress{background:#f0ede8;border-radius:10px;height:8px;overflow:hidden;margin-bottom:1rem}
+.gen-progress-fill{height:100%;background:linear-gradient(90deg,#0a2d5e,#185fa5);border-radius:10px;transition:width .4s ease}
+.gen-stage-label{font-size:13px;color:#888;margin-bottom:.5rem}
+.gen-log{background:#fff;border:0.5px solid #e0ddd6;border-radius:10px;padding:1rem;text-align:left;max-height:200px;overflow-y:auto;font-size:12.5px;color:#555;line-height:1.8}
+.gen-log-line{display:flex;gap:8px;align-items:flex-start}
+.gen-log-line .icon{color:#2e7d32;flex-shrink:0}
+.gen-log-line .icon.spin{color:#185fa5;animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MAIN LAYOUT ── */
+.nav-tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #e0ddd6;overflow-x:auto;padding:0 1.5rem}
+.tab-btn{padding:.8rem 1.1rem;font-size:13px;font-weight:500;color:#888;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab-btn:hover{color:#1a1a1a}
+.tab-btn.active{color:#0a2d5e;border-bottom-color:#0a2d5e;font-weight:600}
+.stage-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:5px;vertical-align:middle}
+.completed-check{display:inline-block;width:16px;height:16px;border-radius:50%;background:#2e7d32;color:#fff;text-align:center;line-height:16px;font-size:10px;margin-left:5px}
+
+.api-key-bar{background:#fff;border-bottom:1px solid #e0ddd6;padding:.55rem 1.5rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.api-key-bar label{font-size:11.5px;font-weight:600;color:#555;white-space:nowrap}
+.api-key-input-wrap{position:relative;flex:1;min-width:200px;max-width:340px}
+.api-key-input{width:100%;padding:.4rem 2.2rem .4rem .7rem;font-size:12.5px;border:1px solid #d0cdc8;border-radius:6px;color:#1a1a1a;background:#fafaf8;font-family:monospace;outline:none}
+.api-key-input:focus{border-color:#0a2d5e}
+.api-key-toggle{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:13px;cursor:pointer;color:#888}
+.api-key-status{font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px}
+.api-key-status.set{background:#e8f4e8;color:#2e7d32}
+.api-key-status.unset{background:#fef0f0;color:#a32d2d}
+.api-key-save-btn{padding:.35rem .85rem;font-size:12px;font-weight:500;border:1px solid #0a2d5e;background:#0a2d5e;color:#fff;border-radius:6px;cursor:pointer}
+.api-key-note{font-size:10.5px;color:#999;flex-basis:100%;margin-top:1px}
+
+/* ── THREE PANEL LAYOUT ── */
+.page-wrap{display:flex;gap:0;min-height:calc(100vh - 108px);overflow:hidden}
+.resume-panel{width:300px;min-width:160px;max-width:50vw;background:#fff;overflow-y:auto;padding:1rem 1.25rem;flex-shrink:0}
+.jd-panel{width:300px;min-width:160px;max-width:50vw;background:#fff;overflow-y:auto;padding:1rem 1.25rem;flex-shrink:0}
+.jd-panel.collapsed{width:40px !important;min-width:40px;overflow:hidden;padding:0}
+.main-area{flex:1;min-width:0;padding-left:1rem}
+.main{max-width:780px;margin:0 auto;padding:1.5rem 1rem}
+
+.panel-header{font-size:10.5px;font-weight:700;color:#0a2d5e;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid #f0ede8;display:flex;align-items:center;justify-content:space-between}
+.panel-toggle{font-size:11px;font-weight:500;color:#888;cursor:pointer;background:none;border:none;text-decoration:underline}
+.jd-panel .panel-header{color:#c0392b}
+.jd-collapsed-tab{display:none;writing-mode:vertical-rl;font-size:10px;font-weight:700;color:#c0392b;letter-spacing:.1em;text-transform:uppercase;padding:.75rem .6rem;cursor:pointer;height:100%;align-items:center;justify-content:center}
+.jd-panel.collapsed .jd-collapsed-tab{display:flex}
+.jd-panel.collapsed .jd-panel-inner{display:none}
+
+.r-section,.jd-section{border-radius:7px;padding:.7rem .85rem;margin-bottom:7px;border:1px solid #e8e5e0;background:#fafaf8;transition:background .25s,border-color .25s;font-size:11.5px}
+.r-section.hl,.jd-section.hl{background:#eeff80;border-color:#c8e600;animation:hlFlash .4s ease-out}
+@keyframes hlFlash{0%{background:#fff9a0}100%{background:#eeff80}}
+.r-section-title,.jd-section-title{font-size:11.5px;font-weight:700;color:#0a2d5e;margin-bottom:2px}
+.jd-section-title{color:#c0392b}
+.r-section.hl .r-section-title,.jd-section.hl .jd-section-title{color:#4a6600}
+.r-section-body,.jd-section-body{font-size:11px;color:#666;line-height:1.55}
+.r-section.hl .r-section-body,.jd-section.hl .jd-section-body{color:#3a4a00}
+.hl-badge{font-size:9.5px;font-weight:700;color:#4a6600;background:#d4f000;padding:1px 7px;border-radius:5px;margin-bottom:4px;display:inline-block}
+.panel-hint{background:#f0f4ff;border:1px solid #b5d4f4;border-radius:7px;padding:.55rem .75rem;font-size:11.5px;color:#185fa5;line-height:1.5;margin-bottom:8px}
+.panel-hint.jd-hint{background:#fff5f5;border-color:#f7c1c1;color:#a32d2d}
+
+.resize-handle{width:5px;min-width:5px;background:#e8e5e0;cursor:col-resize;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.resize-handle:hover,.resize-handle.dragging{background:#0a2d5e}
+.resize-handle.jd-rh:hover,.resize-handle.jd-rh.dragging{background:#c0392b}
+.resize-handle::after{content:'';display:block;width:2px;height:28px;background:rgba(255,255,255,.45);border-radius:2px}
+
+/* ── QUESTION CARD ── */
+.stage-intro{background:#fff;border:0.5px solid #e0ddd6;border-radius:11px;padding:1.1rem 1.3rem;margin-bottom:1.25rem}
+.stage-intro h2{font-size:15px;font-weight:600;color:#0a2d5e;margin-bottom:.3rem}
+.stage-intro p{font-size:13px;color:#555;line-height:1.6}
+.tips{margin-top:.65rem;display:flex;gap:7px;flex-wrap:wrap}
+.tip-chip{font-size:11px;background:#f0f4ff;color:#185fa5;padding:2px 9px;border-radius:18px;border:0.5px solid #b5d4f4}
+
+.mode-toggle{display:flex;gap:6px;background:#f5f4f0;border-radius:7px;padding:3px;margin-bottom:1rem}
+.mode-btn{padding:.4rem .9rem;font-size:12.5px;font-weight:500;border:none;background:none;border-radius:5px;cursor:pointer;color:#888;transition:all .15s}
+.mode-btn.active{background:#fff;color:#0a2d5e;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+
+.progress-bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:1.1rem}
+.progress-bar{flex:1;height:4px;background:#e0ddd6;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#0a2d5e;border-radius:2px;transition:width .3s}
+.progress-label{font-size:12px;color:#888;white-space:nowrap}
+
+.card{background:#fff;border:0.5px solid #e0ddd6;border-radius:13px;padding:1.5rem;min-height:300px;display:flex;flex-direction:column}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.85rem;gap:10px}
+.q-number{font-size:10.5px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.06em}
+.q-category{font-size:10.5px;color:#888;background:#f5f4f0;padding:2px 8px;border-radius:9px;white-space:nowrap}
+.question-text{font-size:16px;font-weight:500;line-height:1.55;color:#111;flex:1}
+.reveal-btn{margin-top:1.25rem;padding:.65rem 1.35rem;background:#0a2d5e;color:#fff;border:none;border-radius:7px;font-size:13.5px;font-weight:500;cursor:pointer;align-self:flex-start;transition:background .15s}
+.reveal-btn:hover{background:#0d3a7a}
+.answer-block{margin-top:1.1rem;border-top:1px solid #f0ede8;padding-top:1.1rem;display:none}
+.answer-block.visible{display:block}
+.answer-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:#2e7d32;text-transform:uppercase;margin-bottom:.5rem}
+.answer-text{font-size:14px;line-height:1.75;color:#222}
+.answer-text p{margin-bottom:.75rem}
+.coaching-note{margin-top:.85rem;background:#f9f6ff;border:0.5px solid #cdc8f5;border-radius:7px;padding:.75rem .9rem;font-size:12.5px;color:#534ab7;line-height:1.6}
+.coaching-note strong{font-weight:600}
+.score-row{display:flex;gap:7px;margin-top:.85rem;flex-wrap:wrap;align-items:center}
+.score-label{font-size:12px;color:#888}
+.score-btn{padding:.38rem .9rem;font-size:12px;border-radius:18px;border:1px solid;cursor:pointer;font-weight:500;transition:all .12s}
+.score-btn.easy{border-color:#2e7d32;color:#2e7d32;background:#f0f8f0}
+.score-btn.easy:hover,.score-btn.easy.picked{background:#2e7d32;color:#fff}
+.score-btn.medium{border-color:#ba7517;color:#ba7517;background:#fef8ee}
+.score-btn.medium:hover,.score-btn.medium.picked{background:#ba7517;color:#fff}
+.score-btn.hard{border-color:#a32d2d;color:#a32d2d;background:#fef0f0}
+.score-btn.hard:hover,.score-btn.hard.picked{background:#a32d2d;color:#fff}
+
+.nav-controls{display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem}
+.nav-btn{padding:.6rem 1.1rem;border:1px solid #d0cdc8;background:#fff;border-radius:7px;font-size:13px;font-weight:500;color:#444;cursor:pointer;transition:all .15s}
+.nav-btn:hover:not(:disabled){background:#f5f4f0;border-color:#aaa}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.nav-btn.primary{background:#0a2d5e;color:#fff;border-color:#0a2d5e}
+.nav-btn.primary:hover:not(:disabled){background:#0d3a7a}
+
+/* ── OVERVIEW ── */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.25rem}
+.stat-card{background:#fff;border:0.5px solid #e0ddd6;border-radius:9px;padding:.85rem}
+.stat-card .stat-label{font-size:10.5px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.stat-card .stat-val{font-size:20px;font-weight:600;color:#0a2d5e}
+.stat-card .stat-sub{font-size:11.5px;color:#888;margin-top:2px}
+.stage-progress-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:1.25rem}
+.spc{background:#fff;border:0.5px solid #e0ddd6;border-radius:9px;padding:.85rem;cursor:pointer;transition:border-color .15s}
+.spc:hover{border-color:#0a2d5e}
+.spc .spc-label{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.spc .spc-n{font-size:18px;font-weight:600;color:#0a2d5e}
+.spc .spc-bar{margin-top:7px;height:3px;background:#e0ddd6;border-radius:2px;overflow:hidden}
+.spc .spc-fill{height:100%;background:#0a2d5e;border-radius:2px}
+.spc .spc-sub{font-size:11px;color:#888;margin-top:3px}
+
+/* ── DONE SCREEN ── */
+.done-screen{text-align:center;padding:2.5rem 1.5rem}
+.done-screen h3{font-size:20px;font-weight:600;color:#0a2d5e;margin-bottom:.65rem}
+.done-screen p{font-size:14px;color:#666;line-height:1.7;max-width:440px;margin:0 auto 1.25rem}
+.done-stats{display:flex;gap:14px;justify-content:center;margin:1.25rem 0;flex-wrap:wrap}
+.done-stat .n{font-size:26px;font-weight:700;color:#0a2d5e}
+.done-stat .l{font-size:11.5px;color:#888}
+
+/* ── SEARCH ── */
+.search-wrap{position:relative;margin-bottom:1.1rem}
+.search-input{width:100%;padding:.75rem 1rem .75rem 2.5rem;font-size:14.5px;border:1px solid #d0cdc8;border-radius:9px;background:#fff;color:#1a1a1a;outline:none;transition:border-color .15s}
+.search-input:focus{border-color:#0a2d5e}
+.search-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:#aaa;font-size:15px;pointer-events:none}
+.search-clear{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#aaa;font-size:17px;cursor:pointer;line-height:1;padding:0}
+.search-results-label{font-size:12px;color:#888;margin-bottom:.65rem;font-weight:500}
+.search-result-card{background:#fff;border:0.5px solid #e0ddd6;border-radius:11px;padding:.9rem 1.1rem;margin-bottom:9px;cursor:pointer;transition:border-color .15s}
+.search-result-card:hover{border-color:#0a2d5e}
+.sr-stage{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#888;margin-bottom:3px}
+.sr-q{font-size:14px;font-weight:500;color:#111;line-height:1.5;margin-bottom:5px}
+.sr-preview{font-size:12.5px;color:#666;line-height:1.5}
+.sr-tag{display:inline-block;font-size:10px;background:#f5f4f0;color:#777;padding:2px 7px;border-radius:7px;margin-top:5px}
+.expanded-card{background:#fff;border:1px solid #0a2d5e;border-radius:13px;padding:1.35rem;margin-bottom:9px}
+.expanded-card .ec-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.85rem;gap:10px}
+.ec-close{background:none;border:none;font-size:19px;color:#aaa;cursor:pointer;line-height:1;padding:0}
+.ec-coaching{margin-top:.75rem;background:#f9f6ff;border:0.5px solid #cdc8f5;border-radius:7px;padding:.65rem .9rem;font-size:12.5px;color:#534ab7;line-height:1.6}
+.no-results{text-align:center;padding:2rem 1rem}
+.no-results h3{font-size:16px;font-weight:600;margin-bottom:.5rem}
+.no-results p{font-size:13.5px;color:#666;line-height:1.6;margin-bottom:1.25rem}
+
+/* ── ASK AI ── */
+.ai-box{background:#fff;border:1px dashed #b5d4f4;border-radius:11px;padding:1.35rem;margin-top:.5rem}
+.ai-box h4{font-size:14.5px;font-weight:600;color:#0a2d5e;margin-bottom:.35rem}
+.ai-box p{font-size:12.5px;color:#666;margin-bottom:.85rem;line-height:1.6}
+.ai-question-edit{min-height:72px;padding:.65rem .85rem;font-size:13.5px;border:1px solid #d0cdc8;border-radius:8px;background:#fff;color:#1a1a1a;line-height:1.6;cursor:text;white-space:pre-wrap;outline:none;margin-bottom:.75rem}
+.ai-question-edit:focus{border-color:#0a2d5e}
+.ai-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:.75rem}
+
+.ai-input-row{position:relative;margin-bottom:.75rem}
+.ai-input-row .ai-question-edit{margin-bottom:0;padding-right:3rem}
+.mic-btn{position:absolute;right:.5rem;top:.5rem;width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:background .15s,transform .15s;background:#f0f4ff;color:#0a2d5e}
+.mic-btn:hover{background:#e0e8ff;transform:scale(1.05)}
+.mic-btn.recording{background:#e31837;color:#fff;animation:micPulse 1s ease-in-out infinite}
+.mic-btn.recording:hover{background:#c0172a}
+.mic-btn.unsupported{opacity:.35;cursor:not-allowed}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(227,24,55,.4)}50%{box-shadow:0 0 0 8px rgba(227,24,55,0)}}
+
+.stt-status{font-size:12px;font-weight:500;margin-bottom:.65rem;display:flex;align-items:center;gap:7px;padding:.45rem .75rem;border-radius:7px}
+.stt-status.listening{background:#fff0f2;color:#c0172a;border:1px solid #f7c1c1}
+.stt-status.listening::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:#e31837;animation:micPulse 1s infinite}
+.stt-status.done{background:#f0f8f0;color:#2e7d32;border:1px solid #a5d6a7}
+.stt-status.error{background:#fff8e8;color:#854f0b;border:1px solid #fac775}
+.ai-stage-sel{padding:.5rem .8rem;border:1px solid #d0cdc8;border-radius:7px;font-size:13px;color:#1a1a1a;background:#fff;outline:none}
+.ai-gen-btn{padding:.6rem 1.35rem;background:#0a2d5e;color:#fff;border:none;border-radius:7px;font-size:13.5px;font-weight:500;cursor:pointer;transition:background .15s}
+.ai-gen-btn:hover:not(:disabled){background:#0d3a7a}
+.ai-gen-btn:disabled{opacity:.5;cursor:not-allowed}
+.generating{display:flex;align-items:center;gap:10px;padding:1rem;font-size:13.5px;color:#185fa5}
+.dot-pulse{display:flex;gap:4px}
+.dot-pulse span{width:5px;height:5px;border-radius:50%;background:#185fa5;animation:dp 1.2s infinite}
+.dot-pulse span:nth-child(2){animation-delay:.2s}
+.dot-pulse span:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.ai-result{background:#f8fbff;border:1px solid #b5d4f4;border-radius:11px;padding:1.35rem;margin-top:.85rem}
+.ai-q-label{font-size:10px;font-weight:700;color:#185fa5;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.ai-q-text{font-size:15px;font-weight:500;color:#111;margin-bottom:.85rem;line-height:1.5}
+.ai-a-label{font-size:10px;font-weight:700;color:#2e7d32;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;margin-top:.85rem;padding-top:.85rem;border-top:1px solid #dce8f8}
+.ai-save-row{display:flex;gap:9px;margin-top:1rem;flex-wrap:wrap}
+.ai-save-btn{padding:.55rem 1.1rem;font-size:12.5px;font-weight:500;border-radius:7px;cursor:pointer;border:1px solid #0a2d5e;background:#0a2d5e;color:#fff;transition:background .15s}
+.ai-save-btn:hover{background:#0d3a7a}
+.ai-discard-btn{padding:.55rem 1.1rem;font-size:12.5px;font-weight:500;border-radius:7px;cursor:pointer;border:1px solid #d0cdc8;background:#fff;color:#666;transition:background .15s}
+.ai-discard-btn:hover{background:#f5f4f0}
+
+/* ── SETTINGS ── */
+.settings-wrap{max-width:680px;margin:0 auto;padding:2rem 1rem}
+.settings-section{background:#fff;border:0.5px solid #e0ddd6;border-radius:12px;padding:1.35rem 1.5rem;margin-bottom:1rem}
+.settings-section h3{font-size:14.5px;font-weight:600;color:#0a2d5e;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid #f0ede8}
+.settings-row{margin-bottom:1rem}
+.settings-row:last-child{margin-bottom:0}
+
+/* ── TIPS ── */
+.tip-card{background:#fff;border:0.5px solid #e0ddd6;border-radius:11px;padding:1.1rem 1.35rem;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+.tip-num{min-width:26px;height:26px;border-radius:50%;background:#0a2d5e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;margin-top:1px}
+.tip-body h4{font-size:14px;font-weight:600;color:#0a2d5e;margin-bottom:4px}
+.tip-body p{font-size:13px;color:#444;line-height:1.65}
+
+@media(max-width:768px){
+  .resume-panel,.jd-panel,.resize-handle{display:none}
+  .main-area{padding-left:0}
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────────
+var APP = {
+  onboarded: false,
+  userName: '',
+  resumeText: '',
+  jdText: '',
+  provider: 'claude',
+  apiKey: '',
+  keyVisible: false,
+  stages: [
+    {id:'hr', label:'HR Screen', color:'#2e7d32', bg:'#e8f4e8', tips:['Keep answers concise — 90 seconds max','Be direct about compensation','Show genuine enthusiasm for the company','Confirm logistics proactively']},
+    {id:'hm', label:'Hiring Manager', color:'#185fa5', bg:'#e3f0fb', tips:['Use STAR structure but lead with insight','Reference frameworks naturally','Show data discipline in every answer','Demonstrate stakeholder navigation']},
+    {id:'tp', label:'Team Panel', color:'#854f0b', bg:'#faeeda', tips:['Slow down — panels reward deliberate speakers','Acknowledge pushback before responding','Use data to anchor every recommendation','End with a forward-looking statement']},
+    {id:'vp', label:'VP / Executive', color:'#993556', bg:'#fbeaf0', tips:['Think out loud on complex questions','Reference enterprise-level implications','Demonstrate risk and regulatory fluency','Ask one sharp question at the end']}
+  ],
+  questions: {},        // { stageId: [{q,a,coaching,resumeKeys,jdKeys,category}] }
+  resumeSections: [],   // [{key,title,body}]  — parsed from resume
+  jdSections: [],       // [{key,title,body}]  — parsed from JD
+  currentStage: 'overview',
+  currentQ: 0,
+  mode: 'practice',
+  revealed: false,
+  scores: {},
+  stageProgress: {},
+  customQuestions: {},
+  searchQuery: '',
+  expandedResult: null,
+  aiResult: null,
+  aiGenerating: false,
+  aiDraft: '',
+  aiTargetStage: '',
+  resumePanelW: 280,
+  jdPanelW: 280,
+  jdCollapsed: false,
+  generating: false,
+  genProgress: 0,
+  genLog: [],
+  genError: null,
+  genResumeIndex: null,
+  view: 'onboard',    // 'onboard' | 'generating' | 'main' | 'settings'
+  onboardStep: 1,     // 1=resume 2=jd 3=provider 4=stages
+  sttActive: false,
+  sttStatus: '',      // '' | 'listening' | 'done' | 'error'
+  sttMsg: '',
+};
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(text){ return String(text||'').split('\n\n').map(function(p){return '<p>'+esc(p.trim())+'</p>';}).join(''); }
+function uid(){ return Math.random().toString(36).slice(2,8); }
+function save(){ try{localStorage.setItem('ic_app',JSON.stringify(APP));}catch(e){} }
+function load(){
+  try{
+    var d=localStorage.getItem('ic_app');
+    if(d){ var p=JSON.parse(d); Object.assign(APP,p); }
+  }catch(e){}
+}
+function getAllQuestions(){
+  var all=[];
+  APP.stages.forEach(function(st){
+    var qs=(APP.questions[st.id]||[]).concat(APP.customQuestions[st.id]||[]);
+    qs.forEach(function(q,i){ all.push(Object.assign({},q,{stage:st.id,stageLabel:st.label,idx:i,isCustom:i>=(APP.questions[st.id]||[]).length})); });
+  });
+  return all;
+}
+function getQs(){ return (APP.questions[APP.currentStage]||[]).concat(APP.customQuestions[APP.currentStage]||[]); }
+function stageById(id){ return APP.stages.find(function(s){return s.id===id;})||{label:id,color:'#555',bg:'#eee',tips:[]}; }
+
+// ── RESUME / JD PARSING ──────────────────────────────────────────────────────
+function buildResumeSections(resumeText){
+  // Create generic sections from resume text by splitting on likely headers
+  var lines = resumeText.split('\n');
+  var sections = []; var current = null;
+  var headerPattern = /^[A-Z][A-Z\s&\/\-]{4,}$|^[A-Z][a-z].{0,40}:?\s*$|^#{1,3}\s/;
+  lines.forEach(function(line){
+    var l = line.trim();
+    if(!l) return;
+    if(headerPattern.test(l) || (l.length < 50 && l === l.toUpperCase() && l.length > 3)){
+      if(current && current.body.trim()) sections.push(current);
+      current = {key: 'sec_'+uid(), title: l.replace(/^#+\s*/,''), body:''};
+    } else if(current){ current.body += l + ' '; }
+    else { current = {key:'sec_'+uid(), title:'Background', body: l+' '}; }
+  });
+  if(current && current.body.trim()) sections.push(current);
+  // Merge small sections
+  var merged = [];
+  sections.forEach(function(s){
+    if(s.body.trim().split(' ').length < 8 && merged.length > 0){
+      merged[merged.length-1].body += ' ' + s.title + ': ' + s.body;
+    } else { merged.push(s); }
+  });
+  return merged.slice(0,12); // cap at 12 sections
+}
+
+function buildJdSections(jdText){
+  var lines = jdText.split('\n');
+  var sections = []; var current = null;
+  var headerPattern = /^[A-Z][A-Z\s&\/\-]{3,}$|^[A-Z][a-z].{0,50}:?\s*$|^#{1,3}\s/;
+  lines.forEach(function(line){
+    var l = line.trim();
+    if(!l) return;
+    if(headerPattern.test(l) || (l.length < 60 && l === l.toUpperCase() && l.length > 3)){
+      if(current && current.body.trim()) sections.push(current);
+      current = {key: 'jd_'+uid(), title: l.replace(/^#+\s*/,''), body:''};
+    } else if(current){ current.body += l + ' '; }
+    else { current = {key:'jd_'+uid(), title:'Overview', body: l+' '}; }
+  });
+  if(current && current.body.trim()) sections.push(current);
+  var merged = [];
+  sections.forEach(function(s){
+    if(s.body.trim().split(' ').length < 8 && merged.length > 0){
+      merged[merged.length-1].body += ' ' + s.title + ': ' + s.body;
+    } else { merged.push(s); }
+  });
+  return merged.slice(0,12);
+}
+
+// ── AI PROVIDER CALLS ─────────────────────────────────────────────────────────
+function friendlyApiError(d, status){
+  // Detect rate limit / quota exceeded
+  if(d && d.type === 'exceeded_limit'){
+    var resetsAt = d.resetsAt || (d.windows && d.windows['5h'] && d.windows['5h'].resets_at);
+    var resetStr = '';
+    if(resetsAt){
+      var resetDate = new Date(resetsAt * 1000);
+      var now = new Date();
+      var diffMs = resetDate - now;
+      if(diffMs > 0){
+        var diffMins = Math.round(diffMs / 60000);
+        var diffHrs = Math.floor(diffMins / 60);
+        var remMins = diffMins % 60;
+        resetStr = diffHrs > 0
+          ? ' Resets in ' + diffHrs + 'h ' + remMins + 'm.'
+          : ' Resets in ' + diffMins + ' minute' + (diffMins===1?'':' s') + '.';
+      } else {
+        resetStr = ' The limit may have just reset — try again.';
+      }
+    }
+    return 'RATE_LIMIT: Your API usage limit has been reached.' + resetStr + ' You can wait for it to reset, then resume generation — your progress is saved.';
+  }
+  if(status === 429) return 'RATE_LIMIT: Too many requests. Please wait a moment and try again.';
+  if(status === 401 || status === 403) return 'AUTH_ERROR: API key is invalid or unauthorised. Please check your key in Settings.';
+  if(status === 400) return 'REQUEST_ERROR: Bad request — the API rejected the input. Try a shorter resume or JD.';
+  if(d && d.error && d.error.message) return d.error.message;
+  if(d && d.error && typeof d.error === 'string') return d.error;
+  return 'API error ' + status;
+}
+
+async function callAI(systemPrompt, userMsg){
+  var key = APP.apiKey.trim();
+  var provider = APP.provider;
+
+  if(provider === 'claude'){
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-3-5-sonnet-20241022',max_tokens:2000,system:systemPrompt,messages:[{role:'user',content:userMsg}]})
+    });
+    var d = await resp.json();
+    if(!resp.ok) throw new Error(friendlyApiError(d, resp.status));
+    return (d.content&&d.content[0]&&d.content[0].text)||'';
+  }
+
+  if(provider === 'openai'){
+    var resp = await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({model:'gpt-4o',max_tokens:2000,messages:[{role:'system',content:systemPrompt},{role:'user',content:userMsg}]})
+    });
+    var d = await resp.json();
+    if(!resp.ok) throw new Error(friendlyApiError(d, resp.status));
+    return (d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'';
+  }
+
+  if(provider === 'gemini'){
+    var resp = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key='+key,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:systemPrompt+'\n\n'+userMsg}]}],generationConfig:{maxOutputTokens:2000}})
+    });
+    var d = await resp.json();
+    if(!resp.ok) throw new Error(friendlyApiError(d, resp.status));
+    return (d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0]&&d.candidates[0].content.parts[0].text)||'';
+  }
+
+  throw new Error('Unknown provider: '+provider);
+}
+
+// ── FIX APPLIED: Improved JSON Parser that catches Arrays ──
+function parseJSON(raw){
+  try{ 
+    var m = raw.match(/\[[\s\S]*\]|\{[\s\S]*\}/); 
+    return JSON.parse(m ? m[0] : raw); 
+  }
+  catch(e){ return null; }
+}
+
+// ── QUESTION GENERATION ───────────────────────────────────────────────────────
+async function generateAllStages(startFromIndex){
+  startFromIndex = startFromIndex || 0;
+  APP.view = 'generating';
+  APP.generating = true;
+  APP.genError = null;
+  if(startFromIndex === 0){
+    APP.genProgress = 0;
+    APP.genLog = [];
+    APP.questions = {};
+  }
+  render();
+
+  // Build resume + jd sections
+  APP.resumeSections = buildResumeSections(APP.resumeText);
+  APP.jdSections = buildJdSections(APP.jdText);
+
+  var resumeKeys = APP.resumeSections.map(function(s){return s.key;}).join(', ');
+  var jdKeys = APP.jdSections.map(function(s){return s.key;}).join(', ');
+  var stages = APP.stages;
+  var total = stages.length;
+
+  var systemBase =
+    'You are an expert interview coach. You have these inputs:\n\n' +
+    'RESUME:\n' + APP.resumeText + '\n\n' +
+    'JOB DESCRIPTION:\n' + APP.jdText + '\n\n' +
+    'RESUME SECTION KEYS (use exactly these when referencing resume sections): ' + resumeKeys + '\n' +
+    'JD SECTION KEYS (use exactly these when referencing JD sections): ' + jdKeys + '\n\n' +
+    'Generate 8-12 interview questions with strong tailored answers for the specified stage. ' +
+    'Answers must draw directly from the resume content provided. ' +
+    'Be specific — reference actual companies, metrics, and experience from the resume. ' +
+    'Respond ONLY with a valid JSON array, no markdown, no preamble:\n' +
+    '[{"q":"question text","category":"category label","a":"answer text with \\n\\n for paragraph breaks","coaching":"1-2 sentence coaching tip","resumeKeys":["key1","key2"],"jdKeys":["key1","key2"]},...]';
+
+  var stageDescriptions = {
+    hr: 'HR Screen — recruiter/TA partner assessing fit, background, compensation, logistics, motivation. Mix of: tell me about yourself, why this role, strengths/weaknesses, salary expectations, notice period, STAR behavioral basics.',
+    hm: 'Hiring Manager — deep technical and functional interview. Questions on: category strategy, end-to-end sourcing execution, specific role challenges, commercial models, stakeholder management, savings methodology, supplier governance.',
+    tp: 'Team/Panel Presentation — cross-functional panel including peers, finance, technology, HR. Questions on: 90-day plan, data-driven decisions, handling pushback, cross-functional collaboration, innovation, scenario-based challenges.',
+    vp: 'VP/Executive — strategic and enterprise-level. Questions on: strategic vision, procurement transformation, executive influence, risk vs savings balance, market trends, leadership and team development, commercial judgment.'
+  };
+
+  for(var i = startFromIndex; i < stages.length; i++){
+    var st = stages[i];
+    var desc = stageDescriptions[st.id] || ('Interview stage: '+st.label+' — generate appropriate questions for this level.');
+    logGen('⟳', 'Generating ' + st.label + ' questions...');
+    render();
+    try{
+      var raw = await callAI(systemBase, 'Stage: ' + st.label + '\nDescription: ' + desc + '\nGenerate questions now.');
+      var parsed = parseJSON(raw);
+      if(Array.isArray(parsed) && parsed.length > 0){
+        var hasIntro = parsed.some(function(q){ return q.q && q.q.toLowerCase().includes('tell me about yourself'); });
+        if(!hasIntro){
+          var introQ = await generateIntroQ(st, systemBase);
+          if(introQ) parsed.unshift(introQ);
+        }
+        APP.questions[st.id] = parsed;
+        logGen('✓', st.label + ' — ' + parsed.length + ' questions ready');
+      } else {
+        logGen('!', st.label + ' — could not parse response, using empty set');
+        APP.questions[st.id] = [];
+      }
+    } catch(e){
+      var msg = e.message || '';
+      if(msg.startsWith('RATE_LIMIT')){
+        // Save progress and surface a resume option
+        APP.genResumeIndex = i;
+        APP.genError = msg.replace('RATE_LIMIT: ','');
+        APP.genProgress = Math.round((i/total)*100);
+        logGen('⚠', 'Rate limit reached at ' + st.label + '. Progress saved.');
+        APP.generating = false;
+        // Save partial progress so completed stages aren't lost
+        APP.onboarded = Object.keys(APP.questions).length > 0;
+        save();
+        render();
+        return;
+      } else if(msg.startsWith('AUTH_ERROR')){
+        APP.genError = msg.replace('AUTH_ERROR: ','');
+        APP.genResumeIndex = i;
+        logGen('✗', 'Auth error: ' + APP.genError);
+        APP.generating = false;
+        save();
+        render();
+        return;
+      } else {
+        logGen('!', st.label + ' — error: ' + msg + '. Skipping.');
+        APP.questions[st.id] = [];
+      }
+    }
+    APP.genProgress = Math.round(((i+1)/total)*100);
+    APP.stageProgress[st.id] = 0;
+    render();
+  }
+
+  APP.generating = false;
+  APP.genError = null;
+  APP.genResumeIndex = null;
+  APP.onboarded = true;
+  APP.view = 'main';
+  APP.currentStage = 'overview';
+  APP.aiTargetStage = APP.stages[0] ? APP.stages[0].id : 'hm';
+  save();
+  render();
+}
+
+function resumeGeneration(){
+  var idx = APP.genResumeIndex || 0;
+  APP.genError = null;
+  generateAllStages(idx);
+}
+
+async function generateIntroQ(st, systemBase){
+  try{
+    var raw = await callAI(systemBase,
+      'Generate ONLY the "Tell me about yourself" question for the ' + st.label + ' stage. ' +
+      'Return a single JSON object (not array): {"q":"Tell me about yourself.","category":"Opening","a":"...","coaching":"...","resumeKeys":[...],"jdKeys":["..."]}');
+    var parsed = parseJSON(raw);
+    if(parsed && parsed.q) return parsed;
+  }catch(e){}
+  return null;
+}
+
+function logGen(icon, msg){
+  APP.genLog.push({icon:icon, msg:msg});
+  if(APP.genLog.length > 20) APP.genLog.shift();
+}
+
+// ── PANEL HIGHLIGHT ───────────────────────────────────────────────────────────
+function renderResumePanel(activeKeys){
+  var el = document.getElementById('resumeSections');
+  if(!el) return;
+  var hasActive = activeKeys && activeKeys.length > 0;
+  var html = '';
+  if(!hasActive && isInterviewStage() && getQs()[APP.currentQ]){
+    var q = getQs()[APP.currentQ];
+    if(q.resumeKeys && q.resumeKeys.length > 0 && APP.mode==='practice' && !APP.revealed){
+      html += '<div class="panel-hint">Resume references appear when you reveal the answer.</div>';
+    }
+  }
+  APP.resumeSections.forEach(function(s){
+    var act = hasActive && activeKeys.indexOf(s.key) > -1;
+    html += '<div class="r-section'+(act?' hl':'')+'">';
+    if(act) html += '<div class="hl-badge">&#10003; Referenced</div>';
+    html += '<div class="r-section-title">'+esc(s.title)+'</div>';
+    html += '<div class="r-section-body">'+esc(s.body.slice(0,220))+(s.body.length>220?'...':'')+'</div>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function renderJdPanel(activeKeys){
+  var el = document.getElementById('jdSections');
+  if(!el) return;
+  var hasActive = activeKeys && activeKeys.length > 0;
+  var html = '';
+  if(!hasActive && isInterviewStage() && getQs()[APP.currentQ]){
+    var q = getQs()[APP.currentQ];
+    if(q.jdKeys && q.jdKeys.length > 0 && APP.mode==='practice' && !APP.revealed){
+      html += '<div class="panel-hint jd-hint">JD references appear when you reveal the answer.</div>';
+    }
+  }
+  APP.jdSections.forEach(function(s){
+    var act = hasActive && activeKeys.indexOf(s.key) > -1;
+    html += '<div class="jd-section'+(act?' hl':'')+'">';
+    if(act) html += '<div class="hl-badge">&#10003; Referenced</div>';
+    html += '<div class="jd-section-title">'+esc(s.title)+'</div>';
+    html += '<div class="jd-section-body">'+esc(s.body.slice(0,220))+(s.body.length>220?'...':'')+'</div>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function highlightForQ(q, forceShow){
+  var show = forceShow || APP.mode==='study' || APP.revealed;
+  renderResumePanel(show ? (q&&q.resumeKeys||[]) : []);
+  renderJdPanel(show ? (q&&q.jdKeys||[]) : []);
+}
+
+function clearPanels(){ renderResumePanel([]); renderJdPanel([]); }
+function isInterviewStage(){ return APP.stages.some(function(s){return s.id===APP.currentStage;}); }
+
+// ── SPEECH TO TEXT ───────────────────────────────────────────────────────────
+var STT = (function(){
+  var recognition = null;
+  var supported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+
+  function isSupported(){ return supported; }
+
+  function init(){
+    if(!supported) return null;
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var r = new SR();
+    r.continuous = true;
+    r.interimResults = true;
+    r.lang = 'en-US';
+    r.maxAlternatives = 1;
+    return r;
+  }
+
+  function start(onTranscript, onEnd, onError){
+    if(!supported){
+      onError('Speech recognition is not supported in this browser. Try Chrome or Edge.');
+      return;
+    }
+    if(recognition){ try{ recognition.stop(); }catch(e){} }
+    recognition = init();
+
+    var finalTranscript = '';
+    var silenceTimer = null;
+
+    function resetSilenceTimer(){
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(function(){
+        // Auto-stop after 2.5 seconds of silence
+        stop();
+      }, 2500);
+    }
+
+    recognition.onstart = function(){
+      APP.sttActive = true;
+      APP.sttStatus = 'listening';
+      APP.sttMsg = 'Listening... speak your question clearly';
+      updateMicUI();
+      resetSilenceTimer();
+    };
+
+    recognition.onresult = function(e){
+      resetSilenceTimer();
+      var interim = '';
+      for(var i = e.resultIndex; i < e.results.length; i++){
+        var t = e.results[i][0].transcript;
+        if(e.results[i].isFinal){ finalTranscript += t + ' '; }
+        else { interim = t; }
+      }
+      var display = (finalTranscript + interim).trim();
+      onTranscript(display, false);
+    };
+
+    recognition.onend = function(){
+      clearTimeout(silenceTimer);
+      APP.sttActive = false;
+      var final = finalTranscript.trim();
+      if(final){
+        onTranscript(final, true);
+        APP.sttStatus = 'done';
+        APP.sttMsg = 'Got it! Review the question above, then generate your answer.';
+      } else {
+        APP.sttStatus = '';
+        APP.sttMsg = '';
+      }
+      updateMicUI();
+      if(onEnd) onEnd(final);
+    };
+
+    recognition.onerror = function(e){
+      clearTimeout(silenceTimer);
+      APP.sttActive = false;
+      var msg = e.error === 'not-allowed'
+        ? 'Microphone access denied. Please allow microphone access in your browser settings.'
+        : e.error === 'no-speech'
+        ? 'No speech detected. Click the mic and speak clearly.'
+        : 'Speech error: ' + e.error + '. Please try again.';
+      APP.sttStatus = 'error';
+      APP.sttMsg = msg;
+      updateMicUI();
+      if(onError) onError(msg);
+    };
+
+    try{ recognition.start(); }
+    catch(e){ APP.sttStatus='error'; APP.sttMsg='Could not start microphone: '+e.message; updateMicUI(); }
+  }
+
+  function stop(){
+    if(recognition){ try{ recognition.stop(); }catch(e){} }
+  }
+
+  function toggle(onTranscript, onEnd, onError){
+    if(APP.sttActive){ stop(); }
+    else { start(onTranscript, onEnd, onError); }
+  }
+
+  return { isSupported: isSupported, start: start, stop: stop, toggle: toggle };
+})();
+
+function updateMicUI(){
+  var btn = document.getElementById('micBtn');
+  var statusEl = document.getElementById('sttStatus');
+  if(btn){
+    btn.className = 'mic-btn' + (APP.sttActive?' recording':'') + (!STT.isSupported()?' unsupported':'');
+    btn.title = !STT.isSupported() ? 'Speech recognition not supported in this browser (use Chrome or Edge)'
+      : APP.sttActive ? 'Click to stop recording' : 'Click to record your question';
+    btn.innerHTML = APP.sttActive ? '⏹' : '🎤';
+  }
+  if(statusEl){
+    if(APP.sttStatus){
+      statusEl.className = 'stt-status ' + APP.sttStatus;
+      statusEl.textContent = APP.sttMsg;
+      statusEl.style.display = 'flex';
+    } else {
+      statusEl.style.display = 'none';
+    }
+  }
+}
+
+function toggleMic(){
+  STT.toggle(
+    function(transcript, isFinal){
+      // Update the draft field live as words come in
+      APP.aiDraft = transcript;
+      var el = document.getElementById('aiDraftEl');
+      if(el){
+        el.textContent = transcript;
+        // Move cursor to end
+        var range = document.createRange();
+        var sel = window.getSelection();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      updateMicUI();
+    },
+    function(finalText){
+      // Recording ended — if we have text, auto-trigger generation
+      if(finalText && finalText.trim().length > 5){
+        APP.aiDraft = finalText.trim();
+        var el = document.getElementById('aiDraftEl');
+        if(el) el.textContent = APP.aiDraft;
+        // Small delay then auto-generate
+        setTimeout(function(){
+          if(APP.aiDraft && APP.apiKey && APP.apiKey.length > 8){
+            generateAiAnswer();
+          }
+        }, 800);
+      }
+    },
+    function(errMsg){
+      console.warn('STT error:', errMsg);
+      updateMicUI();
+    }
+  );
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function setStage(id){ APP.currentStage=id; APP.currentQ=0; APP.revealed=false; clearPanels(); render(); }
+function setMode(m){ APP.mode=m; APP.revealed=false; clearPanels(); render(); }
+function revealAnswer(){
+  APP.revealed=!APP.revealed;
+  var q=getQs()[APP.currentQ];
+  highlightForQ(q, APP.revealed);
+  renderMain();
+}
+function markScore(s){ APP.scores[APP.currentStage+'-'+APP.currentQ]=s; renderMain(); }
+function nextQ(){
+  var qs=getQs();
+  if(APP.currentQ<qs.length-1){ APP.currentQ++; APP.revealed=false; }
+  else { APP.currentQ=qs.length; }
+  APP.stageProgress[APP.currentStage]=Math.max(APP.stageProgress[APP.currentStage]||0, APP.currentQ);
+  var q=getQs()[APP.currentQ];
+  highlightForQ(q);
+  render();
+}
+function prevQ(){
+  if(APP.currentQ>0){ APP.currentQ--; APP.revealed=false; }
+  var q=getQs()[APP.currentQ];
+  highlightForQ(q);
+  render();
+}
+function restartStage(){ APP.currentQ=0; APP.revealed=false; clearPanels(); render(); }
+
+function handleSearchInput(v){ APP.searchQuery=v; APP.expandedResult=null; renderSearchPage(); }
+function clearSearch(){ APP.searchQuery=''; APP.expandedResult=null; renderSearchPage(); }
+function expandResult(i){ APP.expandedResult=i; renderSearchPage(); }
+function collapseResult(){ APP.expandedResult=null; renderSearchPage(); }
+function goToQ(stage,idx){ APP.currentStage=stage; APP.currentQ=idx; APP.revealed=false; APP.view='main'; clearPanels(); render(); }
+function syncAiDraft(el){ APP.aiDraft=el.innerText||el.textContent||''; }
+function discardAi(){ APP.aiResult=null; clearPanels(); renderSearchPage(); }
+
+function saveAiAnswer(){
+  if(!APP.aiResult||APP.aiResult.isError) return;
+  var entry = {q:APP.aiResult.q, a:APP.aiResult.a, coaching:APP.aiResult.coaching||'', category:'AI Generated', resumeKeys:APP.aiResult.resumeKeys||[], jdKeys:APP.aiResult.jdKeys||[]};
+  var sid = APP.aiResult.stage;
+  if(!APP.customQuestions[sid]) APP.customQuestions[sid]=[];
+  APP.customQuestions[sid].push(entry);
+  APP.searchQuery = entry.q.slice(0,50);
+  APP.aiResult = null;
+  APP.aiDraft = '';
+  clearPanels();
+  save();
+  renderSearchPage();
+}
+
+async function generateAiAnswer(){
+  var question = (APP.aiDraft||'').trim();
+  if(!question){ alert('Please type a question first.'); return; }
+  if(!APP.apiKey||!APP.apiKey.trim()){ alert('Please save your API key first.'); return; }
+
+  var selEl = document.getElementById('aiStageSel');
+  var stage = selEl ? selEl.value : (APP.stages[0]&&APP.stages[0].id||'hm');
+  APP.aiGenerating=true; APP.aiResult=null;
+  clearPanels();
+  renderSearchPage();
+
+  var rKeys = APP.resumeSections.map(function(s){return s.key;}).join(', ');
+  var jKeys = APP.jdSections.map(function(s){return s.key;}).join(', ');
+  var stageInfo = stageById(stage);
+
+  var sys = 'You are an expert interview coach.\n\nRESUME:\n'+APP.resumeText+'\n\nJOB DESCRIPTION:\n'+APP.jdText+
+    '\n\nRESUME SECTION KEYS: '+rKeys+'\nJD SECTION KEYS: '+jKeys+
+    '\n\nGenerate a strong, human, specific interview answer that draws directly from the resume content. '+
+    'Interviewer type: '+stageInfo.label+'. '+
+    'Respond ONLY with valid JSON (no markdown):\n'+
+    '{"answer":"answer text with \\n\\n for paragraph breaks","coaching":"1-2 sentence coaching note","resumeKeys":["key1"],"jdKeys":["key1"]}';
+
+  try{
+    var raw = await callAI(sys, 'Interview question: "'+question+'"');
+    var parsed = parseJSON(raw);
+    if(parsed && parsed.answer){
+      APP.aiResult = {q:question, a:parsed.answer, coaching:parsed.coaching||'', stage:stage, resumeKeys:parsed.resumeKeys||[], jdKeys:parsed.jdKeys||[]};
+      renderResumePanel(APP.aiResult.resumeKeys);
+      renderJdPanel(APP.aiResult.jdKeys);
+    } else {
+      APP.aiResult = {q:question, a:'Could not parse response. Try again.', coaching:'', stage:stage, resumeKeys:[], jdKeys:[], isError:true};
+    }
+  }catch(e){
+    APP.aiResult = {q:question, a:'Error: '+e.message, coaching:'', stage:stage, resumeKeys:[], jdKeys:[], isError:true};
+  }
+  APP.aiGenerating=false;
+  renderSearchPage();
+}
+
+// ── ONBOARD / SETTINGS ACTIONS ────────────────────────────────────────────────
+function addStage(){
+  APP.stages.push({id:'stage_'+uid(), label:'New Stage', color:'#534ab7', bg:'#f1effe', tips:[]});
+  renderOnboard();
+}
+function removeStage(id){
+  APP.stages = APP.stages.filter(function(s){return s.id!==id;});
+  renderOnboard();
+}
+function updateStageLabel(id, val){
+  var s = APP.stages.find(function(s){return s.id===id;});
+  if(s) s.label=val;
+}
+
+async function startGeneration(){
+  if(!APP.resumeText.trim()){ alert('Please add your resume.'); return; }
+  if(!APP.jdText.trim()){ alert('Please add the job description.'); return; }
+  if(!APP.apiKey.trim()){ alert('Please add your API key.'); return; }
+  APP.view='generating';
+  render();
+  await generateAllStages();
+}
+
+async function regenerateStage(stageId){
+  var st = stageById(stageId);
+  var rKeys = APP.resumeSections.map(function(s){return s.key;}).join(', ');
+  var jKeys = APP.jdSections.map(function(s){return s.key;}).join(', ');
+  var systemBase = 'You are an expert interview coach. RESUME:\n'+APP.resumeText+'\n\nJOB DESCRIPTION:\n'+APP.jdText+
+    '\n\nRESUME SECTION KEYS: '+rKeys+'\nJD SECTION KEYS: '+jKeys+
+    '\n\nGenerate 8-12 interview questions with strong tailored answers. Respond ONLY with a valid JSON array:\n'+
+    '[{"q":"...","category":"...","a":"...with \\n\\n for paragraphs","coaching":"...","resumeKeys":[...],"jdKeys":[...]},...]';
+  try{
+    var raw = await callAI(systemBase, 'Stage: '+st.label+'. Generate questions now.');
+    var parsed = parseJSON(raw);
+    if(Array.isArray(parsed)&&parsed.length>0){
+      APP.questions[stageId]=parsed;
+      save();
+      alert(st.label+' regenerated — '+parsed.length+' questions ready.');
+      render();
+    }
+  }catch(e){ alert('Error: '+e.message); }
+}
+
+function saveSettings(){
+  save();
+  APP.view='main';
+  // Rebuild sections if resume/jd changed
+  APP.resumeSections = buildResumeSections(APP.resumeText);
+  APP.jdSections = buildJdSections(APP.jdText);
+  render();
+}
+
+function resetApp(){
+  if(!confirm('Reset everything and start over?')) return;
+  localStorage.removeItem('ic_app');
+  Object.assign(APP,{onboarded:false,resumeText:'',jdText:'',provider:'claude',apiKey:'',stages:[
+    {id:'hr',label:'HR Screen',color:'#2e7d32',bg:'#e8f4e8',tips:[]},
+    {id:'hm',label:'Hiring Manager',color:'#185fa5',bg:'#e3f0fb',tips:[]},
+    {id:'tp',label:'Team Panel',color:'#854f0b',bg:'#faeeda',tips:[]},
+    {id:'vp',label:'VP / Executive',color:'#993556',bg:'#fbeaf0',tips:[]}
+  ],questions:{},resumeSections:[],jdSections:[],currentStage:'overview',currentQ:0,mode:'practice',revealed:false,scores:{},stageProgress:{},customQuestions:{},searchQuery:'',expandedResult:null,aiResult:null,aiGenerating:false,aiDraft:'',generating:false,genProgress:0,genLog:[],view:'onboard',onboardStep:1});
+  render();
+}
+
+function saveApiKey(){
+  var inp = document.getElementById('keyInput');
+  if(inp) APP.apiKey = inp.value.trim();
+  var st = document.getElementById('keyStatus');
+  if(st){
+    if(APP.apiKey && APP.apiKey.length > 8){ st.textContent='Key saved ✓'; st.className='api-key-status set'; }
+    else{ st.textContent='No key saved'; st.className='api-key-status unset'; }
+  }
+  save();
+}
+function toggleKeyVis(){
+  APP.keyVisible=!APP.keyVisible;
+  var inp=document.getElementById('keyInput');
+  var btn=document.getElementById('keyEyeBtn');
+  if(inp) inp.type=APP.keyVisible?'text':'password';
+  if(btn) btn.textContent=APP.keyVisible?'🙈':'👁';
+}
+
+function toggleJdPanel(){
+  APP.jdCollapsed=!APP.jdCollapsed;
+  var p=document.getElementById('jdPanel');
+  var b=document.querySelector('.jd-toggle-btn');
+  var h=document.getElementById('jdRH');
+  if(p) p.classList.toggle('collapsed',APP.jdCollapsed);
+  if(b) b.textContent=APP.jdCollapsed?'':'Collapse';
+  if(h) h.style.display=APP.jdCollapsed?'none':'';
+}
+
+// ── DRAG RESIZE ───────────────────────────────────────────────────────────────
+function initResize(handleId, panelId, wrap, reversed){
+  var handle=document.getElementById(handleId);
+  var panel=document.getElementById(panelId);
+  if(!handle||!panel) return;
+  var drag=false, sx=0, sw=0;
+  handle.addEventListener('mousedown',function(e){
+    drag=true; sx=e.clientX; sw=panel.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor='col-resize';
+    document.body.style.userSelect='none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!drag) return;
+    var delta = reversed ? sx-e.clientX : e.clientX-sx;
+    var ww = wrap ? wrap.offsetWidth : window.innerWidth;
+    var nw = Math.min(Math.max(sw+delta,160), ww*0.5);
+    panel.style.width=nw+'px'; panel.style.minWidth=nw+'px';
+  });
+  document.addEventListener('mouseup',function(){
+    if(!drag) return; drag=false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor=''; document.body.style.userSelect='';
+  });
+}
+
+// ── RENDER FUNCTIONS ──────────────────────────────────────────────────────────
+function render(){
+  var app = document.getElementById('app');
+  if(!app) return;
+
+  if(APP.view==='onboard'){ app.innerHTML = renderOnboardHTML(); bindOnboard(); return; }
+  if(APP.view==='generating'){ app.innerHTML = renderGeneratingHTML(); return; }
+  if(APP.view==='settings'){ app.innerHTML = renderSettingsHTML(); bindSettings(); return; }
+
+  // Main app view
+  app.innerHTML = renderMainHTML();
+  renderMainContent();
+  renderResumePanel([]);
+  renderJdPanel([]);
+  initResize('resumeRH','resumePanel',document.getElementById('pageWrap'),false);
+  initResize('jdRH','jdPanel',document.getElementById('pageWrap'),true);
+  document.addEventListener('keydown',function(e){
+    if(e.target.id==='keyInput'&&e.key==='Enter') saveApiKey();
+  });
+}
+
+// ── ONBOARD HTML ──────────────────────────────────────────────────────────────
+function renderOnboardHTML(){
+  var step = APP.onboardStep;
+  var dots = [1,2,3,4].map(function(i){
+    return '<div class="step-dot'+(i<step?' done':i===step?' active':'')+'" style="'+(i<step?'background:#2e7d32;':'')+'"></div>';
+  }).join('');
+
+  var body = '';
+
+  if(step===1){
+    body = '<label class="field-label">Your resume</label>' +
+      '<div class="field-sub">Paste your full resume text, or upload a plain text / PDF file.</div>' +
+      '<div class="upload-zone" id="resumeUploadZone">' +
+        '<input type="file" accept=".txt,.pdf" id="resumeFileInput">' +
+        '<div class="upload-zone-icon">📄</div>' +
+        '<p>Drop your resume PDF or text file here, or click to browse</p>' +
+        '<p style="font-size:11px;color:#aaa;margin-top:4px">Supports PDF and .txt — text is extracted automatically</p>' +
+        '<div class="file-name" id="resumeFileName"></div>' +
+      '</div>' +
+      '<div style="text-align:center;margin:.75rem 0;font-size:12px;color:#aaa">— or paste below —</div>' +
+      '<textarea class="ob-field" id="resumeText" placeholder="Paste your full resume here..." style="min-height:180px">'+esc(APP.resumeText)+'</textarea>';
+  }
+
+  if(step===2){
+    body = '<label class="field-label">Job description</label>' +
+      '<div class="field-sub">Paste the full job posting — the more detail, the better the questions and highlights.</div>' +
+      '<textarea class="ob-field" id="jdText" placeholder="Paste the full job description here..." style="min-height:220px">'+esc(APP.jdText)+'</textarea>';
+  }
+
+  if(step===3){
+    var providers = [
+      {id:'claude', icon:'🟣', name:'Claude', model:'Claude 3.5 Sonnet', hint:'Enter your Anthropic API key (starts with sk-ant-)'},
+      {id:'openai', icon:'🟢', name:'OpenAI', model:'GPT-4o', hint:'Enter your OpenAI API key (starts with sk-)'},
+      {id:'gemini', icon:'🔵', name:'Gemini', model:'Gemini 1.5 Pro', hint:'Enter your Google AI Studio API key'}
+    ];
+    body = '<label class="field-label">Choose your AI provider</label>' +
+      '<div class="field-sub">Select which AI you want to power the interview coaching. You can change this later in settings.</div>' +
+      '<div class="provider-grid">' +
+      providers.map(function(p){
+        return '<div class="provider-card'+(APP.provider===p.id?' selected':'')+'" data-action="setProvOnboard" data-val="'+p.id+'">' +
+          '<div class="provider-icon">'+p.icon+'</div>' +
+          '<div class="p-name">'+p.name+'</div>' +
+          '<div class="p-model">'+p.model+'</div>' +
+          '</div>';
+      }).join('') +
+      '</div>' +
+      '<label class="field-label" style="margin-top:1rem">API Key</label>' +
+      '<div class="field-sub">'+(providers.find(function(p){return p.id===APP.provider;})||{hint:''}).hint+'</div>' +
+      '<div class="key-input-wrap">' +
+        '<input class="ob-input" type="password" id="providerKey" placeholder="Paste your API key..." value="'+esc(APP.apiKey)+'" style="font-family:monospace">' +
+        '<button class="key-eye" onclick="var i=document.getElementById(&apos;providerKey&apos;);i.type=i.type===&apos;password&apos;?&apos;text&apos;:&apos;password&apos;">👁</button>' +
+      '</div>' +
+      '<div class="ob-hint">Your key is stored only in your browser and never sent anywhere except directly to the AI provider.</div>';
+  }
+
+  if(step===4){
+    body = '<label class="field-label">Interview stages</label>' +
+      '<div class="field-sub">Customise the stages for your interview process. Reorder, rename, add, or remove stages. AI will generate questions for each.</div>' +
+      '<div class="stage-list" id="stageList">' +
+      APP.stages.map(function(s){
+        return '<div class="stage-item">' +
+          '<span class="stage-drag">☰</span>' +
+          '<input value="'+esc(s.label)+'" onchange="updateStageLabel(\''+s.id+'\',this.value)" onkeyup="updateStageLabel(\''+s.id+'\',this.value)">' +
+          '<button class="stage-del" onclick="removeStage(&apos;'+s.id+'&apos;)" title="Remove">×</button>' +
+          '</div>';
+      }).join('') +
+      '</div>' +
+      '<button class="add-stage-btn" onclick="addStage()">+ Add stage</button>';
+  }
+
+  var backBtn = step > 1 ? '<button class="ob-btn secondary" onclick="APP.onboardStep--;renderOnboard()">← Back</button>' : '';
+  var nextLabel = step < 4 ? 'Continue →' : 'Generate my interview coach →';
+
+  return '<div class="onboard-wrap">' +
+    '<div class="onboard-card">' +
+      '<h2>'+(step===1?'Welcome to Interview Coach':step===2?'Add the job description':step===3?'Connect your AI':step===4?'Set your interview stages':'')+'</h2>' +
+      '<p class="sub">'+(step===1?'Upload or paste your resume. AI will generate tailored questions and highlight exactly which parts of your experience answer each question.':
+        step===2?'Paste the full job description. The AI will map every answer to the relevant requirements in the JD.':
+        step===3?'Choose your preferred AI provider and add your API key. All keys stay in your browser only.':
+        'Tell the AI which interview stages you\'ll face. It generates the right questions for each level.')+'</p>' +
+      '<div class="step-dots">'+dots+'</div>' +
+      body +
+      '<div class="ob-actions">' + backBtn +
+        '<button class="ob-btn primary" id="obNextBtn" onclick="handleOnboardNext()">' + nextLabel + '</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderOnboard(){ document.getElementById('app').innerHTML = renderOnboardHTML(); bindOnboard(); }
+
+function bindOnboard(){
+  var fi = document.getElementById('resumeFileInput');
+  if(!fi) return;
+  fi.addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var fnEl = document.getElementById('resumeFileName');
+    var taEl = document.getElementById('resumeText');
+
+    if(file.name.toLowerCase().endsWith('.pdf')){
+      if(fnEl) fnEl.textContent = '⏳ Reading PDF...';
+      extractPdfText(file, function(text, err){
+        if(err || !text.trim()){
+          if(fnEl) fnEl.textContent = '⚠ Could not read PDF — please paste your resume text below instead.';
+          fnEl.style.color = '#a32d2d';
+          return;
+        }
+        APP.resumeText = text;
+        if(taEl) taEl.value = text;
+        if(fnEl){ fnEl.textContent = '✓ ' + file.name + ' — ' + text.split(/\s+/).length + ' words extracted'; fnEl.style.color='#2e7d32'; }
+      });
+    } else {
+      // Plain text / docx fallback — read as text
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        var raw = ev.target.result || '';
+        // Strip obvious binary / docx XML noise
+        var clean = raw.replace(/<[^>]+>/g,' ').replace(/[^\x20-\x7E\n\r\t]/g,' ').replace(/\s{3,}/g,'\n').trim();
+        APP.resumeText = clean.length > 100 ? clean : raw;
+        if(taEl) taEl.value = APP.resumeText;
+        if(fnEl){ fnEl.textContent = '✓ ' + file.name; fnEl.style.color='#2e7d32'; }
+      };
+      reader.readAsText(file);
+    }
+  });
+}
+
+function extractPdfText(file, callback){
+  // Load PDF.js from CDN then extract all page text
+  if(window.pdfjsLib){
+    _doPdfExtract(file, callback);
+    return;
+  }
+  var script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  script.onload = function(){
+    if(window.pdfjsLib){
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      _doPdfExtract(file, callback);
+    } else {
+      callback('', 'PDF.js failed to load');
+    }
+  };
+  script.onerror = function(){ callback('', 'Could not load PDF reader'); };
+  document.head.appendChild(script);
+}
+
+function _doPdfExtract(file, callback){
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    var typedArray = new Uint8Array(ev.target.result);
+    window.pdfjsLib.getDocument({data: typedArray}).promise.then(function(pdf){
+      var pages = pdf.numPages;
+      var textParts = [];
+      var pagesDone = 0;
+      for(var i = 1; i <= pages; i++){
+        (function(pageNum){
+          pdf.getPage(pageNum).then(function(page){
+            page.getTextContent().then(function(content){
+              var pageText = content.items.map(function(item){ return item.str; }).join(' ');
+              textParts[pageNum - 1] = pageText;
+              pagesDone++;
+              if(pagesDone === pages){
+                var full = textParts.join('\n\n').replace(/ {3,}/g, ' ').trim();
+                callback(full, null);
+              }
+            });
+          }).catch(function(){ pagesDone++; textParts[pageNum-1]=''; if(pagesDone===pages){ callback(textParts.join('\n\n'),null); } });
+        })(i);
+      }
+    }).catch(function(err){ callback('', err.message||'PDF parse error'); });
+  };
+  reader.onerror = function(){ callback('', 'File read error'); };
+  reader.readAsArrayBuffer(file);
+}
+
+function handleOnboardNext(){
+  var step = APP.onboardStep;
+  if(step===1){
+    var ta=document.getElementById('resumeText');
+    if(ta) APP.resumeText=ta.value.trim();
+    if(!APP.resumeText){ alert('Please add your resume.'); return; }
+  }
+  if(step===2){
+    var ta=document.getElementById('jdText');
+    if(ta) APP.jdText=ta.value.trim();
+    if(!APP.jdText){ alert('Please add the job description.'); return; }
+  }
+  if(step===3){
+    var ki=document.getElementById('providerKey');
+    if(ki) APP.apiKey=ki.value.trim();
+    if(!APP.apiKey){ alert('Please add your API key.'); return; }
+  }
+  if(step===4){
+    if(APP.stages.length===0){ alert('Please add at least one interview stage.'); return; }
+    APP.resumeSections = buildResumeSections(APP.resumeText);
+    APP.jdSections = buildJdSections(APP.jdText);
+    generateAllStages(0);
+    return;
+  }
+  APP.onboardStep++;
+  renderOnboard();
+}
+
+// ── GENERATING HTML ───────────────────────────────────────────────────────────
+function renderGeneratingHTML(){
+  var doneCount = Object.keys(APP.questions).filter(function(k){ return APP.questions[k] && APP.questions[k].length > 0; }).length;
+  var totalStages = APP.stages.length;
+
+  var errorCard = '';
+  if(APP.genError){
+    var isRateLimit = APP.genError.indexOf('usage limit') > -1 || APP.genError.indexOf('rate') > -1;
+    var isAuth = APP.genError.indexOf('nvalid') > -1 || APP.genError.indexOf('nauthori') > -1;
+    errorCard =
+      '<div style="background:#fff5f5;border:1.5px solid #f7c1c1;border-radius:12px;padding:1.35rem 1.5rem;margin-top:1.25rem;text-align:left">' +
+        '<div style="font-size:14px;font-weight:600;color:#a32d2d;margin-bottom:.5rem">' +
+          (isRateLimit ? '⏳ API rate limit reached' : isAuth ? '🔑 API key error' : '⚠ Generation paused') +
+        '</div>' +
+        '<p style="font-size:13.5px;color:#555;line-height:1.65;margin-bottom:1rem">' + esc(APP.genError) + '</p>' +
+        (doneCount > 0 ?
+          '<p style="font-size:13px;color:#2e7d32;margin-bottom:1rem">✓ <strong>'+doneCount+' of '+totalStages+' stages</strong> completed and saved. You can use those now, or wait and resume.</p>'
+          : '') +
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
+          (isRateLimit ?
+            '<button class="ob-btn primary" onclick="resumeGeneration()">Resume when ready →</button>' : '') +
+          (isAuth ?
+            '<button class="ob-btn secondary" onclick="APP.view=&apos;settings&apos;;render()">Fix API key in Settings</button>' : '') +
+          (doneCount > 0 ?
+            '<button class="ob-btn secondary" onclick="APP.onboarded=true;APP.view=&apos;main&apos;;APP.currentStage=&apos;overview&apos;;save();render()">Use what\'s ready now</button>' : '') +
+          (isRateLimit ?
+            '<div style="margin-top:.75rem;width:100%;font-size:12px;color:#888">💡 Tip: Switch to OpenAI or Gemini in Settings if you need it faster — they have separate rate limits.</div>' : '') +
+        '</div>' +
+      '</div>';
+  }
+
+  return '<div class="gen-wrap">' +
+    '<h2>' + (APP.genError ? 'Generation paused' : 'Generating your interview coach') + '</h2>' +
+    (!APP.genError ? '<p>AI is reading your resume and JD and crafting tailored questions and answers for each stage. This takes about 30–60 seconds.</p>' : '') +
+    '<div class="gen-stage-label">Progress: '+APP.genProgress+'% &nbsp;·&nbsp; '+doneCount+'/'+totalStages+' stages done</div>' +
+    '<div class="gen-progress"><div class="gen-progress-fill" style="width:'+APP.genProgress+'%"></div></div>' +
+    '<div class="gen-log">' +
+    APP.genLog.map(function(l){
+      var iconClass = l.icon==='⟳' ? ' spin' : l.icon==='⚠' ? '' : '';
+      var color = l.icon==='✓' ? 'color:#2e7d32' : l.icon==='⚠'||l.icon==='✗' ? 'color:#a32d2d' : '';
+      return '<div class="gen-log-line"><span class="icon'+iconClass+'" style="'+color+'">'+l.icon+'</span><span style="'+color+'">'+esc(l.msg)+'</span></div>';
+    }).join('') +
+    '</div>' +
+    errorCard +
+    '</div>';
+}
+
+// ── MAIN HTML WRAPPER ─────────────────────────────────────────────────────────
+function renderMainHTML(){
+  var providerLabels = {claude:'Claude',openai:'OpenAI',gemini:'Gemini'};
+  var pClass = 'provider-pill ' + APP.provider;
+  var stages = APP.stages;
+
+  var navTabs = '<div class="nav-tabs" id="navTabs">' +
+    '<button class="tab-btn'+(APP.currentStage==='overview'?' active':'')+'" onclick="setStage(&apos;overview&apos;)">Overview</button>' +
+    stages.map(function(s){
+      var qs = (APP.questions[s.id]||[]).length + (APP.customQuestions[s.id]||[]).length;
+      var done = qs>0 && (APP.stageProgress[s.id]||0)>=qs;
+      var col = s.color||'#555'; var bg = s.bg||'#eee';
+      return '<button class="tab-btn'+(APP.currentStage===s.id?' active':'')+'" data-action="goStage" data-val="'+s.id+'" style="'+(APP.currentStage===s.id?'border-bottom-color:'+col+';color:'+col+';':'')+'">' +
+        s.label +
+        '<span class="stage-badge" style="background:'+bg+';color:'+col+'">'+s.id.toUpperCase().slice(0,2)+'</span>' +
+        (done?'<span class="completed-check">✓</span>':'') +
+        '</button>';
+    }).join('') +
+    '<button class="tab-btn'+(APP.currentStage==='search'?' active':'')+'" data-action="goStage" data-val="search" style="'+(APP.currentStage==='search'?'border-bottom-color:#0f6e56;color:#0f6e56;':'')+'">' +
+      'Ask AI <span class="stage-badge" style="background:#e1f5ee;color:#0f6e56">AI</span></button>' +
+    '<button class="tab-btn'+(APP.currentStage==='tips'?' active':'')+'" onclick="setStage(&apos;tips&apos;)">Tips</button>' +
+    '</div>';
+
+  var keyBar = '<div class="api-key-bar">' +
+    '<label>API Key <span class="provider-pill '+APP.provider+'" style="margin-left:4px">'+providerLabels[APP.provider]+'</span></label>' +
+    '<div class="api-key-input-wrap">' +
+      '<input class="api-key-input" type="password" id="keyInput" placeholder="API key..." value="'+esc(APP.apiKey)+'" autocomplete="off">' +
+      '<button class="api-key-toggle" id="keyEyeBtn" onclick="toggleKeyVis()">👁</button>' +
+    '</div>' +
+    '<button class="api-key-save-btn" onclick="saveApiKey()">Save</button>' +
+    '<span class="api-key-status '+(APP.apiKey&&APP.apiKey.length>8?'set':'unset')+'" id="keyStatus">'+(APP.apiKey&&APP.apiKey.length>8?'Key saved ✓':'No key saved')+'</span>' +
+    '<button class="hdr-btn" style="font-size:11px;margin-left:auto" onclick="APP.view=&apos;settings&apos;;render()">⚙ Settings</button>' +
+    '<span class="api-key-note">Key stored in browser only — never sent anywhere except directly to your AI provider.</span>' +
+    '</div>';
+
+  var pageWrap = '<div class="page-wrap" id="pageWrap">' +
+    '<div class="resume-panel" id="resumePanel">' +
+      '<div class="panel-header">Resume <button class="panel-toggle" onclick="document.getElementById(&apos;resumePanel&apos;).style.display=&apos;none&apos;">Hide</button></div>' +
+      '<div id="resumeSections"></div>' +
+    '</div>' +
+    '<div class="resize-handle" id="resumeRH"></div>' +
+    '<div class="main-area"><div class="main" id="mainContent"></div></div>' +
+    '<div class="resize-handle jd-rh" id="jdRH"'+(APP.jdCollapsed?' style="display:none"':'')+'></div>' +
+    '<div class="jd-panel'+(APP.jdCollapsed?' collapsed':'')+'" id="jdPanel">' +
+      '<div class="jd-collapsed-tab" onclick="toggleJdPanel()">Job Description</div>' +
+      '<div class="jd-panel-inner">' +
+        '<div class="panel-header" style="color:#c0392b">Job Description <button class="panel-toggle jd-toggle-btn" onclick="toggleJdPanel()">Collapse</button></div>' +
+        '<div id="jdSections"></div>' +
+      '</div>' +
+    '</div>' +
+    '</div>';
+
+  return '<div class="app-header">' +
+    '<div class="app-header-left"><h1>Interview Coach</h1><p>AI-powered · Your resume · Your JD · Your stages</p></div>' +
+    '<div class="header-actions">' +
+      '<span class="provider-pill '+APP.provider+'" style="font-size:11px">'+providerLabels[APP.provider]+'</span>' +
+      '<button class="hdr-btn" onclick="APP.view=&apos;settings&apos;;render()">⚙ Settings</button>' +
+      '<button class="hdr-btn danger" onclick="resetApp()">Reset</button>' +
+    '</div></div>' +
+    navTabs + keyBar + pageWrap;
+}
+
+// ── MAIN CONTENT ROUTING ──────────────────────────────────────────────────────
+function renderMainContent(){
+  var el = document.getElementById('mainContent');
+  if(!el) return;
+  if(APP.currentStage==='overview'){ el.innerHTML=renderOverviewHTML(); clearPanels(); return; }
+  if(APP.currentStage==='tips'){ el.innerHTML=renderTipsHTML(); clearPanels(); return; }
+  if(APP.currentStage==='search'){ renderSearchPage(); return; }
+  renderMain();
+}
+
+function renderMain(){
+  var el = document.getElementById('mainContent');
+  if(!el) return;
+  var qs = getQs();
+  if(!qs.length){ el.innerHTML='<div style="padding:2rem;text-align:center;color:#888"><p style="margin-bottom:1rem">No questions for this stage yet.</p><button class="nav-btn primary" onclick="regenerateStage(&apos;'+APP.currentStage+'&apos;)">Generate questions</button></div>'; clearPanels(); return; }
+  if(APP.currentQ>=qs.length){ el.innerHTML=renderDoneHTML(); clearPanels(); return; }
+
+  var q = qs[APP.currentQ];
+  var pct = Math.round((APP.currentQ/qs.length)*100);
+  var scoreKey = APP.currentStage+'-'+APP.currentQ;
+  var picked = APP.scores[scoreKey];
+  var show = APP.mode==='study'||APP.revealed;
+
+  highlightForQ(q, show);
+
+  var st = stageById(APP.currentStage);
+  var stageIntro = '<div class="stage-intro">' +
+    '<h2 style="color:'+(st.color||'#0a2d5e')+'">'+esc(st.label)+' Interview</h2>' +
+    '<p>'+esc((st.tips||[]).join(' · ') || 'Questions tailored for this stage of your interview.')+'</p>' +
+    '</div>';
+
+  var revBtn = APP.mode==='practice'
+    ? '<button class="reveal-btn" onclick="revealAnswer()">'+(APP.revealed?'Hide answer':'Reveal answer')+'</button>'
+    : '';
+
+  var scoreHtml = APP.mode==='practice'
+    ? '<div class="score-row"><span class="score-label">How did you do?</span>'+
+      '<button class="score-btn easy'+(picked==='easy'?' picked':'')+'" onclick="markScore(&apos;easy&apos;)">Nailed it</button>'+
+      '<button class="score-btn medium'+(picked==='medium'?' picked':'')+'" onclick="markScore(&apos;medium&apos;)">Getting there</button>'+
+      '<button class="score-btn hard'+(picked==='hard'?' picked':'')+'" onclick="markScore(&apos;hard&apos;)">Need work</button></div>'
+    : '';
+
+  el.innerHTML = stageIntro +
+    '<div class="mode-toggle">'+
+      '<button class="mode-btn'+(APP.mode==='practice'?' active':'')+'" onclick="setMode(&apos;practice&apos;)">Practice Mode</button>'+
+      '<button class="mode-btn'+(APP.mode==='study'?' active':'')+'" onclick="setMode(&apos;study&apos;)">Study Mode</button>'+
+    '</div>'+
+    '<div class="progress-bar-wrap">'+
+      '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>'+
+      '<span class="progress-label">'+(APP.currentQ+1)+' / '+qs.length+'</span>'+
+    '</div>'+
+    '<div class="card">'+
+      '<div class="card-header">'+
+        '<div><div class="q-number">Question '+(APP.currentQ+1)+'</div></div>'+
+        '<div class="q-category">'+esc(q.category||'General')+'</div>'+
+      '</div>'+
+      '<div class="question-text">'+esc(q.q)+'</div>'+
+      revBtn+
+      '<div class="answer-block'+(show?' visible':'')+'" id="answerBlock">'+
+        '<div class="answer-label">Strong answer</div>'+
+        '<div class="answer-text">'+fmt(q.a)+'</div>'+
+        '<div class="coaching-note"><strong>Coaching note:</strong> '+esc(q.coaching||'')+'</div>'+
+        scoreHtml+
+      '</div>'+
+    '</div>'+
+    '<div class="nav-controls">'+
+      '<button class="nav-btn" onclick="prevQ()" '+(APP.currentQ===0?'disabled':'')+'>← Previous</button>'+
+      '<button class="nav-btn primary" onclick="nextQ()">'+(APP.currentQ<qs.length-1?'Next question →':'Finish stage →')+'</button>'+
+    '</div>';
+}
+
+// ── OVERVIEW ──────────────────────────────────────────────────────────────────
+function renderOverviewHTML(){
+  var total = APP.stages.reduce(function(acc,s){ return acc+(APP.questions[s.id]||[]).length+(APP.customQuestions[s.id]||[]).length; },0);
+  var attempted = Object.keys(APP.scores).length;
+  var nailed = Object.values(APP.scores).filter(function(v){return v==='easy';}).length;
+  var tough = Object.values(APP.scores).filter(function(v){return v==='hard';}).length;
+
+  return '<div class="stage-intro"><h2>Welcome back, '+(APP.userName||'there')+'</h2><p>Your personalised interview coach is ready. Work through each stage or jump to any question.</p></div>'+
+    '<div class="overview-grid">'+
+      '<div class="stat-card"><div class="stat-label">Total questions</div><div class="stat-val">'+total+'</div><div class="stat-sub">across '+APP.stages.length+' stages</div></div>'+
+      '<div class="stat-card"><div class="stat-label">Attempted</div><div class="stat-val">'+attempted+'</div><div class="stat-sub">questions practiced</div></div>'+
+      '<div class="stat-card"><div class="stat-label">Nailed it</div><div class="stat-val" style="color:#2e7d32">'+nailed+'</div><div class="stat-sub">strong answers</div></div>'+
+      '<div class="stat-card"><div class="stat-label">Need work</div><div class="stat-val" style="color:#a32d2d">'+tough+'</div><div class="stat-sub">flagged for review</div></div>'+
+    '</div>'+
+    '<div class="stage-progress-grid">'+
+    APP.stages.map(function(s){
+      var qs=(APP.questions[s.id]||[]).length+(APP.customQuestions[s.id]||[]).length;
+      var done=Math.min(APP.stageProgress[s.id]||0,qs);
+      var pct=qs>0?Math.round((done/qs)*100):0;
+      return '<div class="spc" onclick="setStage(&apos;'+s.id+'&apos;)">'+
+        '<div class="spc-label">'+esc(s.label)+'</div>'+
+        '<div class="spc-n">'+qs+' <span style="font-size:13px;font-weight:400;color:#888">questions</span></div>'+
+        '<div class="spc-bar"><div class="spc-fill" style="width:'+pct+'%;background:'+(s.color||'#0a2d5e')+'"></div></div>'+
+        '<div class="spc-sub">'+done+'/'+qs+' attempted</div>'+
+        '</div>';
+    }).join('')+
+    '</div>'+
+    '<div class="stage-intro" style="background:#f0f4ff;border-color:#b5d4f4">'+
+      '<h2 style="color:#185fa5">How to use</h2>'+
+      '<p><strong>Practice Mode:</strong> Question appears first — think through your answer, then reveal it to see which parts of your resume and JD it references, highlighted live. <strong>Study Mode:</strong> Question and answer appear together. Use <strong>Ask AI</strong> to generate answers for any question not in the bank.</p>'+
+    '</div>';
+}
+
+// ── DONE SCREEN ───────────────────────────────────────────────────────────────
+function renderDoneHTML(){
+  var nailed = Object.keys(APP.scores).filter(function(k){return k.startsWith(APP.currentStage+'-')&&APP.scores[k]==='easy';}).length;
+  var tough = Object.keys(APP.scores).filter(function(k){return k.startsWith(APP.currentStage+'-')&&APP.scores[k]==='hard';}).length;
+  var st = stageById(APP.currentStage);
+  return '<div class="done-screen">'+
+    '<div style="font-size:36px;margin-bottom:.75rem">✓</div>'+
+    '<h3>'+esc(st.label)+' — Complete</h3>'+
+    '<p>You\'ve worked through all questions for this stage.</p>'+
+    '<div class="done-stats">'+
+      '<div class="done-stat"><div class="n" style="color:#2e7d32">'+nailed+'</div><div class="l">Nailed it</div></div>'+
+      '<div class="done-stat"><div class="n" style="color:#a32d2d">'+tough+'</div><div class="l">Need work</div></div>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'+
+      '<button class="nav-btn primary" onclick="restartStage()">Restart stage</button>'+
+      '<button class="nav-btn" onclick="setStage(&apos;overview&apos;)">Back to overview</button>'+
+    '</div></div>';
+}
+
+// ── SEARCH PAGE ───────────────────────────────────────────────────────────────
+function renderSearchPage(){
+  var el = document.getElementById('mainContent');
+  if(!el) return;
+  var allQ = getAllQuestions();
+  var query = APP.searchQuery.trim().toLowerCase();
+  var results = query.length>1 ? allQ.filter(function(q){
+    return q.q.toLowerCase().includes(query)||q.a.toLowerCase().includes(query)||q.category.toLowerCase().includes(query)||q.stageLabel.toLowerCase().includes(query);
+  }) : [];
+  var hasQuery = query.length>1;
+  var expanded = APP.expandedResult;
+
+  var html = '<div class="stage-intro"><h2>Search &amp; Ask AI</h2><p>Search the question bank, or ask Claude to generate a tailored answer for any question not covered.</p></div>'+
+    '<div class="search-wrap">'+
+      '<span class="search-icon">🔍</span>'+
+      '<input class="search-input" type="text" id="searchField" placeholder="Search by keyword e.g. negotiation, OSFI, rate card..." oninput="handleSearchInput(this.value)">'+
+      (APP.searchQuery?'<button class="search-clear" onclick="clearSearch()">×</button>':'')+'</div>';
+
+  if(hasQuery && results.length>0){
+    html += '<div class="search-results-label">'+results.length+' result'+(results.length!==1?'s':'')+' found</div>';
+    results.forEach(function(r,i){
+      if(expanded===i){
+        html += '<div class="expanded-card">'+
+          '<div class="ec-header"><div>'+
+            '<div class="sr-stage">'+esc(r.stageLabel)+' · '+esc(r.category)+(r.isCustom?' · <strong>AI Generated</strong>':'')+'</div>'+
+            '<div style="font-size:15px;font-weight:500;color:#111;line-height:1.5">'+esc(r.q)+'</div>'+
+          '</div><button class="ec-close" onclick="collapseResult()">×</button></div>'+
+          '<div style="font-size:10px;font-weight:700;color:#2e7d32;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;margin-top:.85rem;border-top:1px solid #f0ede8;padding-top:.85rem">Strong answer</div>'+
+          '<div class="answer-text">'+fmt(r.a)+'</div>'+
+          '<div class="ec-coaching"><strong>Coaching note:</strong> '+esc(r.coaching)+'</div>'+
+          '<div style="margin-top:.85rem;display:flex;gap:8px">'+
+            '<button class="nav-btn" onclick="goToQ(&apos;'+r.stage+'&apos;,'+r.idx+')">Go to question →</button>'+
+            '<button class="nav-btn" onclick="collapseResult()">Collapse</button>'+
+          '</div></div>';
+      } else {
+        var prev = r.a.replace(/\n/g,' ').slice(0,120)+'...';
+        html += '<div class="search-result-card" onclick="expandResult('+i+')">'+
+          '<div class="sr-stage">'+esc(r.stageLabel)+' · '+esc(r.category)+(r.isCustom?' · AI Generated':'')+'</div>'+
+          '<div class="sr-q">'+esc(r.q)+'</div>'+
+          '<div class="sr-preview">'+esc(prev)+'</div>'+
+          '<span class="sr-tag">Click to expand</span></div>';
+      }
+    });
+  } else if(hasQuery){
+    html += '<div class="no-results"><h3>No results found</h3><p>No existing questions match that search. Use Claude below to generate a tailored answer.</p></div>';
+  }
+
+  // Ask AI box
+  var hasKey = APP.apiKey && APP.apiKey.length > 8;
+  html += '<div class="ai-box">'+
+    '<h4>Ask AI a new question</h4>'+
+    '<p>Type your question, or click the <strong>🎤 mic</strong> to record it directly from the recruiter. AI will generate an answer using your resume and JD, highlighting the relevant sections in both panels.</p>'+
+    (!hasKey?'<div style="background:#fff8e8;border:1px solid #fac775;border-radius:7px;padding:.6rem .9rem;font-size:12.5px;color:#633806;margin-bottom:.85rem"><strong>API key required.</strong> Enter your key in the bar above.</div>':'')+
+    '<div id="sttStatus" class="stt-status" style="display:'+(APP.sttStatus?'flex':'none')+'" '+
+      (APP.sttStatus?'class="stt-status '+APP.sttStatus+'"':'')+'>'+esc(APP.sttMsg||'')+'</div>'+
+    '<div class="ai-input-row">'+
+      '<div class="ai-question-edit" contenteditable="true" id="aiDraftEl" oninput="syncAiDraft(this)">'+esc(APP.aiDraft)+'</div>'+
+      '<button class="mic-btn'+(APP.sttActive?' recording':'')+'" id="micBtn" '+
+        'onclick="toggleMic()" '+
+        'title="'+(APP.sttActive?'Stop recording':'Record question from recruiter')+'">'+
+        (APP.sttActive?'⏹':'🎤')+
+      '</button>'+
+    '</div>'+
+    '<div class="ai-controls">'+
+      '<select class="ai-stage-sel" id="aiStageSel">'+
+      APP.stages.map(function(s){ return '<option value="'+s.id+'"'+(APP.aiTargetStage===s.id?' selected':'')+'>'+esc(s.label)+'</option>'; }).join('')+
+      '</select>'+
+      '<button class="ai-gen-btn" onclick="generateAiAnswer()" '+((!hasKey||APP.aiGenerating)?'disabled':'')+'>'+
+        (APP.aiGenerating?'Generating...':'Generate answer with AI')+'</button>'+
+    '</div>'+
+    (APP.aiGenerating?'<div class="generating"><div class="dot-pulse"><span></span><span></span><span></span></div>AI is crafting your answer...</div>':'')+
+    (APP.aiResult?renderAiResult():'')+
+    '</div>';
+
+  el.innerHTML = html;
+  var sf = document.getElementById('searchField');
+  if(sf){ sf.value=APP.searchQuery; sf.focus(); var l=sf.value.length; sf.setSelectionRange(l,l); }
+  var ad = document.getElementById('aiDraftEl');
+  if(ad){
+    if(!APP.aiDraft) ad.innerHTML='';
+    else if(ad.textContent !== APP.aiDraft) ad.textContent = APP.aiDraft;
+  }
+  updateMicUI();
+}
+
+function renderAiResult(){
+  var r = APP.aiResult;
+  if(r.isError) return '<div class="ai-result"><div style="color:#a32d2d;font-size:13px">'+esc(r.a)+'</div>'+
+    '<div class="ai-save-row"><button class="ai-discard-btn" onclick="discardAi()">Clear</button></div></div>';
+  return '<div class="ai-result">'+
+    '<div class="ai-q-label">Question</div>'+
+    '<div class="ai-q-text">'+esc(r.q)+'</div>'+
+    '<div class="ai-a-label">Strong answer</div>'+
+    '<div class="answer-text">'+fmt(r.a)+'</div>'+
+    (r.coaching?'<div class="ec-coaching" style="margin-top:.75rem"><strong>Coaching note:</strong> '+esc(r.coaching)+'</div>':'')+
+    '<div class="ai-save-row">'+
+      '<button class="ai-save-btn" onclick="saveAiAnswer()">Save to question bank</button>'+
+      '<button class="ai-discard-btn" onclick="discardAi()">Discard</button>'+
+    '</div></div>';
+}
+
+// ── TIPS PAGE ─────────────────────────────────────────────────────────────────
+function renderTipsHTML(){
+  var tips=[
+    {t:'Lead with data, always',b:'Every answer is stronger when anchored in a number. Time-to-award reduced by 20%, cost savings of 12%, service disruptions reduced by 30%. These numbers are in your resume — use them.'},
+    {t:'Answer the unspoken question first',b:'Hiring managers are always asking "Can this person do THIS job at THIS level?" Answer that directly before giving the story. Skip the biographical preamble.'},
+    {t:'Use STAR — but lead with insight',b:'Structure: Situation → Task → Action → Result. But open with the insight or judgment call, not the situation. "The key decision was X. Here\'s how that played out..."'},
+    {t:'Name your frameworks',b:'BATNA, wants vs needs, dual-panel model, concentration risk, escalation cap, blended rate baseline. When you use precise terminology naturally, you signal genuine expertise.'},
+    {t:'Make Finance a co-author, not an auditor',b:'Always say "I agreed the savings methodology with Finance before presenting to leadership." This signals governance intelligence — you understand how decisions get validated in organizations.'},
+    {t:'Connect answers to THIS role',b:'End every answer with a forward lean: "That\'s exactly the approach I\'d apply here at [company]..." It signals you\'re already thinking as an insider, not an applicant.'},
+    {t:'Panel interviews: command and invite',b:'Open your panel introduction with structure (shows confidence) and end with an invitation to them ("I\'d love to hear your perspective on..."). You\'re being assessed on executive presence AND collaborative instinct simultaneously.'},
+    {t:'VP/exec interviews: minimal bio, maximum signal',b:'Executives pattern-match fast. Cut biography to two sentences and get to the strategic insight immediately. Pivot to asking their perspective — it signals peer-level thinking.'},
+    {t:'The BATNA story is your negotiation proof point',b:'Have a specific BATNA story ready: "My BATNA was supplier B at a 4% higher rate. Knowing that gave me a clear walk-away position." That\'s the proof you negotiate structurally, not emotionally.'},
+    {t:'Feedback to losing suppliers is a strategic investment',b:'Hiring managers at senior levels notice whether you mention how you treat non-awarded suppliers. Specific, respectful feedback preserves competitive tension in future cycles. Name it.'},
+  ];
+  return '<div class="stage-intro"><h2>Power Tips</h2><p>These are the interview mechanics that separate senior candidates from the rest.</p></div>'+
+    tips.map(function(t,i){
+      return '<div class="tip-card">'+
+        '<div class="tip-num">'+(i+1)+'</div>'+
+        '<div class="tip-body"><h4>'+esc(t.t)+'</h4><p>'+esc(t.b)+'</p></div>'+
+        '</div>';
+    }).join('');
+}
+
+// ── SETTINGS HTML ─────────────────────────────────────────────────────────────
+function renderSettingsHTML(){
+  var providers=[
+    {id:'claude',icon:'🟣',name:'Claude',model:'Claude 3.5 Sonnet'},
+    {id:'openai',icon:'🟢',name:'OpenAI',model:'GPT-4o'},
+    {id:'gemini',icon:'🔵',name:'Gemini',model:'Gemini 1.5 Pro'}
+  ];
+  var providerCards = providers.map(function(p){
+    var sel = APP.provider===p.id;
+    return '<div class="provider-card'+(sel?' selected':'')+'" data-action="setProv" data-val="'+p.id+'">' +
+      '<div class="provider-icon">'+p.icon+'</div>' +
+      '<div class="p-name">'+p.name+'</div>' +
+      '<div class="p-model">'+p.model+'</div></div>';
+  }).join('');
+  var stageRows = APP.stages.map(function(s){
+    return '<div class="stage-item">' +
+      '<span class="stage-drag">☰</span>' +
+      '<input value="'+esc(s.label)+'" data-stageid="'+s.id+'" class="sett-stage-input" oninput="updateStageLabel(this.dataset.stageid,this.value)">' +
+      '<button class="nav-btn" style="font-size:11px;padding:.3rem .7rem" data-action="regenStage" data-val="'+s.id+'">Regenerate ↺</button>' +
+      '<button class="stage-del" data-action="delStage" data-val="'+s.id+'">×</button>' +
+    '</div>';
+  }).join('');
+  return '<div class="app-header">' +
+      '<div class="app-header-left"><h1>Settings</h1><p>Update resume, JD, provider, stages</p></div>' +
+      '<div class="header-actions"><button class="hdr-btn" data-action="backToMain">← Back</button></div>' +
+    '</div>' +
+    '<div class="settings-wrap">' +
+    '<div class="settings-section"><h3>Your resume</h3>' +
+      '<label class="field-label">Resume text</label>' +
+      '<textarea class="ob-field" id="settResume" style="min-height:160px">'+esc(APP.resumeText)+'</textarea>' +
+    '</div>' +
+    '<div class="settings-section"><h3>Job description</h3>' +
+      '<label class="field-label">Job description text</label>' +
+      '<textarea class="ob-field" id="settJd" style="min-height:160px">'+esc(APP.jdText)+'</textarea>' +
+    '</div>' +
+    '<div class="settings-section"><h3>AI provider &amp; API key</h3>' +
+      '<label class="field-label">Provider</label>' +
+      '<div class="provider-grid" id="settProvGrid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1rem">'+providerCards+'</div>' +
+      '<label class="field-label">API key</label>' +
+      '<div class="key-input-wrap">' +
+        '<input class="ob-input" type="password" id="settKey" value="'+esc(APP.apiKey)+'" placeholder="Paste your API key..." style="font-family:monospace">' +
+        '<button class="key-eye" data-action="toggleSettKey">👁</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="settings-section"><h3>Interview stages</h3>' +
+      '<div class="stage-list" id="settStageList">'+stageRows+'</div>' +
+      '<button class="add-stage-btn" data-action="addStageSett">+ Add stage</button>' +
+    '</div>' +
+    '<div class="settings-section"><h3>Actions</h3>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
+        '<button class="ob-btn primary" data-action="saveSettings">Save changes</button>' +
+        '<button class="ob-btn primary" style="background:#185fa5" data-action="regenAll">Regenerate all stages ↺</button>' +
+        '<button class="ob-btn secondary" style="border-color:#e31837;color:#e31837" data-action="resetApp">Reset everything</button>' +
+      '</div>' +
+    '</div></div>';
+}
+
+function renderSettings(){ document.getElementById('app').innerHTML = renderSettingsHTML(); }
+function bindSettings(){
+  // Provider cards already use onclick inline
+}
+
+function saveSettings(){
+  var r=document.getElementById('settResume'); if(r) APP.resumeText=r.value.trim();
+  var j=document.getElementById('settJd'); if(j) APP.jdText=j.value.trim();
+  var k=document.getElementById('settKey'); if(k) APP.apiKey=k.value.trim();
+  APP.resumeSections=buildResumeSections(APP.resumeText);
+  APP.jdSections=buildJdSections(APP.jdText);
+  save();
+  APP.view='main';
+  render();
+}
+
+
+// ── GLOBAL CLICK DISPATCHER ───────────────────────────────────────────────────
+document.addEventListener('click', function(e){
+  var el = e.target.closest('[data-action]');
+  if(!el) return;
+  var action = el.dataset.action;
+  var val = el.dataset.val || '';
+
+  if(action === 'goStage'){ setStage(val); }
+  else if(action === 'setProv'){ 
+    APP.provider = val;
+    // Re-highlight provider cards in settings
+    document.querySelectorAll('#settProvGrid .provider-card').forEach(function(c){ c.classList.toggle('selected', c.dataset.val===val); });
+  }
+  else if(action === 'setProvOnboard'){ APP.provider=val; renderOnboard(); }
+  else if(action === 'backToMain'){ APP.view='main'; render(); }
+  else if(action === 'saveSettings'){ saveSettings(); }
+  else if(action === 'regenAll'){ collectSettingsAndRegenerate(); }
+  else if(action === 'resetApp'){ resetApp(); }
+  else if(action === 'regenStage'){ regenerateStage(val); }
+  else if(action === 'delStage'){ 
+    APP.stages = APP.stages.filter(function(s){ return s.id!==val; });
+    renderSettings();
+  }
+  else if(action === 'addStageSett'){ addStage(); renderSettings(); }
+  else if(action === 'toggleSettKey'){
+    var inp = document.getElementById('settKey');
+    if(inp){ inp.type = inp.type==='password'?'text':'password'; el.textContent = inp.type==='password'?'👁':'🙈'; }
+  }
+});
+
+function collectSettingsAndRegenerate(){
+  var r=document.getElementById('settResume'); if(r) APP.resumeText=r.value.trim();
+  var j=document.getElementById('settJd'); if(j) APP.jdText=j.value.trim();
+  var k=document.getElementById('settKey'); if(k) APP.apiKey=k.value.trim();
+  APP.resumeSections=buildResumeSections(APP.resumeText);
+  APP.jdSections=buildJdSections(APP.jdText);
+  generateAllStages(0);
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+load();
+if(APP.onboarded && APP.view==='main'){ render(); }
+else { APP.view='onboard'; render(); }
+</script>
+</body>
+</html>
