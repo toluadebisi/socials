@@ -660,7 +660,11 @@ function renderMain() {
 }
 
 function formatAnswer(text) {
-  return text.split('\n\n').map(p => `<p style="margin-bottom:0.85rem">${p.trim()}</p>`).join('');
+  if (!text) return '';
+  // Replace literal '\n' strings that the AI might output with actual newlines, 
+  // then split by any sequence of newlines and filter out empty strings
+  var cleanText = text.replace(/\\n/g, '\n');
+  return cleanText.split(/\n+/).filter(p => p.trim()).map(p => `<p style="margin-bottom:0.85rem">${p.trim()}</p>`).join('');
 }
 
 function getStageIntro(stage) {
@@ -1027,7 +1031,7 @@ async function generateAiAnswer() {
   aiResult = null;
   renderSearch();
 
-  var systemPrompt = "You are an expert interview coach helping Tolulope Adebisi prepare for a Sourcing Integration Project Lead role at GE Healthcare (focused on M&A, IT, Software, and MedTech compliance).\n\nCANDIDATE BACKGROUND:\n" + RESUME_CONTEXT + "\n\nROLE CONTEXT:\n" + JD_CONTEXT + "\n\nINTERVIEWER CONTEXT: " + stageCtx[stage] + "\n\nGenerate a strong, human, confident interview answer that:\n1. Sounds like Tolulope speaking naturally\n2. Draws on Tolulope\'s actual experience (especially Plural Health for healthcare compliance, plus Maestrogrid/Rhea)\n3. References GE Healthcare/M&A context naturally (master supplier list, disposition strategy, TSAs, PHI/compliance, Precision Care)\n4. Is calibrated for the specific interviewer type above\n5. Uses STAR structure for behavioral questions but leads with insight\n\nAlso generate:\n- A 1-2 sentence coaching note\n- resumeKeys: which resume sections this answer draws on. Choose ONLY from: [maestrogrid, rhea, plural, fitc, krystal, skills]\n- jdKeys: which JD sections this answer targets. Choose ONLY from: [integration_scope, disposition_strategy, governance, execution, risk_mgmt, project_mgmt]\n\nRespond ONLY with valid JSON — no markdown, no preamble:\n{\"answer\": \"answer text with \\\\n\\\\n for paragraph breaks\", \"coaching\": \"coaching note\", \"resumeKeys\": [\"plural\"], \"jdKeys\": [\"risk_mgmt\"]}"
+  var systemPrompt = "You are an expert interview coach helping Tolulope Adebisi prepare for a Sourcing Integration Project Lead role at GE Healthcare (focused on M&A, IT, Software, and MedTech compliance).\n\nCANDIDATE BACKGROUND:\n" + RESUME_CONTEXT + "\n\nROLE CONTEXT:\n" + JD_CONTEXT + "\n\nINTERVIEWER CONTEXT: " + stageCtx[stage] + "\n\nGenerate a strong, human, confident interview answer that:\n1. Sounds like Tolulope speaking naturally\n2. Draws on Tolulope\'s actual experience (especially Plural Health for healthcare compliance, plus Maestrogrid/Rhea)\n3. References GE Healthcare/M&A context naturally (master supplier list, disposition strategy, TSAs, PHI/compliance, Precision Care)\n4. Is calibrated for the specific interviewer type above\n5. Uses STAR structure for behavioral questions but leads with insight\n\nAlso generate:\n- A 1-2 sentence coaching note\n- resumeKeys: which resume sections this answer draws on. Choose ONLY from: [maestrogrid, rhea, plural, fitc, krystal, skills]\n- jdKeys: which JD sections this answer targets. Choose ONLY from: [integration_scope, disposition_strategy, governance, execution, risk_mgmt, project_mgmt]\n\nRespond ONLY with valid JSON — no markdown, no preamble:\n{\"answer\": \"answer text (use normal newlines for paragraphs)\", \"coaching\": \"coaching note\", \"resumeKeys\": [\"plural\"], \"jdKeys\": [\"risk_mgmt\"]}"
 
   try {
     var resp = await fetch('https://api.anthropic.com/v1/messages', {
