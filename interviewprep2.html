@@ -47,6 +47,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .b-tp{background:#fce8d0;color:#b85c00}.b-vp{background:#eedff8;color:#6636a8}
 .b-tip{background:#e6f9f0;color:#0f6e56}.b-ai{background:#fff0cc;color:#8a5a00}
 .b-gaps{background:#fce8e8;color:#8b2020}
+.b-grader{background:#f0eaff;color:#5a2ca0}.b-gameday{background:#fff3cc;color:#7a4e00}
 
 /* Layout */
 .layout{display:flex;min-height:calc(100vh - 148px)}
@@ -225,6 +226,75 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .gap-bridge .bridge-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--success);margin-bottom:5px}
 .gap-bridge p{font-size:13px;color:var(--ink2);line-height:1.65}
 
+/* Answer Grader */
+.grader-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.25rem}
+.grader-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink3);margin-bottom:6px}
+.grader-textarea{width:100%;min-height:140px;padding:0.75rem;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid var(--border2);border-radius:8px;color:var(--ink);background:var(--cream);resize:vertical;outline:none;line-height:1.65;transition:border 0.15s}
+.grader-textarea:focus{border-color:var(--ge-navy)}
+.grader-q-sel{width:100%;padding:0.55rem 0.8rem;font-size:13px;border:1px solid var(--border2);border-radius:6px;color:var(--ink);background:#fff;outline:none;margin-bottom:0.85rem}
+.grader-run-btn{padding:0.65rem 1.5rem;background:var(--ge-navy);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s;text-transform:uppercase;letter-spacing:0.04em}
+.grader-run-btn:hover:not(:disabled){background:#00225c}
+.grader-run-btn:disabled{opacity:0.4;cursor:not-allowed}
+.grader-result{margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.5rem}
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.25rem}
+.score-pill{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem}
+.score-pill-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink3);margin-bottom:4px}
+.score-pill-val{font-size:26px;font-weight:700;line-height:1}
+.score-pill-bar{margin-top:6px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.score-pill-fill{height:100%;border-radius:2px;transition:width 0.6s ease}
+.score-pill.s-great .score-pill-val{color:var(--success)}.score-pill.s-great .score-pill-fill{background:var(--success)}
+.score-pill.s-ok .score-pill-val{color:var(--warn)}.score-pill.s-ok .score-pill-fill{background:var(--warn)}
+.score-pill.s-low .score-pill-val{color:var(--danger)}.score-pill.s-low .score-pill-fill{background:var(--danger)}
+.grader-overall{font-size:13.5px;font-weight:600;color:var(--ge-navy);margin-bottom:0.85rem;padding:0.65rem 1rem;background:#edf5ff;border-radius:6px;border-left:3px solid var(--ge-navy)}
+.grader-section{margin-bottom:1.1rem}
+.grader-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink3);margin-bottom:5px}
+.grader-section-body{font-size:13.5px;line-height:1.7;color:var(--ink2)}
+.grader-rewrite{background:#f5f0ff;border:1px solid #d8cefc;border-radius:10px;padding:1.25rem;margin-top:1rem}
+.grader-rewrite-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#5a3faa;margin-bottom:0.65rem}
+.grader-rewrite-body{font-size:14px;line-height:1.75;color:var(--ink)}
+.grader-loading{display:flex;align-items:center;gap:10px;padding:1.25rem 0;font-size:13px;color:var(--ge-navy)}
+
+/* Interview Day */
+.gameday-hero{background:var(--ge-navy);color:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.25rem;border-bottom:3px solid var(--ge-teal)}
+.gameday-hero h2{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:0.4rem}
+.gameday-hero p{font-size:13px;opacity:0.75;line-height:1.6}
+.gameday-section{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.gameday-section h3{font-family:'DM Serif Display',serif;font-size:16px;font-weight:400;color:var(--ge-navy);margin-bottom:0.85rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border)}
+.number-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0.75rem}
+.number-chip{background:var(--ge-teal);color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:5px;letter-spacing:0.02em}
+.number-chip span{opacity:0.75;font-weight:400;margin-left:4px}
+.phrase-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:0.65rem}
+.phrase-bullet{min-width:8px;height:8px;border-radius:50%;background:var(--ge-teal);margin-top:6px;flex-shrink:0}
+.phrase-text{font-size:13.5px;color:var(--ink2);line-height:1.6}
+.phrase-text strong{color:var(--ink);font-weight:600}
+.warmup-item{background:var(--cream);border-radius:6px;padding:0.75rem 0.9rem;margin-bottom:6px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;transition:background 0.15s;border:1px solid var(--border)}
+.warmup-item:hover{background:#edf5ff;border-color:#b5d4f4}
+.warmup-num{min-width:24px;height:24px;border-radius:50%;background:var(--ge-navy);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.warmup-q{font-size:13.5px;color:var(--ink);font-weight:500;line-height:1.5}
+.warmup-hint{font-size:11.5px;color:var(--ink3);margin-top:2px}
+.checklist-item{display:flex;align-items:center;gap:10px;padding:0.5rem 0;border-bottom:1px solid var(--border);cursor:pointer}
+.checklist-item:last-child{border-bottom:none}
+.check-box{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.check-box.checked{background:var(--success);border-color:var(--success);color:#fff;font-size:11px}
+.checklist-text{font-size:13px;color:var(--ink2);line-height:1.45}
+.checklist-text.checked{text-decoration:line-through;color:var(--ink3)}
+
+/* Voice recording */
+.voice-bar{display:flex;align-items:center;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap}
+.voice-btn{display:flex;align-items:center;gap:6px;padding:0.45rem 0.9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em}
+.voice-btn.idle{background:#fff;border-color:var(--border2);color:var(--ink2)}
+.voice-btn.idle:hover{border-color:var(--danger);color:var(--danger)}
+.voice-btn.recording{background:var(--danger);border-color:var(--danger);color:#fff;animation:pulse-rec 1.2s infinite}
+.voice-btn.processing{background:var(--ge-teal);border-color:var(--ge-teal);color:#fff;cursor:not-allowed}
+@keyframes pulse-rec{0%,100%{box-shadow:0 0 0 0 rgba(139,32,32,0.4)}50%{box-shadow:0 0 0 6px rgba(139,32,32,0)}}
+.mic-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
+.voice-btn.recording .mic-dot{animation:blink 0.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.voice-timer{font-size:11px;color:var(--danger);font-weight:700;min-width:32px;display:none}
+.voice-timer.show{display:inline}
+.voice-status{font-size:11px;color:var(--ink3);font-style:italic}
+.voice-error{font-size:11px;color:var(--danger);background:#fce8e8;padding:3px 8px;border-radius:4px}
+
 .no-results{text-align:center;padding:2rem 1rem}
 .no-results h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;color:var(--ink);margin-bottom:0.4rem}
 .no-results p{font-size:13px;color:var(--ink3);margin-bottom:1.25rem;line-height:1.65}
@@ -285,6 +355,8 @@ const STAGES=[
   {id:"vp",label:"VP / Executive",badge:"VP",bc:"b-vp"},
   {id:"gaps",label:"Hard Questions",badge:"Gaps",bc:"b-gaps"},
   {id:"tips",label:"Power Tips",badge:"Pro",bc:"b-tip"},
+  {id:"grader",label:"Answer Grader",badge:"New",bc:"b-grader"},
+  {id:"gameday",label:"Interview Day",badge:"Day-Of",bc:"b-gameday"},
   {id:"search",label:"Ask AI",badge:"AI",bc:"b-ai"}
 ];
 
@@ -719,6 +791,27 @@ let scores={},customQs={hr:[],hm:[],tp:[],vp:[],gaps:[]};
 let searchQ='',expandedSR=null,aiResult=null,aiGenerating=false;
 let aiDraft='',aiStage='hm',apiKey='',keyVisible=false;
 let resumeVisible=true,jdVisible=true;
+// Grader state
+let graderAnswer='',graderQuestion='',graderResult=null,graderLoading=false;
+// Interview day checklist
+let checklist={};
+
+// ─── LOCALSTORAGE PERSISTENCE ───────────────────────────
+function saveState(){
+  try{
+    localStorage.setItem('ic_scores',JSON.stringify(scores));
+    localStorage.setItem('ic_customQs',JSON.stringify(customQs));
+    localStorage.setItem('ic_checklist',JSON.stringify(checklist));
+  }catch(e){}
+}
+function loadState(){
+  try{
+    const s=localStorage.getItem('ic_scores');if(s)scores=JSON.parse(s);
+    const c=localStorage.getItem('ic_customQs');if(c)customQs=JSON.parse(c);
+    const ch=localStorage.getItem('ic_checklist');if(ch)checklist=JSON.parse(ch);
+  }catch(e){}
+}
+loadState();
 
 function getQs(){
   const base=QS[stage]||[];
@@ -743,6 +836,8 @@ function renderMain(){
   if(!el)return;
   if(stage==='overview'){el.innerHTML=renderOverview();renderResume([]);renderJd([]);return;}
   if(stage==='tips'){el.innerHTML=renderTips();renderResume([]);renderJd([]);return;}
+  if(stage==='grader'){el.innerHTML=renderGrader();renderResume([]);renderJd([]);return;}
+  if(stage==='gameday'){el.innerHTML=renderGameDay();renderResume([]);renderJd([]);return;}
   if(stage==='search'){renderSearch();renderResume([]);renderJd([]);return;}
   if(stage==='gaps'){renderGaps();return;}
 
@@ -957,6 +1052,13 @@ function renderAiBox(){
   const hasKey=apiKey&&apiKey.trim().startsWith('sk-');
   let html=`<div class="ai-box"><h4>Ask Claude a new question</h4><p>Type any interview question you want prepared. Claude will respond using your resume, GE Healthcare integration context, and M&A methodology. Save the answer to your question bank.</p>`;
   if(!hasKey)html+=`<div class="ai-key-warn"><strong>API key required.</strong> Enter your Anthropic API key in the bar at the top of the page and click Save key.</div>`;
+  html+=`<div class="voice-bar">
+    <button class="voice-btn idle" id="voiceBtn" onclick="toggleVoice()">
+      <span class="mic-dot"></span><span id="voiceBtnLabel">Record question</span>
+    </button>
+    <span class="voice-timer" id="voiceTimer">0:00</span>
+    <span class="voice-status" id="voiceStatus">Speak your interview question — it will appear in the box below</span>
+  </div>`;
   html+=`<div contenteditable="true" class="ai-q-area" id="aiQArea" oninput="syncAiDraft(this)">${esc(aiDraft)}</div>
     <div class="ai-controls">
       <select class="ai-stage-sel" id="aiStageEl"><option value="hr"${aiStage==='hr'?' selected':''}>HR Screen</option><option value="hm"${aiStage==='hm'?' selected':''}>Hiring Manager</option><option value="tp"${aiStage==='tp'?' selected':''}>Team Panel</option><option value="vp"${aiStage==='vp'?' selected':''}>VP / Executive</option></select>
@@ -1013,7 +1115,7 @@ function renderJd(activeKeys){
 // ─── CONTROLS ───────────────────────────────────────────
 function setMode(m){mode=m;revealed=false;renderMain();}
 function toggleReveal(){revealed=!revealed;const qs=getQs();const q=qs[qIdx];if(q){renderResume(revealed?q.resumeKeys||[]:[]);renderJd(revealed?q.jdKeys||[]:[]);}renderMain();}
-function setScore(s){scores[stage+'-'+qIdx]=s;renderMain();}
+function setScore(s){scores[stage+'-'+qIdx]=s;saveState();renderMain();}
 function nextQ(){const qs=getQs();if(qIdx<qs.length-1){qIdx++;revealed=false;renderMain();}else{qIdx=qs.length;renderMain();}}
 function prevQ(){if(qIdx>0){qIdx--;revealed=false;renderMain();}}
 function restartStage(){qIdx=0;revealed=false;renderMain();}
@@ -1126,6 +1228,7 @@ function saveAiQ(){
   if(!aiResult||aiResult.isError)return;
   if(!customQs[aiResult.stage])customQs[aiResult.stage]=[];
   customQs[aiResult.stage].push({category:'AI Generated',q:aiResult.q,a:aiResult.a,coaching:aiResult.coaching||'AI-generated — adapt to your own voice before delivering.',resumeKeys:aiResult.resumeKeys||[],jdKeys:aiResult.jdKeys||[]});
+  saveState();
   searchQ=aiResult.q.substring(0,50);aiResult=null;aiDraft='';
   renderResume([]);renderJd([]);renderSearch();
 }
@@ -1155,6 +1258,357 @@ function makeResizable(handleId,panelId,direction){
 }
 makeResizable('resizeH','sideResume','left');
 makeResizable('jdResize','sideJd','right');
+
+// ─── ANSWER GRADER ──────────────────────────────────────
+function renderGrader(){
+  // Build question selector options from all stages
+  let opts='<option value="">— Choose a prepared question (optional) —</option>';
+  const labs={hr:'HR Screen',hm:'Hiring Manager',tp:'Team Panel',vp:'VP Executive',gaps:'Hard Questions'};
+  ['hr','hm','tp','vp','gaps'].forEach(s=>{
+    (QS[s]||[]).forEach((q,i)=>{
+      const sel=(graderQuestion===s+'::'+i)?' selected':'';
+      opts+=`<option value="${s}::${i}"${sel}>[${labs[s]}] ${q.q.substring(0,70)}${q.q.length>70?'…':''}</option>`;
+    });
+  });
+
+  const scoreHtml=graderResult&&!graderResult.isError?`
+    <div class="grader-overall">${graderResult.verdict}</div>
+    <div class="score-grid">
+      ${[
+        {label:'Story Structure',key:'story',desc:'Does it have a hook, tension, resolution?'},
+        {label:'M&A Bridge',key:'bridge',desc:'Does it connect your past to integration work?'},
+        {label:'Specificity',key:'specificity',desc:'Concrete numbers, names, mechanisms?'},
+        {label:'Delivery Confidence',key:'confidence',desc:'Sounds natural, not scripted?'}
+      ].map(d=>{
+        const val=graderResult.scores[d.key]||0;
+        const cls=val>=8?'s-great':val>=6?'s-ok':'s-low';
+        return `<div class="score-pill ${cls}">
+          <div class="score-pill-label">${d.label}</div>
+          <div class="score-pill-val">${val}<span style="font-size:14px;font-weight:400;color:var(--ink3)">/10</span></div>
+          <div class="score-pill-bar"><div class="score-pill-fill" style="width:${val*10}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${graderResult.gaps?`<div class="grader-section"><div class="grader-section-title">What's missing or weak</div><div class="grader-section-body">${graderResult.gaps}</div></div>`:''}
+    ${graderResult.strengths?`<div class="grader-section"><div class="grader-section-title">What's working</div><div class="grader-section-body">${graderResult.strengths}</div></div>`:''}
+    <div class="grader-rewrite">
+      <div class="grader-rewrite-label">✦ Stronger version of your answer</div>
+      <div class="grader-rewrite-body answer-text">${graderResult.rewrite||''}</div>
+      <div class="coach-note" style="margin-top:0.85rem"><strong>Key upgrade:</strong> ${esc(graderResult.keyUpgrade||'')}</div>
+    </div>`
+  :graderResult&&graderResult.isError?`<div style="color:var(--danger);font-size:13px;padding:0.75rem;background:#fce8e8;border-radius:6px">${esc(graderResult.error)}</div>`:'';
+
+  return `
+    <div class="stage-intro" style="border-left-color:#5a2ca0">
+      <h2 style="color:#5a2ca0">Answer Grader</h2>
+      <p>Type or speak your own answer to any interview question — exactly as you'd deliver it. Claude will score it on four dimensions, identify what's missing, and rewrite a stronger version side-by-side. This is the fastest way to close the gap between studying answers and actually delivering them.</p>
+    </div>
+    <div class="grader-wrap">
+      <div class="grader-label">Which question are you answering?</div>
+      <select class="grader-q-sel" id="graderQSel" onchange="setGraderQ(this.value)">${opts}</select>
+      <div class="grader-label">Your answer — type it or use the mic below</div>
+      <div class="voice-bar" style="margin-bottom:0.65rem">
+        <button class="voice-btn idle" id="graderVoiceBtn" onclick="toggleGraderVoice()">
+          <span class="mic-dot"></span><span id="graderVoiceLabel">Record answer</span>
+        </button>
+        <span class="voice-timer" id="graderVoiceTimer">0:00</span>
+        <span class="voice-status" id="graderVoiceStatus">Speak your answer out loud — it appears in the box below</span>
+      </div>
+      <textarea class="grader-textarea" id="graderTextarea" placeholder="Write your answer here exactly as you would deliver it in the interview room. Don't edit as you go — just speak or type freely, then let Claude grade it..." oninput="graderAnswer=this.value">${esc(graderAnswer)}</textarea>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:0.85rem;flex-wrap:wrap">
+        <button class="grader-run-btn" onclick="runGrader()" ${!apiKey.startsWith('sk-')||graderLoading?'disabled':''}>${graderLoading?'Grading…':'Grade my answer'}</button>
+        ${!apiKey.startsWith('sk-')?`<span style="font-size:12px;color:var(--danger)">Save your API key above first</span>`:''}
+        ${graderAnswer?`<button class="ctrl-btn" onclick="graderAnswer='';document.getElementById('graderTextarea').value='';graderResult=null;renderMain()">Clear</button>`:''}
+      </div>
+      ${graderLoading?`<div class="grader-loading"><div class="dots"><span></span><span></span><span></span></div>Scoring your answer across four dimensions…</div>`:''}
+      ${graderResult?`<div class="grader-result">${scoreHtml}</div>`:''}
+    </div>`;
+}
+
+function setGraderQ(val){graderQuestion=val;renderMain();}
+
+async function runGrader(){
+  const answer=(graderAnswer||'').trim();
+  if(!answer){alert('Paste or type your answer first.');return;}
+  if(!apiKey||!apiKey.startsWith('sk-')){alert('API key required.');return;}
+  graderLoading=true;graderResult=null;renderMain();
+
+  // Get the reference question + ideal answer if selected
+  let qContext='No specific question selected — grade on general M&A integration sourcing interview quality.';
+  let idealAnswer='';
+  if(graderQuestion){
+    const [s,i]=graderQuestion.split('::');
+    const q=(QS[s]||[])[parseInt(i)];
+    if(q){
+      qContext=`Interview question: "${q.q}"`;
+      idealAnswer=`Reference strong answer (do NOT show this to the candidate — use only to calibrate scoring): ${(q.a||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ')}`;
+    }
+  }
+
+  const system=`You are a senior interview coach grading a candidate's answer to a GE Healthcare Sourcing Integration Project Lead (LPB band) interview question. The candidate is Tolulope Adebisi — 10+ years strategic sourcing, transitioning into formal M&A integration. She must bridge the gap between her past experience (building frameworks from scratch at Maestrogrid, multi-region vendor governance at Rhea Carrison, regulated IT at Plural Health) and formal M&A integration work.
+
+${qContext}
+${idealAnswer}
+
+GRADE THE CANDIDATE'S ANSWER on these four dimensions (score each 1–10):
+1. story: Does the answer have a compelling narrative arc — hook/tension/resolution? Or is it a list of resume bullets?
+2. bridge: Does it naturally connect her past experience to M&A/integration work without being defensive about the gap?
+3. specificity: Does it use real numbers, real mechanisms (BATNA, Change of Control, true-up, disposition roadmap, TCO), real outcomes — or is it vague?
+4. confidence: Does it sound like a person speaking naturally, or like someone reading from a script/slide deck?
+
+Respond ONLY with valid JSON — no markdown, no preamble:
+{
+  "scores": {"story":7,"bridge":5,"specificity":8,"confidence":6},
+  "verdict": "One punchy sentence summarising the overall quality — e.g. 'Strong technical depth but the story arc is missing — this reads like a CV walkthrough, not a compelling case.'",
+  "strengths": "2–3 sentences on what's working well. Be specific — name the exact phrases or moments that land.",
+  "gaps": "2–3 sentences on what's weakest. Be direct and specific — name exactly what's missing or what landed flat.",
+  "rewrite": "<p>A rewritten version of the answer in Tolulope's voice — 3-5 paragraphs, story-first, no bullet points, uses natural openers like 'Honestly...' or 'The thing I learned...', includes at least one concrete number, bridges to M&A naturally, sounds like a confident person speaking not a slide deck.</p>",
+  "keyUpgrade": "One sentence naming the single most important change made in the rewrite."
+}`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey.trim(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1400,system,messages:[{role:'user',content:`Candidate's answer to grade:\n\n"${answer}"`}]})});
+    if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error?e.error.message:'API error '+resp.status);}
+    const data=await resp.json();
+    const raw=(data.content&&data.content[0]&&data.content[0].text)||'';
+    let parsed;
+    try{const m=raw.match(/\{[\s\S]*\}/);parsed=JSON.parse(m?m[0]:raw);}catch(e){throw new Error('Could not parse grader response.');}
+    graderResult=parsed;
+  }catch(e){
+    graderResult={isError:true,error:'Grading failed: '+e.message+'. Check your API key and try again.'};
+  }
+  graderLoading=false;renderMain();
+}
+
+// Separate voice instance for grader textarea
+let graderVoiceActive=false,graderSR=null,graderRecInterval=null,graderRecSecs=0;
+function toggleGraderVoice(){graderVoiceActive?stopGraderSpeech():startGraderSpeech();}
+function startGraderSpeech(){
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){setGraderVoiceError('Not supported. Use Chrome or Edge.');return;}
+  const btn=document.getElementById('graderVoiceBtn');
+  const label=document.getElementById('graderVoiceLabel');
+  const timer=document.getElementById('graderVoiceTimer');
+  const status=document.getElementById('graderVoiceStatus');
+  graderSR=new SpeechRecognition();
+  graderSR.continuous=true;graderSR.interimResults=true;graderSR.lang='en-US';
+  let final='';
+  graderSR.onstart=()=>{
+    graderVoiceActive=true;graderRecSecs=0;
+    if(btn)btn.className='voice-btn recording';if(label)label.textContent='Stop recording';
+    if(timer)timer.className='voice-timer show';if(status)status.textContent='Listening…';
+    graderRecInterval=setInterval(()=>{graderRecSecs++;const m=Math.floor(graderRecSecs/60),s=graderRecSecs%60;if(timer)timer.textContent=m+':'+(s<10?'0':'')+s;if(graderRecSecs>=180)stopGraderSpeech();},1000);
+  };
+  graderSR.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t+' ';else interim+=t;}
+    const ta=document.getElementById('graderTextarea');
+    if(ta){const v=(final+interim).trim();ta.value=v;graderAnswer=v;}
+  };
+  graderSR.onerror=e=>{stopGraderSpeech();setGraderVoiceError('Mic error: '+e.error);};
+  graderSR.onend=()=>{if(graderVoiceActive){try{graderSR.start();}catch(e){stopGraderSpeech();}}};
+  try{graderSR.start();}catch(e){setGraderVoiceError('Could not start mic: '+e.message);}
+}
+function stopGraderSpeech(){
+  graderVoiceActive=false;clearInterval(graderRecInterval);
+  if(graderSR){try{graderSR.stop();}catch(e){}}graderSR=null;
+  const btn=document.getElementById('graderVoiceBtn');const label=document.getElementById('graderVoiceLabel');
+  const timer=document.getElementById('graderVoiceTimer');const status=document.getElementById('graderVoiceStatus');
+  if(btn)btn.className='voice-btn idle';if(label)label.textContent='Record answer';
+  if(timer)timer.className='voice-timer';if(status)status.textContent='✓ Answer captured — click Grade my answer';
+}
+function setGraderVoiceError(msg){const s=document.getElementById('graderVoiceStatus');if(s){s.className='voice-error';s.textContent=msg;setTimeout(()=>{if(s){s.className='voice-status';s.textContent='Speak your answer out loud — it appears in the box below';}},4000);}}
+
+// ─── INTERVIEW DAY ───────────────────────────────────────
+const CHECKLIST_ITEMS=[
+  "Reviewed my key numbers: 20% time-to-award, 12% cost savings, 30% disruption reduction, 25% contract discrepancy reduction",
+  "Practised the elevator pitch out loud — under 2 minutes, leads with the M&A bridge",
+  "Reviewed the GE Healthcare spin-off context (Jan 2023) and Precision Care strategy",
+  "Prepared 2 questions to ask each interviewer",
+  "Confirmed interview format, length, and interviewer names",
+  "Reviewed the 4 disposition buckets: Consolidate, Retain, Exit, Re-source",
+  "Slept well, eaten, hydrated — physical state matters",
+  "Arrived / logged in 10 minutes early"
+];
+
+function renderGameDay(){
+  const checkHtml=CHECKLIST_ITEMS.map((item,i)=>{
+    const done=checklist['c'+i];
+    return `<div class="checklist-item" onclick="toggleCheck(${i})">
+      <div class="check-box${done?' checked':''}">${done?'✓':''}</div>
+      <div class="checklist-text${done?' checked':''}">${item}</div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="gameday-hero">
+      <h2>Interview Day — Tolulope</h2>
+      <p>Everything you need in the next 60 minutes. Numbers to lock in. Phrases to open with. A 5-minute warmup to get into the right mental state. You've done the work — this is the delivery.</p>
+    </div>
+
+    <div class="gameday-section">
+      <h3>Your numbers — memorise these cold</h3>
+      <p style="font-size:12.5px;color:var(--ink3);margin-bottom:0.85rem">These are your proof points. Drop them naturally — don't recite them like a list.</p>
+      <div class="number-row">
+        <div class="number-chip">20%<span>Time-to-award reduction @ Maestrogrid</span></div>
+        <div class="number-chip">12%<span>Cost savings @ Rhea Carrison</span></div>
+        <div class="number-chip">30%<span>Service disruption reduction @ Rhea</span></div>
+        <div class="number-chip">25%<span>Contract discrepancy reduction @ Plural Health</span></div>
+        <div class="number-chip">10+<span>Years in strategic sourcing</span></div>
+        <div class="number-chip">Jan 2023<span>GE Healthcare spin-off date</span></div>
+      </div>
+    </div>
+
+    <div class="gameday-section">
+      <h3>Power opening phrases — use these to begin answers</h3>
+      <p style="font-size:12.5px;color:var(--ink3);margin-bottom:0.85rem">These openers signal someone who thinks, not someone who recites. Pick one per answer.</p>
+      ${[
+        {phrase:"The honest version is...",why:"Signals transparency — interviewers relax when you lead with candour"},
+        {phrase:"What I find genuinely interesting about this is...",why:"Shows intellectual curiosity, not just competence"},
+        {phrase:"Let me be specific about what that actually looked like...",why:"Pre-empts the follow-up 'can you give me an example?'"},
+        {phrase:"The thing most people miss on this is...",why:"Frames you as the expert in the room, not a candidate reciting answers"},
+        {phrase:"I want to answer that directly rather than deflect...",why:"Perfect opener for the M&A gap question — disarms before they press"},
+        {phrase:"The mistake I made — and what I changed after — was...",why:"The only way to answer failure/weakness questions that builds trust"}
+      ].map(p=>`<div class="phrase-item"><div class="phrase-bullet"></div><div class="phrase-text"><strong>"${p.phrase}"</strong><br><span style="font-size:12px;color:var(--ink3)">${p.why}</span></div></div>`).join('')}
+    </div>
+
+    <div class="gameday-section">
+      <h3>5-minute warmup — do this right before you go in</h3>
+      <p style="font-size:12.5px;color:var(--ink3);margin-bottom:0.85rem">Say each answer out loud. Not in your head — out loud. Click any question to practice it now.</p>
+      ${[
+        {q:"In one sentence, what makes you the right person for this role?",hint:"Your M&A bridge in 20 words."},
+        {q:"What is a disposition strategy and how do you build one?",hint:"Consolidate / Retain / Exit / Re-source + your 3-phase process."},
+        {q:"Name a specific risk you'd look for when integrating IT vendors.",hint:"Change of Control clause — say it with confidence."},
+        {q:"How do you lead a project without direct authority?",hint:"Data + shared goals + transparency — give the Rhea Carrison story."},
+        {q:"What does GE Healthcare's Precision Care strategy mean for sourcing?",hint:"Retain R&D toolchain, consolidate back-office — protect engineering velocity."}
+      ].map((w,i)=>`<div class="warmup-item" onclick="goStage('search');setTimeout(()=>{const a=document.getElementById('aiQArea');if(a){a.innerText='${w.q.replace(/'/g,"\\'")}';aiDraft='${w.q.replace(/'/g,"\\'")}';renderSearch();}},100)">
+        <div class="warmup-num">${i+1}</div>
+        <div><div class="warmup-q">${w.q}</div><div class="warmup-hint">${w.hint}</div></div>
+      </div>`).join('')}
+    </div>
+
+    <div class="gameday-section">
+      <h3>Pre-interview checklist</h3>
+      ${checkHtml}
+    </div>
+
+    <div class="gameday-section" style="background:#f9f6ff;border-color:#d8cefc">
+      <h3 style="color:#5a2ca0">The one thing to remember</h3>
+      <p style="font-size:14.5px;line-height:1.8;color:var(--ink2)">You're not trying to convince them you've done M&A before. You're showing them that the specific skills they need — building governance from a blank page, rationalising a fragmented supplier base, driving cross-functional alignment without authority — are exactly what you've been doing. The title is new. The work isn't. Say that with conviction.</p>
+    </div>`;
+}
+
+function toggleCheck(i){
+  checklist['c'+i]=!checklist['c'+i];
+  saveState();
+  // Re-render just the checklist section inline
+  const el=document.getElementById('mainContent');
+  if(el)el.innerHTML=renderGameDay();
+}
+
+// ─── VOICE RECORDING (Web Speech API — browser-native STT, no extra API needed) ─────
+let recInterval=null,recSeconds=0,voiceActive=false,speechRecognition=null;
+
+function toggleVoice(){
+  if(voiceActive){stopSpeech();}else{startSpeech();}
+}
+
+function startSpeech(){
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){
+    setVoiceError('Speech recognition not supported. Try Chrome or Edge browser.');return;
+  }
+  const btn=document.getElementById('voiceBtn');
+  const label=document.getElementById('voiceBtnLabel');
+  const timer=document.getElementById('voiceTimer');
+  const status=document.getElementById('voiceStatus');
+
+  speechRecognition=new SpeechRecognition();
+  speechRecognition.continuous=true;
+  speechRecognition.interimResults=true;
+  speechRecognition.lang='en-US';
+
+  let finalTranscript='';
+  let interim='';
+
+  speechRecognition.onstart=()=>{
+    voiceActive=true;recSeconds=0;
+    btn.className='voice-btn recording';
+    label.textContent='Stop recording';
+    timer.className='voice-timer show';
+    status.textContent='Listening… speak your question clearly';
+    recInterval=setInterval(()=>{
+      recSeconds++;
+      const m=Math.floor(recSeconds/60),s=recSeconds%60;
+      if(timer)timer.textContent=m+':'+(s<10?'0':'')+s;
+      if(recSeconds>=120)stopSpeech();
+    },1000);
+  };
+
+  speechRecognition.onresult=e=>{
+    interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal){finalTranscript+=t+' ';}
+      else{interim+=t;}
+    }
+    // Live update the text area
+    const area=document.getElementById('aiQArea');
+    if(area){
+      const display=(finalTranscript+interim).trim();
+      area.innerText=display;
+      aiDraft=display;
+    }
+    if(status)status.textContent='Listening… (speak or click Stop when done)';
+  };
+
+  speechRecognition.onerror=e=>{
+    stopSpeech();
+    const msgs={
+      'not-allowed':'Microphone access denied. Allow mic access in browser settings.',
+      'no-speech':'No speech detected. Try again.',
+      'network':'Network error during recognition.',
+      'audio-capture':'No microphone found.'
+    };
+    setVoiceError(msgs[e.error]||'Speech recognition error: '+e.error);
+  };
+
+  speechRecognition.onend=()=>{
+    // Auto-restart if still supposed to be active (Chrome cuts off after ~1min)
+    if(voiceActive){
+      try{speechRecognition.start();}catch(e){stopSpeech();}
+    }
+  };
+
+  try{speechRecognition.start();}catch(e){setVoiceError('Could not start microphone: '+e.message);}
+}
+
+function stopSpeech(){
+  voiceActive=false;
+  clearInterval(recInterval);
+  if(speechRecognition){try{speechRecognition.stop();}catch(e){}}
+  speechRecognition=null;
+  resetVoiceBtn();
+  const area=document.getElementById('aiQArea');
+  if(area&&area.innerText.trim()){
+    const status=document.getElementById('voiceStatus');
+    if(status)status.textContent='✓ Question captured — review above and click Generate';
+  }
+}
+
+function resetVoiceBtn(){
+  const btn=document.getElementById('voiceBtn');
+  const label=document.getElementById('voiceBtnLabel');
+  const timer=document.getElementById('voiceTimer');
+  if(btn)btn.className='voice-btn idle';
+  if(label)label.textContent='Record question';
+  if(timer)timer.className='voice-timer';
+}
+
+function setVoiceError(msg){
+  const status=document.getElementById('voiceStatus');
+  if(status){status.className='voice-error';status.textContent=msg;setTimeout(()=>{if(status){status.className='voice-status';status.textContent='Speak your interview question — it will appear in the box below';}},4000);}
+}
 
 // ─── UTILITY ────────────────────────────────────────────
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
