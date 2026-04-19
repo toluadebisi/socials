@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Coach Pro</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--brand:#1d4ed8;--good:#059669;--warn:#d97706;--bad:#dc2626}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}header{padding:18px 24px;background:#0f172a;color:#fff;display:flex;justify-content:space-between;align-items:center}h1{margin:0;font-size:20px}.wrap{display:grid;grid-template-columns:280px 1fr;gap:18px;padding:18px}.panel,.main{background:var(--card);border:1px solid var(--line);border-radius:14px}.panel{padding:16px}.main{padding:18px}.q{font-size:24px;font-weight:700;line-height:1.35;margin:10px 0 16px}.muted{color:var(--muted)}select,button,textarea,input{font:inherit}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.btn{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.mode.active{background:#dbeafe;border-color:#93c5fd}.answer{border-top:1px solid var(--line);padding-top:16px;margin-top:12px;line-height:1.7}.meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}.pill{padding:6px 10px;border-radius:999px;background:#f3f4f6;font-size:13px}.score.good{color:var(--good)}.score.warn{color:var(--warn)}.score.bad{color:var(--bad)}textarea{width:100%;min-height:160px;border:1px solid var(--line);border-radius:12px;padding:12px}.small{font-size:13px}.list button{display:block;width:100%;text-align:left;margin:8px 0}.hidden{display:none}@media(max-width:900px){.wrap{grid-template-columns:1fr}}</style>
+</head>
+<body>
+<header><h1>Interview Coach Pro</h1><div class='small'>Human answers. No fluff.</div></header>
+<div class='wrap'>
+<aside class='panel'>
+<div class='muted small'>Questions</div>
+<div id='list' class='list'></div>
+<hr>
+<div class='muted small'>Answer Grader</div>
+<textarea id='grader' placeholder='Paste your interview answer here...'></textarea>
+<div class='toolbar'><button class='btn primary' onclick='gradeAnswer()'>Grade Answer</button></div>
+<div id='gradeOut' class='small'></div>
+</aside>
+<main class='main'>
+<div class='muted'>Current Question</div>
+<div id='question' class='q'></div>
+<div class='toolbar'>
+<button class='btn mode active' data-mode='concise' onclick='setMode(this)'>Concise</button>
+<button class='btn mode' data-mode='balanced' onclick='setMode(this)'>Balanced</button>
+<button class='btn mode' data-mode='detailed' onclick='setMode(this)'>Detailed</button>
+<button class='btn primary' onclick='showAnswer()'>Reveal Answer</button>
+<button class='btn' onclick='nextQ()'>Next</button>
+</div>
+<div id='answer' class='answer hidden'></div>
+</main>
+</div>
+<script>
+const data=[
+{q:'How do you ensure continuous improvement and innovation within procurement and supplier relationships, particularly in dynamic IT environments?',a:{concise:'I focus on three areas: data visibility, supplier collaboration, and regular performance reviews. First, I analyze spend, usage, renewals, and service issues to identify waste or opportunities. Second, I keep strategic suppliers engaged by sharing future business needs early so they can propose better solutions or pricing. Third, I run scorecards that measure cost, service, responsiveness, and innovation. In previous roles, this approach helped consolidate duplicate tools, improve service levels, and reduce avoidable costs.',balanced:'Continuous improvement in IT procurement starts with strong data and disciplined supplier management. I review spend, license usage, contract terms, support performance, and upcoming renewals to spot trends early. That helps identify duplicate tools, underused licenses, or contracts that no longer match business needs. I also maintain regular business reviews with key suppliers, where we discuss roadmaps, risks, and improvement ideas. When suppliers understand our future direction, they often bring stronger pricing or better solutions. Finally, I use scorecards covering cost, SLA performance, responsiveness, and innovation contributions. That creates accountability and keeps relationships productive.',detailed:'In dynamic IT environments, procurement has to be proactive. I begin with analytics: spend trends, utilization, ticket volumes, renewals, and stakeholder feedback. That reveals where we can consolidate vendors, renegotiate terms, or retire underused tools. I then build strategic supplier relationships through quarterly reviews focused on roadmap alignment, risks, and continuous improvement actions. Good suppliers should bring ideas, not just invoices. I also use KPI scorecards measuring savings, service levels, issue resolution speed, compliance, and innovation. Suppliers who perform well earn more opportunities. This combination of analytics, governance, and partnership drives continuous improvement.'}},
+{q:'Tell me about yourself.',a:{concise:'I am a procurement and project professional with experience across sourcing, supplier management, and operational improvement. I have worked in regulated and fast-paced environments, led cross-functional initiatives, and delivered savings while improving process efficiency. What I bring is a practical, data-driven approach and strong stakeholder management.',balanced:'I am a procurement and project management professional with experience leading sourcing initiatives, vendor management, and process improvement. Across my career, I have worked with cross-functional teams, negotiated contracts, improved controls, and delivered cost savings. I enjoy solving business problems, especially where procurement can add strategic value through better supplier partnerships and stronger commercial discipline.',detailed:'I bring a mix of procurement, operations, and project leadership experience. My background includes strategic sourcing, contract negotiations, supplier performance management, and business process improvement. I have supported stakeholders across finance, IT, and operations, and I am comfortable balancing cost, risk, and service quality. I am at my best in roles where I can bring structure, drive execution, and build strong working relationships.'}}
+];
+let idx=0,mode='concise';
+const banned=['synergy realization','commercial vulnerability','intersection of','strategic leverage'];
+function clean(t){banned.forEach(w=>t=t.replaceAll(w,''));return t.replace(/\s+/g,' ').trim();}
+function words(t){return t.split(/\s+/).filter(Boolean).length}
+function seconds(t){return Math.ceil(words(t)/140*60)}
+function humanScore(t){let s=100;if(words(t)>220)s-=20;if((t.match(/strategic/gi)||[]).length>2)s-=10;if((t.match(/synergy/gi)||[]).length>0)s-=10;return Math.max(55,s)}
+function renderList(){list.innerHTML='';data.forEach((x,i)=>{const b=document.createElement('button');b.className='btn';b.textContent=(i+1)+'. '+x.q;b.onclick=()=>{idx=i;renderQ()};list.appendChild(b)})}
+function renderQ(){question.textContent=data[idx].q;answer.classList.add('hidden');answer.innerHTML=''}
+function setMode(el){document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));el.classList.add('active');mode=el.dataset.mode}
+function showAnswer(){let t=clean(data[idx].a[mode]);let sec=seconds(t),hs=humanScore(t);let cls=hs>84?'good':hs>69?'warn':'bad';answer.innerHTML='<div>'+t+'</div><div class="meta"><span class="pill">⏱ '+sec+' sec</span><span class="pill">Words: '+words(t)+'</span><span class="pill score '+cls+'">Human Score: '+hs+'/100</span></div>';answer.classList.remove('hidden')}
+function nextQ(){idx=(idx+1)%data.length;renderQ()}
+function gradeAnswer(){const t=grader.value.trim();if(!t)return;let w=words(t),sec=seconds(t),hs=humanScore(t);let clarity=w<80?65:w<180?88:72;gradeOut.innerHTML='Estimated Time: '+sec+' sec<br>Clarity: '+clarity+'/100<br>Human Score: '+hs+'/100<br>Advice: '+(w>220?'Shorten it and remove repetition.': 'Good length. Add one measurable example for impact.');}
+renderList();renderQ();
+</script>
+</body>
+</html>
