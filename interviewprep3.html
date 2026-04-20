@@ -360,7 +360,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 // ─── FILTERS & METRICS ─────────────────────────────────
 const bannedWords = [
   "intersection of", "commercial vulnerability", "synergy realization", 
-  "strategic leverage model", "value architecture", "paradigm shift", "leverage"
+  "strategic leverage model", "value architecture", "paradigm shift", "leverage", "complex multi-stakeholder environments"
 ];
 
 function cleanBuzzwords(text) {
@@ -412,11 +412,11 @@ hr:[
     category:"Elevator Pitch",
     q:"Tell me about yourself and your sourcing background.",
     answer: {
-      concise: `<p>I'm a Senior Procurement Manager currently at Maestrogrid. My expertise is bringing structure to decentralized environments. I built our IT and external labor frameworks from scratch, cutting time-to-award by 20%. I'm interested in this role because taking fragmented systems and building a governed model is exactly what M&A integration requires.</p>`,
-      balanced: `<p>I'm currently a Senior Procurement Manager at Maestrogrid in Toronto. My background is in building enterprise category management frameworks from the ground up, especially for IT and software. Before Maestrogrid, I managed multi-region vendor portfolios at Rhea Carrison, standardizing processes and cutting costs by 12%.</p><p>I excel in environments that need structure—which is why this integration role caught my eye. It's essentially what I've been doing: taking fragmented systems, like what you see on Day 1 of an acquisition, and building a unified operating model.</p>`,
-      detailed: `<p>I've spent over a decade in sourcing, primarily focusing on IT software and complex indirect categories. Right now, I'm at Maestrogrid. I was brought in to build their enterprise framework from scratch because they had a very decentralized setup—much like an M&A environment.</p><p>Previously, at Rhea Carrison, I led vendor rationalization across different regions. I had to work closely with HR, Finance, and IT leaders to change established vendor relationships. I also have experience at Plural Health managing IT procurement in a regulated clinical environment, which I know is critical for GE Healthcare.</p><p>Ultimately, my career has been about navigating complex stakeholder environments and building clear sourcing models. That's the exact skill set I want to bring to this integration lead role.</p>`
+      concise: `<p>I'm a procurement leader who specializes in stepping into fragmented environments and building order. Over my recent roles at Maestrogrid, Rhea Carrison, and Plural Health, I've managed complex IT portfolios, consolidated global vendors for 12% savings, and navigated strict healthcare compliance.</p><p>I'm drawn to this Integration Lead role because post-acquisition environments require exactly this skill set: taking legacy systems, making swift disposition decisions, and protecting Day-1 business continuity.</p>`,
+      balanced: `<p>Over the last decade, my career has been about building structure within highly decentralized organizations. My story really comes together across my three most recent roles.</p><p>During my time at Plural Health, I managed IT sourcing in a highly regulated clinical setting, which taught me how to navigate strict compliance like SOC 2 and HIPAA. Following that, at Rhea Carrison, I took on a multi-region portfolio, driving a major vendor consolidation project that delivered 12% in cost savings and reduced service disruptions by 30%.</p><p>Most recently at Maestrogrid, I inherited a completely decentralized setup and architected our enterprise governance framework from scratch, cutting time-to-award by 20%. When I look at your Integration Lead role, it requires someone who can seamlessly handle clinical compliance, drive global consolidation, and build clear governance. That transition work is exactly what I do best.</p>`,
+      detailed: `<p>Over the last ten years, my career has centered on turning messy, decentralized environments into governed operations—especially for IT software. My progression across my recent roles translates directly to the challenges of an M&A integration.</p><p>First, at Plural Health, I managed IT procurement in a strict clinical setting. The situation required zero-defect compliance, so I implemented strict audit processes that reduced contract discrepancies by 25%. Next, at Rhea Carrison, I faced massive multi-region vendor sprawl. I executed a global consolidation strategy and negotiated standardized rate cards, resulting in 12% cost savings and 30% fewer service disruptions.</p><p>Today at Maestrogrid, I walked into a completely decentralized environment with no enterprise framework. I built our category management from the ground up, which ultimately cut our time-to-award by 20%.</p><p>I see this GE Healthcare Integration role as the culmination of these experiences. An acquisition means inheriting redundant contracts, navigating clinical compliance, and establishing swift governance. My goal is to be the commercial bridge that protects your Day-1 continuity while systematically capturing those expected synergy savings.</p>`
     },
-    coaching:"Lead with your current role, then highlight the connection between your past work (structuring decentralized environments) and M&A integration.",
+    coaching:"Deliver in four beats: Identity → Scale of work across roles → Proof (Metrics) → GE Healthcare M&A Tie-in.",
     resumeKeys:["maestrogrid","rhea","plural"],
     jdKeys:["integration_scope","disposition_strategy","project_mgmt"]
   },
@@ -911,7 +911,7 @@ function renderAiBox(){
       if(aiResult.coaching)html+=`<div class="coach-note"><strong>Coaching:</strong> ${esc(aiResult.coaching)}</div>`;
       html+=`<div class="ai-save-row"><button class="ai-save" onclick="saveAiQ()">Save to bank</button><button class="ai-discard" onclick="discardAi()">Discard</button></div>`;
     }else{
-      html+=`<div style="color:var(--danger)">${esc(aiResult.errorMsg)}</div><button class="ai-discard" onclick="discardAi()">Clear</button>`;
+      html+=`<div style="color:var(--danger)"><strong>Error:</strong> ${esc(aiResult.errorMsg)}</div><button class="ai-discard" style="margin-top:0.8rem" onclick="discardAi()">Clear</button>`;
     }
     html+='</div>';
   }
@@ -928,36 +928,67 @@ async function generateAnswer(){
 
   aiGenerating=true;aiResult=null;renderSearch();
 
-  const system=`You are an expert interview coach for Tolulope Adebisi (Senior Procurement Manager, applying for GE Healthcare M&A Integration Lead).
+  const resumeContext = RESUME_SECS.map(s => s.title + ': ' + s.body).join('\n');
+  const jdContext = JD_SECS.map(s => s.title + ': ' + s.body).join('\n');
 
-CRITICAL INSTRUCTIONS:
-1. Write like a senior professional in an interview.
-2. Use NATURAL spoken language. NO theatrical TED Talk style hooks ("The honest version?").
-3. NO corporate jargon or buzzwords ("intersection of", "paradigm", "strategic leverage").
-4. Keep answers highly concise and realistic to speak out loud.
+  const system=`You are an expert interview coach for Tolulope Adebisi, applying for the GE Healthcare M&A Integration Sourcing Lead role.
+
+Candidate Background:
+${resumeContext}
+
+GE Healthcare Job Description (JD) Context:
+${jdContext}
+
+CRITICAL INSTRUCTIONS FOR ANSWERS:
+1. Speak like a confident, natural human. NO theatrical hooks. NO generic fluff like "complex multi-stakeholder environments". Use simple, direct, conversational language.
+2. TELL A STORY USING THE STAR FORMAT: Use the Situation, Task, Action, Result framework implicitly. Frame multiple past roles into a cohesive narrative sequence whenever possible (e.g. progressing from Plural Health to Rhea Carrison to Maestrogrid). 
+3. DIRECT JD MAPPING: You MUST explicitly map the candidate's past experience directly to the requirements in the provided GE Healthcare Job Description. Show exactly how past actions prove the ability to execute the specific duties listed in the JD.
+4. PROVE WITH METRICS: Always include hard, measurable impacts (e.g., 20% time-to-award reduction, 12% savings) and name specific past companies (Maestrogrid, Rhea Carrison, Plural Health). Never use vague phrases like "I was recently involved in integration work."
+5. TRANSITIONS: NEVER use the phrase "For example" to introduce past roles. Use natural, executive transitions like "In my recent role at...", "During my time at...", or "Most recently,".
+6. SHOW JD VALUE OVER GENERAL M&A: Focus on how the candidate's skills solve the specific problems outlined in the JD (e.g., disposition strategy, cross-functional governance, risk mitigation) rather than just generic M&A value.
+7. Keep it concise and impactful.
 
 Respond ONLY with valid JSON matching this structure perfectly:
 {
   "answer": {
-    "concise": "<p>Very direct, 45 seconds spoken max.</p>",
-    "balanced": "<p>Good detail, 75 seconds spoken max. Natural transitions.</p>",
-    "detailed": "<p>Use if asked for deep explanation. 90 seconds max.</p>"
+    "concise": "<p>Direct, metric-driven, maps to JD, 45 seconds spoken max.</p>",
+    "balanced": "<p>STAR format story (Identity -> Scale -> Proof -> JD/M&A Tie-in), specific project examples proving a direct JD requirement, 75 seconds spoken max.</p>",
+    "detailed": "<p>Deep STAR format story, weaves multiple roles if applicable, heavily maps Maestrogrid/Rhea Carrison experience to specific GE Healthcare JD needs, 90 seconds spoken max.</p>"
   },
-  "coaching": "1 sentence practical tip.",
+  "coaching": "1 sentence practical tip on delivery.",
   "resumeKeys": ["maestrogrid"],
   "jdKeys": ["execution"]
 }`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey.trim(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-20241022',max_tokens:1200,system,messages:[{role:'user',content:`Question: "${q}"`}]})});
-    if(!resp.ok) throw new Error('API Error');
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey.trim(),
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1200,
+        system,
+        messages:[{role:'user',content:`Question: "${q}"`}]
+      })
+    });
+    
+    if(!resp.ok) {
+      const errData = await resp.json().catch(() => ({}));
+      throw new Error(errData.error?.message || `HTTP ${resp.status}`);
+    }
+
     const data=await resp.json();
     const raw=(data.content&&data.content[0]&&data.content[0].text)||'';
     const m=raw.match(/\{[\s\S]*\}/);
     const parsed=JSON.parse(m?m[0]:raw);
     aiResult={q, answer: parsed.answer, coaching: parsed.coaching, stage:s, resumeKeys: parsed.resumeKeys, jdKeys: parsed.jdKeys};
   }catch(e){
-    aiResult={q, isError:true, errorMsg:'Error generating response.'};
+    aiResult={q, isError:true, errorMsg: e.message || 'Error generating response.'};
   }
   aiGenerating=false;
   renderSearch();
@@ -1021,6 +1052,11 @@ function renderGrader(){
           </div>
         </div>
       `: ''}
+      ${graderResult && graderResult.isError ? `
+        <div class="grader-result" style="color:var(--danger)">
+          <strong>Grading Failed:</strong> ${esc(graderResult.humanFeedback)}
+        </div>
+      `: ''}
     </div>`;
 }
 
@@ -1030,22 +1066,58 @@ async function runGrader(){
   if(!apiKey){alert('API key required.');return;}
   graderLoading=true;renderMain();
 
-  const system=`You are a strict interview coach. Grade this answer for a GE Healthcare M&A Integration sourcing role.
-  CRITICAL RULE: The candidate must sound like a normal, competent human speaking. Heavily penalize theatrical hooks, corporate jargon (synergy realization, paradigm, leverage), and overly long sentences.
+  const resumeContext = RESUME_SECS.map(s => s.title + ': ' + s.body).join('\n');
+  const jdContext = JD_SECS.map(s => s.title + ': ' + s.body).join('\n');
+
+  const system=`You are a strict interview coach grading Tolulope Adebisi for the GE Healthcare M&A Integration Sourcing role.
+
+Candidate Background:
+${resumeContext}
+
+GE Healthcare Job Description (JD) Context:
+${jdContext}
+
+CRITICAL GRADING RULES:
+1. The candidate must sound like a normal, competent human speaking. Heavily penalize generic fluff ("complex multi-stakeholder environments"), theatrical hooks, or vague claims.
+2. STAR FORMAT & STORYTELLING: Ensure the candidate tells a cohesive story referencing multiple recent roles (if applicable) and uses the STAR format. The answer MUST provide MEASURABLE impact (e.g., 12% savings, 20% reduction). Penalize answers that lack proof.
+3. TRANSITIONS: Penalize the phrase "For example" when introducing past roles. Enforce natural executive transitions like "In my recent role at..." or "During my time at...".
+4. TIE TO THE JD: The answer MUST explicitly connect the candidate's experience to the specific GE Healthcare Job Description requirements provided above. Do not just look for generic M&A references; look for direct evidence solving the JD's specific challenges.
 
   Respond ONLY with JSON:
   {
     "verdict": "One short sentence summary.",
-    "humanFeedback": "2 sentences pointing out any unnatural phrasing, buzzwords, or areas where it sounds scripted.",
-    "rewrite": "<p>A concise, highly natural spoken version. Max 60 seconds spoken length. No bullet points.</p>"
+    "humanFeedback": "2 sentences pointing out any missing metrics, vague fluff, lack of the STAR/Storytelling formatting, or failure to map to the JD.",
+    "rewrite": "<p>A concise, highly natural spoken version using Identity -> Scale -> Proof -> JD mapping story arc, actual metrics, and direct mapping to the GE Healthcare JD. Max 60 seconds.</p>"
   }`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey.trim(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-20241022',max_tokens:800,system,messages:[{role:'user',content:`Grade this spoken answer: "${answer}"`}]})});
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey.trim(),
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:800,
+        system,
+        messages:[{role:'user',content:`Grade this spoken answer: "${answer}"`}]
+      })
+    });
+    
+    if(!resp.ok) {
+      const errData = await resp.json().catch(() => ({}));
+      throw new Error(errData.error?.message || `HTTP ${resp.status}`);
+    }
+
     const data=await resp.json();
     const m=(data.content[0].text).match(/\{[\s\S]*\}/);
     graderResult=JSON.parse(m[0]);
-  }catch(e){graderResult={isError:true};}
+  }catch(e){
+    graderResult={isError:true, humanFeedback: e.message || 'Failed to generate grading response.'};
+  }
   graderLoading=false;renderMain();
 }
 
