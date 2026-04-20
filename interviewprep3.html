@@ -611,6 +611,49 @@ function loadState(){
 }
 loadState();
 
+// ─── RENDER HELPERS ─────────────────────────────────────
+function renderResume(activeKeys) {
+  const el = document.getElementById('resumeSecs');
+  if (!el) return;
+  el.innerHTML = RESUME_SECS.map(s => {
+    const isLit = activeKeys && activeKeys.includes(s.key) ? ' lit' : '';
+    return `<div class="res-sec${isLit}">
+      <div class="res-sec-title">${esc(s.title)}</div>
+      <div class="res-sec-sub">${esc(s.sub)}</div>
+      <div class="res-sec-body">${esc(s.body)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderJd(activeKeys) {
+  const el = document.getElementById('jdSecs');
+  if (!el) return;
+  el.innerHTML = JD_SECS.map(s => {
+    const isLit = activeKeys && activeKeys.includes(s.key) ? ' lit' : '';
+    return `<div class="jd-sec${isLit}">
+      <div class="jd-sec-title">${esc(s.title)}</div>
+      <div class="jd-sec-body">${esc(s.body)}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleResume() {
+  resumeVisible = !resumeVisible;
+  const sr = document.getElementById('sideResume');
+  const rh = document.getElementById('resizeH');
+  if (sr) sr.style.display = resumeVisible ? 'block' : 'none';
+  if (rh) rh.style.display = resumeVisible ? 'flex' : 'none';
+}
+
+function toggleJd() {
+  jdVisible = !jdVisible;
+  const el = document.getElementById('sideJd');
+  if (el) {
+    if (jdVisible) el.classList.remove('collapsed');
+    else el.classList.add('collapsed');
+  }
+}
+
 function getQs(){
   const base=QS[stage]||[];
   const custom=customQs[stage]||[];
