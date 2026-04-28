@@ -479,6 +479,18 @@ body::before{
 .trigger-label{font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
 .trigger-body{font-size:12px;color:#ffdda0;line-height:1.7;font-weight:500;}
 
+/* New Analysis button */
+.new-analysis-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 18px;background:transparent;
+  border:1px solid var(--border2);border-radius:8px;
+  color:var(--text2);font-family:var(--syne);font-weight:600;font-size:12px;
+  cursor:pointer;transition:all .2s;letter-spacing:0.04em;white-space:nowrap;
+}
+.new-analysis-btn:hover{border-color:var(--lime);color:var(--lime);background:rgba(184,255,53,0.06);}
+.new-analysis-btn svg{transition:transform .3s;}
+.new-analysis-btn:hover svg{transform:rotate(180deg);}
+
 /* Session / Psychology */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
 .info-card{background:var(--ink2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;}
@@ -1072,7 +1084,14 @@ function renderResult(p) {
           <span class="rh-phase">${p.marketPhase || ''} · ${p.marketStructure || ''}</span>
         </div>
       </div>
-      <div class="rh-right">
+      <div class="rh-right" style="display:flex;align-items:center;gap:16px;">
+        <button class="new-analysis-btn" onclick="resetAnalysis()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 7A5 5 0 1 1 7 2a5 5 0 0 1 3.54 1.46L12 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          New Analysis
+        </button>
         <div class="conf-ring-wrap">
           <div class="conf-ring">
             <svg width="64" height="64" viewBox="0 0 64 64">
@@ -1216,6 +1235,46 @@ function restoreResult(idx) {
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('loadingState').style.display = 'none';
   renderResult(history[idx]);
+}
+
+/* ===================================================
+   RESET / NEW ANALYSIS
+=================================================== */
+function resetAnalysis() {
+  // Clear images
+  imgs[0] = null; imgs[1] = null; imgs[2] = null;
+
+  // Reset upload zones
+  [0, 1, 2].forEach(i => {
+    const z = document.getElementById('uz' + i);
+    z.classList.remove('has-img');
+    const thumb = z.querySelector('img');
+    if (thumb) thumb.remove();
+    document.getElementById('un' + i).textContent = ['H4 / Daily chart', 'H1 / H2 chart', 'M15 / M5 chart'][i];
+    document.getElementById('uc' + i).style.display = 'none';
+    // Reset the file input so the same file can be re-selected
+    const input = z.querySelector('input[type=file]');
+    if (input) input.value = '';
+  });
+
+  // Clear instrument & account fields
+  document.getElementById('instrument').value = '';
+  document.getElementById('account').value = '';
+
+  // Hide result, show empty state
+  document.getElementById('resultWrap').style.display = 'none';
+  document.getElementById('resultWrap').innerHTML = '';
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('emptyState').style.display = 'flex';
+  document.getElementById('statusLine').textContent = '';
+
+  // Scroll right panel back to top
+  document.getElementById('rightPanel').scrollTop = 0;
+
+  // Re-evaluate button state
+  checkReady();
+
+  toast('Ready for new analysis — upload your charts', 'info');
 }
 
 /* ===================================================
