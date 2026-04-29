@@ -560,6 +560,36 @@ body::before{
 .modal-body li{margin-bottom:6px;}
 .modal-body strong{color:var(--lime);}
 
+/* Paste overlay & zone enhancements */
+.uz-actions{display:flex;gap:6px;margin-top:6px;}
+.uz-paste-btn{
+  font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 9px;border:1px solid var(--border2);border-radius:4px;
+  background:transparent;color:var(--text3);cursor:pointer;transition:all .2s;
+  position:relative;z-index:2;
+}
+.uz-paste-btn:hover{border-color:var(--lime);color:var(--lime);background:rgba(184,255,53,.06);}
+.uzone.paste-ready{border-color:var(--lime);animation:pastePulse .6s ease;}
+@keyframes pastePulse{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px rgba(184,255,53,.2);}}
+.uzone.drag-over{border-color:var(--lime);background:rgba(184,255,53,.06);}
+.paste-global-hint{
+  font-family:var(--mono);font-size:9px;color:var(--text3);
+  text-align:center;letter-spacing:.06em;margin-top:4px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.paste-global-hint kbd{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:3px;
+  padding:1px 5px;font-size:9px;color:var(--text2);font-family:var(--mono);
+}
+.uz-clear-btn{
+  font-family:var(--mono);font-size:9px;letter-spacing:.08em;
+  padding:3px 8px;border:1px solid rgba(255,61,87,.3);border-radius:4px;
+  background:transparent;color:var(--red);cursor:pointer;transition:all .2s;
+  position:relative;z-index:2;display:none;
+}
+.uz-clear-btn:hover{background:rgba(255,61,87,.08);}
+.uzone.has-img .uz-clear-btn{display:inline-block;}
+
 /* Scrollbar */
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -673,33 +703,45 @@ body::before{
         <div>
           <div class="panel-section-title">Chart Upload</div>
           <div class="upload-zones">
-            <div class="uzone" id="uz0">
+            <div class="uzone" id="uz0" ondragover="handleDragOver(event,0)" ondragleave="handleDragLeave(event,0)" ondrop="handleDrop(event,0)">
               <input type="file" accept="image/*" onchange="handleFile(0,this)">
               <div class="uz-tf">HIGH<br>TF</div>
               <div class="uz-content">
                 <div class="uz-name" id="un0">H4 / Daily chart</div>
-                <div class="uz-hint">Click or drop image</div>
+                <div class="uz-actions">
+                  <button class="uz-paste-btn" onclick="pasteIntoZone(event,0)">⌘ Paste</button>
+                  <button class="uz-clear-btn" id="uclear0" onclick="clearZone(event,0)">✕ Clear</button>
+                </div>
               </div>
               <span class="uz-check" id="uc0" style="display:none">✓</span>
             </div>
-            <div class="uzone" id="uz1">
+            <div class="uzone" id="uz1" ondragover="handleDragOver(event,1)" ondragleave="handleDragLeave(event,1)" ondrop="handleDrop(event,1)">
               <input type="file" accept="image/*" onchange="handleFile(1,this)">
               <div class="uz-tf">MID<br>TF</div>
               <div class="uz-content">
                 <div class="uz-name" id="un1">H1 / H2 chart</div>
-                <div class="uz-hint">Click or drop image</div>
+                <div class="uz-actions">
+                  <button class="uz-paste-btn" onclick="pasteIntoZone(event,1)">⌘ Paste</button>
+                  <button class="uz-clear-btn" id="uclear1" onclick="clearZone(event,1)">✕ Clear</button>
+                </div>
               </div>
               <span class="uz-check" id="uc1" style="display:none">✓</span>
             </div>
-            <div class="uzone" id="uz2">
+            <div class="uzone" id="uz2" ondragover="handleDragOver(event,2)" ondragleave="handleDragLeave(event,2)" ondrop="handleDrop(event,2)">
               <input type="file" accept="image/*" onchange="handleFile(2,this)">
               <div class="uz-tf">ENTRY<br>TF</div>
               <div class="uz-content">
                 <div class="uz-name" id="un2">M15 / M5 chart</div>
-                <div class="uz-hint">Click or drop image</div>
+                <div class="uz-actions">
+                  <button class="uz-paste-btn" onclick="pasteIntoZone(event,2)">⌘ Paste</button>
+                  <button class="uz-clear-btn" id="uclear2" onclick="clearZone(event,2)">✕ Clear</button>
+                </div>
               </div>
               <span class="uz-check" id="uc2" style="display:none">✓</span>
             </div>
+          </div>
+          <div class="paste-global-hint">
+            <kbd>Ctrl</kbd>+<kbd>V</kbd> anywhere to auto-fill next empty slot
           </div>
         </div>
 
@@ -848,25 +890,118 @@ function clearKey() {
 }
 
 /* ===================================================
-   FILE UPLOAD
+   IMAGE HANDLING — shared helper
 =================================================== */
+const defaultNames = ['H4 / Daily chart', 'H1 / H2 chart', 'M15 / M5 chart'];
+
+function setImage(idx, dataUrl, label) {
+  imgs[idx] = dataUrl;
+  const z = document.getElementById('uz' + idx);
+  z.classList.add('has-img');
+  // Remove old thumb
+  const old = z.querySelector('.uz-thumb');
+  if (old) old.remove();
+  // Insert thumb before uz-tf
+  const thumb = document.createElement('img');
+  thumb.className = 'uz-thumb';
+  thumb.src = dataUrl;
+  z.insertBefore(thumb, z.querySelector('.uz-tf'));
+  document.getElementById('un' + idx).textContent = label || 'Pasted image';
+  document.getElementById('uc' + idx).style.display = 'block';
+  // Flash success
+  z.classList.add('paste-ready');
+  setTimeout(() => z.classList.remove('paste-ready'), 700);
+  checkReady();
+}
+
 function handleFile(idx, input) {
   const file = input.files[0]; if (!file) return;
   const r = new FileReader();
-  r.onload = e => {
-    imgs[idx] = e.target.result;
-    const z = document.getElementById('uz' + idx);
-    z.classList.add('has-img');
-    const existing = z.querySelector('img');
-    if (existing) existing.remove();
-    const thumb = document.createElement('img');
-    thumb.className = 'uz-thumb';
-    thumb.src = e.target.result;
-    z.appendChild(thumb);
-    document.getElementById('un' + idx).textContent = file.name;
-    document.getElementById('uc' + idx).style.display = 'block';
-    checkReady();
-  };
+  r.onload = e => setImage(idx, e.target.result, file.name);
+  r.readAsDataURL(file);
+}
+
+/* Paste button — reads clipboard for this specific zone */
+async function pasteIntoZone(e, idx) {
+  e.preventDefault(); e.stopPropagation();
+  try {
+    const items = await navigator.clipboard.read();
+    for (const item of items) {
+      const imgType = item.types.find(t => t.startsWith('image/'));
+      if (imgType) {
+        const blob = await item.getType(imgType);
+        const r = new FileReader();
+        r.onload = ev => setImage(idx, ev.target.result, 'Pasted image');
+        r.readAsDataURL(blob);
+        return;
+      }
+    }
+    toast('No image found in clipboard — copy a chart screenshot first', 'error');
+  } catch {
+    // Fallback: focus zone so global paste listener can target it
+    pendingPasteIdx = idx;
+    document.getElementById('uz' + idx).style.outline = '2px solid var(--lime)';
+    setTimeout(() => { document.getElementById('uz' + idx).style.outline = ''; pendingPasteIdx = -1; }, 3000);
+    toast('Clipboard access denied — press Ctrl+V / Cmd+V now to paste into slot ' + (idx + 1), 'info');
+  }
+}
+
+/* Global paste listener — Ctrl+V / Cmd+V anywhere */
+let pendingPasteIdx = -1;
+document.addEventListener('paste', e => {
+  // Only act when on the analyser page
+  if (!document.getElementById('page-analyser').classList.contains('active')) return;
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      if (!blob) continue;
+      const r = new FileReader();
+      r.onload = ev => {
+        // Use pending idx if set, otherwise first empty slot
+        let target = pendingPasteIdx >= 0 ? pendingPasteIdx : imgs.findIndex(i => i === null);
+        if (target === -1) target = 0; // overwrite slot 0 if all full
+        pendingPasteIdx = -1;
+        setImage(target, ev.target.result, 'Pasted image');
+        toast(`Chart pasted into ${['High TF', 'Mid TF', 'Entry TF'][target]} slot`, 'success');
+      };
+      r.readAsDataURL(blob);
+      return;
+    }
+  }
+});
+
+/* Clear individual zone */
+function clearZone(e, idx) {
+  e.preventDefault(); e.stopPropagation();
+  imgs[idx] = null;
+  const z = document.getElementById('uz' + idx);
+  z.classList.remove('has-img');
+  const thumb = z.querySelector('.uz-thumb');
+  if (thumb) thumb.remove();
+  document.getElementById('un' + idx).textContent = defaultNames[idx];
+  document.getElementById('uc' + idx).style.display = 'none';
+  const input = z.querySelector('input[type=file]');
+  if (input) input.value = '';
+  checkReady();
+}
+
+/* Drag and drop */
+function handleDragOver(e, idx) {
+  e.preventDefault();
+  document.getElementById('uz' + idx).classList.add('drag-over');
+}
+function handleDragLeave(e, idx) {
+  document.getElementById('uz' + idx).classList.remove('drag-over');
+}
+function handleDrop(e, idx) {
+  e.preventDefault();
+  document.getElementById('uz' + idx).classList.remove('drag-over');
+  const file = e.dataTransfer?.files[0];
+  if (!file || !file.type.startsWith('image/')) { toast('Please drop an image file', 'error'); return; }
+  const r = new FileReader();
+  r.onload = ev => setImage(idx, ev.target.result, file.name);
   r.readAsDataURL(file);
 }
 
@@ -1241,18 +1376,15 @@ function restoreResult(idx) {
    RESET / NEW ANALYSIS
 =================================================== */
 function resetAnalysis() {
-  // Clear images
-  imgs[0] = null; imgs[1] = null; imgs[2] = null;
-
-  // Reset upload zones
+  // Clear all zones using shared logic
   [0, 1, 2].forEach(i => {
+    imgs[i] = null;
     const z = document.getElementById('uz' + i);
     z.classList.remove('has-img');
-    const thumb = z.querySelector('img');
+    const thumb = z.querySelector('.uz-thumb');
     if (thumb) thumb.remove();
-    document.getElementById('un' + i).textContent = ['H4 / Daily chart', 'H1 / H2 chart', 'M15 / M5 chart'][i];
+    document.getElementById('un' + i).textContent = defaultNames[i];
     document.getElementById('uc' + i).style.display = 'none';
-    // Reset the file input so the same file can be re-selected
     const input = z.querySelector('input[type=file]');
     if (input) input.value = '';
   });
