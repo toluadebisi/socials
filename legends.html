@@ -8,424 +8,449 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
+/* ═══════════════════════════════════════
+   DESIGN TOKENS — TradeIQ aesthetic
+═══════════════════════════════════════ */
 :root {
-  --bg:      #0d0f14;
-  --bg2:     #13151c;
-  --bg3:     #1a1d27;
-  --panel:   #161923;
-  --border:  rgba(255,255,255,0.06);
-  --border2: rgba(255,255,255,0.11);
-  --border3: rgba(255,255,255,0.18);
-  --gold:    #e8b84b;
-  --gold2:   #f5d070;
-  --golddim: rgba(232,184,75,0.12);
-  --goldborder: rgba(232,184,75,0.25);
-  --red:     #e05252;
-  --green:   #3ecf8e;
-  --blue:    #5b9cf6;
-  --text:    #e8e6e1;
-  --text2:   #8b8982;
-  --text3:   #4a4845;
-  --mono:    'Space Mono', monospace;
-  --sans:    'Space Grotesk', sans-serif;
-  --display: 'Bebas Neue', cursive;
-  --radius:  8px;
-  --radius2: 12px;
+  --bg:       #0d0f14;
+  --bg2:      #13151c;
+  --bg3:      #1a1d27;
+  --panel:    #161923;
+  --b1:       rgba(255,255,255,0.06);
+  --b2:       rgba(255,255,255,0.11);
+  --b3:       rgba(255,255,255,0.20);
+  --gold:     #e8b84b;
+  --gold2:    #f5d070;
+  --golddim:  rgba(232,184,75,0.10);
+  --goldbrd:  rgba(232,184,75,0.22);
+  --red:      #e05252;
+  --green:    #3ecf8e;
+  --blue:     #5b9cf6;
+  --text:     #e8e6e1;
+  --t2:       #8b8982;
+  --t3:       #4a4845;
+  --mono:     'Space Mono', monospace;
+  --sans:     'Space Grotesk', sans-serif;
+  --disp:     'Bebas Neue', cursive;
+  --r:        8px;
+  --r2:       12px;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg); color: var(--text);
-  font-family: var(--sans); font-size: 14px; line-height: 1.6;
-  min-height: 100vh; overflow-x: hidden;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:14px;line-height:1.6;
+  min-height:100vh;overflow-x:hidden;
 }
-body::after {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background-image: linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
-  background-size: 48px 48px;
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:48px 48px;
 }
-.app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.z{position:relative;z-index:1}
 
-/* TOPBAR */
-.topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 28px; height: 56px;
-  background: var(--panel); border-bottom: 1px solid var(--border2);
-  position: sticky; top: 0; z-index: 100; gap: 16px;
+/* ─── TOPBAR ──────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;gap:12px;
+  height:56px;padding:0 24px;
+  background:var(--panel);border-bottom:1px solid var(--b2);
 }
-.topbar-logo {
-  font-family: var(--display); font-size: 26px; letter-spacing: 2px;
-  color: var(--text); display: flex; align-items: center; gap: 8px; white-space: nowrap;
+.logo{font-family:var(--disp);font-size:24px;letter-spacing:2px;white-space:nowrap}
+.logo span{color:var(--gold)}
+.topnav{display:flex;gap:2px;flex:1}
+.tnb{
+  background:none;border:none;cursor:pointer;
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  color:var(--t2);padding:6px 13px;border-radius:var(--r);
+  transition:all .15s;letter-spacing:.04em;
 }
-.topbar-logo span { color: var(--gold); }
-.topbar-nav { display: flex; gap: 4px; }
-.nav-btn {
-  background: none; border: none; cursor: pointer;
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
-  color: var(--text2); padding: 6px 14px; border-radius: var(--radius); transition: all .15s;
+.tnb:hover{color:var(--text);background:var(--bg3)}
+.tnb.on{color:var(--gold);background:var(--golddim)}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.pip{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--t3);transition:all .3s;flex-shrink:0;
 }
-.nav-btn:hover { color: var(--text); background: var(--bg3); }
-.nav-btn.active { color: var(--gold); background: var(--golddim); }
-.topbar-right { display: flex; align-items: center; gap: 10px; }
-.status-pip {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--text3);
-  flex-shrink: 0; transition: all .3s;
+.pip.live{background:var(--green);box-shadow:0 0 7px var(--green)}
+.pip.warn{background:var(--gold);box-shadow:0 0 7px var(--gold)}
+.api-toggle{
+  display:flex;align-items:center;gap:6px;
+  background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 13px;font-family:var(--sans);font-size:12px;font-weight:600;
+  color:var(--t2);cursor:pointer;transition:all .15s;white-space:nowrap;
 }
-.status-pip.live { background: var(--green); box-shadow: 0 0 6px var(--green); }
-.settings-btn {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: var(--radius); padding: 7px 14px;
-  font-family: var(--sans); font-size: 12px; font-weight: 600;
-  color: var(--text2); cursor: pointer; transition: all .15s; letter-spacing: .04em;
-}
-.settings-btn:hover { border-color: var(--border3); color: var(--text); }
-.settings-btn.ok { color: var(--green); border-color: rgba(62,207,142,.3); }
+.api-toggle:hover{border-color:var(--b3);color:var(--text)}
+.api-toggle.live{color:var(--green);border-color:rgba(62,207,142,.3)}
 
-/* SETTINGS DRAWER */
-.drawer {
-  background: var(--panel); border-bottom: 1px solid var(--border2);
-  overflow: hidden; max-height: 0;
-  transition: max-height .35s cubic-bezier(.4,0,.2,1);
-  position: sticky; top: 56px; z-index: 99;
+/* ─── API DRAWER ──────────────────────────── */
+.api-drawer{
+  position:sticky;top:56px;z-index:190;
+  background:var(--panel);border-bottom:1px solid var(--b2);
+  max-height:0;overflow:hidden;
+  transition:max-height .3s cubic-bezier(.4,0,.2,1);
 }
-.drawer.open { max-height: 560px; }
-.drawer-inner {
-  padding: 28px;
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px;
+.api-drawer.open{max-height:280px}
+.api-inner{
+  padding:24px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;
 }
-@media(max-width:900px){.drawer-inner{grid-template-columns:1fr 1fr;}}
-@media(max-width:580px){.drawer-inner{grid-template-columns:1fr;}}
+@media(max-width:860px){.api-inner{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.api-inner{grid-template-columns:1fr}}
+.api-group{display:flex;flex-direction:column;gap:7px}
+.api-lbl{
+  font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3);
+}
+.api-row{position:relative}
+.api-input{
+  width:100%;background:var(--bg2);border:1px solid var(--b2);
+  border-radius:var(--r);padding:9px 36px 9px 12px;
+  font-family:var(--mono);font-size:12px;color:var(--text);
+  outline:none;transition:border-color .2s;
+}
+.api-input:focus{border-color:var(--gold)}
+.api-input::placeholder{color:var(--t3)}
+.eye{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--t3);font-size:13px;
+  padding:0;line-height:1;
+}
+.api-hint{font-size:11px;color:var(--t3);line-height:1.55}
+.api-hint a{color:var(--gold);text-decoration:none}
+.api-hint a:hover{text-decoration:underline}
+.api-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:2px}
+.save-btn{
+  background:var(--gold);color:#000;border:none;border-radius:var(--r);
+  padding:8px 16px;font-family:var(--sans);font-size:12px;font-weight:700;
+  letter-spacing:.04em;cursor:pointer;transition:background .15s;
+}
+.save-btn:hover{background:var(--gold2)}
+.clear-btn{
+  font-size:11px;color:var(--t3);cursor:pointer;text-decoration:underline;
+  background:none;border:none;font-family:var(--sans);padding:0;
+}
+.clear-btn:hover{color:var(--red)}
+.g-connect{
+  display:flex;align-items:center;gap:7px;
+  background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);
+  padding:8px 12px;font-family:var(--sans);font-size:12px;font-weight:600;
+  color:var(--t2);cursor:pointer;transition:all .15s;width:100%;
+}
+.g-connect:hover{border-color:var(--b3);color:var(--text)}
+.g-connect.done{color:var(--green);border-color:rgba(62,207,142,.3)}
+.g-ico{width:15px;height:15px;flex-shrink:0}
 
-.s-group { display: flex; flex-direction: column; gap: 8px; }
-.s-label {
-  font-size: 10px; font-weight: 700; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--text3);
+/* ─── MODAL ───────────────────────────────── */
+.modal-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.75);z-index:500;
+  align-items:center;justify-content:center;
 }
-.s-input {
-  background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: var(--radius); padding: 10px 14px;
-  font-family: var(--mono); font-size: 12px;
-  color: var(--text); outline: none; width: 100%; transition: border-color .2s;
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--panel);border:1px solid var(--b2);
+  border-radius:var(--r2);padding:28px;
+  max-width:500px;width:90%;position:relative;max-height:90vh;overflow-y:auto;
 }
-.s-input:focus { border-color: var(--gold); }
-.s-input::placeholder { color: var(--text3); }
-.s-hint { font-size: 11px; color: var(--text3); line-height: 1.55; }
-.s-hint a { color: var(--gold); text-decoration: none; }
-.s-hint a:hover { text-decoration: underline; }
-.s-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.save-btn {
-  background: var(--gold); color: #000; border: none; border-radius: var(--radius);
-  padding: 9px 18px; font-family: var(--sans); font-size: 12px; font-weight: 700;
-  letter-spacing: .05em; cursor: pointer; transition: all .15s;
-}
-.save-btn:hover { background: var(--gold2); }
-.clear-lnk {
-  font-size: 11px; color: var(--text3); cursor: pointer; text-decoration: underline;
-  background: none; border: none; font-family: var(--sans); padding: 0;
-}
-.clear-lnk:hover { color: var(--red); }
-.g-btn {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius);
-  padding: 9px 14px; font-family: var(--sans); font-size: 12px; font-weight: 600;
-  color: var(--text2); cursor: pointer; transition: all .15s; width: 100%;
-}
-.g-btn:hover { border-color: var(--border3); color: var(--text); }
-.g-btn.done { color: var(--green); border-color: rgba(62,207,142,.3); }
-.g-icon { width: 16px; height: 16px; flex-shrink: 0; }
-.eye-btn {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  background: none; border: none; cursor: pointer; color: var(--text3); font-size: 13px;
-}
-.pw-wrap { position: relative; }
-
-/* MODAL */
-.modal-bg {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75);
-  z-index: 200; align-items: center; justify-content: center;
-}
-.modal-bg.open { display: flex; }
-.modal {
-  background: var(--panel); border: 1px solid var(--border2); border-radius: var(--radius2);
-  padding: 32px; max-width: 520px; width: 90%; position: relative;
-  max-height: 90vh; overflow-y: auto;
-}
-.modal h2 { font-family: var(--display); font-size: 28px; letter-spacing: 1px; margin-bottom: 16px; }
-.modal ol { margin: 12px 0 0 20px; font-size: 13px; color: var(--text2); line-height: 2; }
-.modal ol a { color: var(--gold); }
-.modal-close {
-  position: absolute; top: 16px; right: 16px; background: none; border: none;
-  color: var(--text3); font-size: 20px; cursor: pointer;
-}
-
-/* MAIN */
-.main { display: flex; flex: 1; }
-
-/* SIDEBAR */
-.sidebar {
-  width: 272px; flex-shrink: 0; background: var(--panel);
-  border-right: 1px solid var(--border2); padding: 24px 0;
-  position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
-}
-@media(max-width:800px){.sidebar{display:none;}}
-.sb-section { padding: 0 18px; margin-bottom: 28px; }
-.sb-label {
-  font-size: 10px; font-weight: 700; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--text3);
-  margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
-}
-.legend-field {
-  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius);
-  padding: 11px 14px; font-family: var(--sans); font-size: 15px; font-weight: 600;
-  color: var(--text); outline: none; width: 100%; transition: border-color .2s, box-shadow .2s;
-  margin-bottom: 8px;
-}
-.legend-field:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,184,75,.08); }
-.legend-field::placeholder { color: var(--text3); font-weight: 400; font-size: 13px; }
-.gen-btn {
-  background: var(--gold); color: #000; border: none; border-radius: var(--radius);
-  padding: 12px; width: 100%; font-family: var(--display); font-size: 20px; letter-spacing: 1px;
-  cursor: pointer; transition: all .15s;
-}
-.gen-btn:hover { background: var(--gold2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,184,75,.2); }
-.gen-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
-.hist-list { display: flex; flex-direction: column; gap: 6px; }
-.hist-item {
-  padding: 10px 12px; background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius); cursor: pointer; transition: all .15s;
-}
-.hist-item:hover { border-color: var(--border3); }
-.hist-title { font-size: 12px; font-weight: 600; color: var(--text); }
-.hist-sub { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
-.sb-empty { font-size: 12px; color: var(--text3); font-family: var(--mono); }
-
-/* CONTENT */
-.content { flex: 1; padding: 28px; min-width: 0; }
-
-/* HERO */
-.hero { text-align: center; padding: 48px 20px 36px; }
-.hero-eye {
-  font-size: 11px; font-weight: 700; letter-spacing: .16em;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
-}
-.hero-title {
-  font-family: var(--display); font-size: clamp(46px,7vw,76px);
-  letter-spacing: 3px; line-height: 1; color: var(--text); margin-bottom: 16px;
-}
-.hero-title span { color: var(--gold); }
-.hero-sub {
-  font-size: 15px; color: var(--text2); max-width: 500px;
-  margin: 0 auto 28px; line-height: 1.7;
-}
-.hero-stats { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; margin-bottom: 36px; }
-.hero-stat { text-align: center; }
-.hero-stat-n { font-family: var(--display); font-size: 34px; color: var(--gold); letter-spacing: 1px; }
-.hero-stat-l { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; }
-.hero-mob { display: none; gap: 10px; max-width: 480px; margin: 0 auto; }
-@media(max-width:800px){.hero-mob{display:flex;}}
-
-/* SETUP CALLOUT */
-.callout {
-  background: var(--panel); border: 1px solid var(--goldborder);
-  border-radius: var(--radius2); padding: 18px 22px; margin-bottom: 22px; display: none;
-}
-.callout.show { display: block; }
-.callout h3 { font-size: 14px; font-weight: 700; color: var(--gold); margin-bottom: 5px; }
-.callout p { font-size: 12px; color: var(--text3); line-height: 1.6; }
-
-/* ERROR */
-.err {
-  background: rgba(224,82,82,.08); border: 1px solid rgba(224,82,82,.25);
-  border-radius: var(--radius); padding: 11px 16px;
-  font-family: var(--mono); font-size: 12px; color: var(--red);
-  margin-bottom: 18px; display: none;
-}
-.err.show { display: block; }
-
-/* SECTION HEADER */
-.sec-hd {
-  display: flex; align-items: baseline; justify-content: space-between;
-  margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
-}
-.sec-hd h2 { font-family: var(--display); font-size: 28px; letter-spacing: 1px; color: var(--text); }
-.sec-hd p { font-size: 12px; color: var(--text3); font-family: var(--mono); }
-
-/* PAIRINGS */
-.pair-wrap { display: none; margin-bottom: 28px; }
-.pair-wrap.show { display: block; }
-.pair-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(198px,1fr)); gap: 10px; }
-.pair-card {
-  background: var(--panel); border: 1px solid var(--border2); border-radius: var(--radius2);
-  padding: 18px 16px; cursor: pointer; transition: all .2s; position: relative; overflow: hidden;
-}
-.pair-card::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg,var(--gold) 0%,transparent 50%);
-  opacity: 0; transition: opacity .2s;
-}
-.pair-card:hover { border-color: var(--goldborder); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
-.pair-card:hover::before { opacity: .04; }
-.pc-n { font-family: var(--display); font-size: 34px; color: var(--border2); line-height: 1; margin-bottom: 8px; position: relative; }
-.pc-t { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.35; position: relative; }
-.pc-e { font-size: 11px; color: var(--text3); font-family: var(--mono); line-height: 1.5; position: relative; }
-.pc-tag {
-  display: inline-block; margin-top: 10px; position: relative;
-  font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 99px;
-  background: var(--golddim); color: var(--gold); border: 1px solid var(--goldborder);
+.modal h2{font-family:var(--disp);font-size:26px;letter-spacing:1px;margin-bottom:12px}
+.modal ol{margin:10px 0 0 18px;font-size:13px;color:var(--t2);line-height:2}
+.modal ol a{color:var(--gold)}
+.modal-x{
+  position:absolute;top:14px;right:14px;
+  background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;
 }
 
-/* LOADING */
-.load-wrap { display: none; padding: 44px 0; text-align: center; }
-.load-wrap.show { display: block; }
-.load-txt { font-family: var(--mono); font-size: 12px; color: var(--text3); margin-bottom: 16px; animation: pulse 1.5s infinite; }
+/* ─── LAYOUT ──────────────────────────────── */
+.layout{display:flex;flex:1}
+
+/* ─── SIDEBAR ─────────────────────────────── */
+.sidebar{
+  width:264px;flex-shrink:0;background:var(--panel);
+  border-right:1px solid var(--b2);
+  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;
+  padding:20px 0;
+}
+@media(max-width:780px){.sidebar{display:none}}
+.sb-sec{padding:0 16px;margin-bottom:24px}
+.sb-lbl{
+  font-size:10px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--t3);
+  margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--b1);
+}
+.legend-inp{
+  background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);
+  padding:10px 13px;font-family:var(--sans);font-size:14px;font-weight:600;
+  color:var(--text);outline:none;width:100%;margin-bottom:8px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.legend-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,184,75,.08)}
+.legend-inp::placeholder{color:var(--t3);font-weight:400;font-size:13px}
+.fire-btn{
+  background:var(--gold);color:#000;border:none;border-radius:var(--r);
+  padding:11px;width:100%;font-family:var(--disp);font-size:19px;letter-spacing:1px;
+  cursor:pointer;transition:all .15s;
+}
+.fire-btn:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 6px 18px rgba(232,184,75,.2)}
+.fire-btn:active{transform:translateY(0)}
+.fire-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.hist-list{display:flex;flex-direction:column;gap:5px}
+.hist-card{
+  padding:9px 11px;background:var(--bg2);border:1px solid var(--b1);
+  border-radius:var(--r);cursor:pointer;transition:border-color .15s;
+}
+.hist-card:hover{border-color:var(--b3)}
+.hist-t{font-size:12px;font-weight:600;color:var(--text)}
+.hist-s{font-size:10px;color:var(--t3);margin-top:2px;font-family:var(--mono)}
+.sb-empty{font-size:12px;color:var(--t3);font-family:var(--mono)}
+
+/* ─── CONTENT ─────────────────────────────── */
+.content{flex:1;padding:24px;min-width:0}
+
+/* ─── CALLOUT ─────────────────────────────── */
+.callout{
+  background:var(--panel);border:1px solid var(--goldbrd);
+  border-radius:var(--r2);padding:16px 20px;margin-bottom:20px;
+  display:none;
+}
+.callout.show{display:block}
+.callout h3{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.callout p{font-size:12px;color:var(--t3);line-height:1.6}
+
+/* ─── HERO ────────────────────────────────── */
+.hero{text-align:center;padding:40px 16px 32px}
+.hero-eye{
+  font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:12px;
+}
+.hero-h{
+  font-family:var(--disp);font-size:clamp(44px,7vw,72px);
+  letter-spacing:3px;line-height:1;color:var(--text);margin-bottom:14px;
+}
+.hero-h span{color:var(--gold)}
+.hero-p{
+  font-size:14px;color:var(--t2);max-width:480px;
+  margin:0 auto 24px;line-height:1.7;
+}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:28px}
+.hs{text-align:center}
+.hs-n{font-family:var(--disp);font-size:30px;color:var(--gold);letter-spacing:1px}
+.hs-l{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em}
+.hero-mob{display:none;gap:8px;max-width:440px;margin:0 auto}
+@media(max-width:780px){.hero-mob{display:flex}}
+
+/* ─── ERROR ───────────────────────────────── */
+.err-box{
+  background:rgba(224,82,82,.08);border:1px solid rgba(224,82,82,.25);
+  border-radius:var(--r);padding:10px 14px;
+  font-family:var(--mono);font-size:12px;color:var(--red);
+  margin-bottom:16px;display:none;
+}
+.err-box.show{display:block}
+
+/* ─── PAIRINGS ────────────────────────────── */
+.pair-section{display:none;margin-bottom:24px}
+.pair-section.show{display:block}
+.sec-hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.sec-hd h2{font-family:var(--disp);font-size:26px;letter-spacing:1px;color:var(--text)}
+.sec-hd p{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.pair-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(188px,1fr));gap:9px}
+.pair-card{
+  background:var(--panel);border:1px solid var(--b2);border-radius:var(--r2);
+  padding:16px 14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.pair-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--gold) 0%,transparent 50%);
+  opacity:0;transition:opacity .2s;
+}
+.pair-card:hover{border-color:var(--goldbrd);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.pair-card:hover::before{opacity:.04}
+.pc-n{font-family:var(--disp);font-size:30px;color:var(--b2);line-height:1;margin-bottom:7px;position:relative}
+.pc-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.3;position:relative}
+.pc-e{font-size:11px;color:var(--t3);font-family:var(--mono);line-height:1.5;position:relative}
+.pc-tag{
+  display:inline-block;margin-top:9px;position:relative;
+  font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  padding:2px 8px;border-radius:99px;
+  background:var(--golddim);color:var(--gold);border:1px solid var(--goldbrd);
+}
+
+/* ─── LOADING ─────────────────────────────── */
+.loading{display:none;padding:40px 0;text-align:center}
+.loading.show{display:block}
+.load-msg{font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:14px}
+.load-track{width:180px;height:2px;background:var(--b2);border-radius:99px;overflow:hidden;margin:0 auto}
+.load-fill{height:100%;background:var(--gold);border-radius:99px;animation:ls 1.3s ease-in-out infinite}
+@keyframes ls{0%{width:0;margin-left:0}50%{width:55%}100%{width:0;margin-left:100%}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.load-track { width: 200px; height: 2px; background: var(--border2); border-radius: 99px; overflow: hidden; margin: 0 auto; }
-.load-fill { height: 100%; background: var(--gold); border-radius: 99px; animation: lslide 1.4s ease-in-out infinite; }
-@keyframes lslide{0%{width:0%;margin-left:0}50%{width:60%}100%{width:0%;margin-left:100%}}
+.load-msg{animation:pulse 1.5s infinite}
 
-/* OUTPUT */
-.out-wrap { display: none; }
-.out-wrap.show { display: block; }
-.out-head { margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
-.out-head h1 { font-family: var(--display); font-size: clamp(30px,5vw,52px); letter-spacing: 2px; color: var(--text); line-height: 1; margin-bottom: 5px; }
-.out-head p { font-size: 12px; color: var(--text3); font-family: var(--mono); }
-.exp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-.exp-btn {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius);
-  padding: 7px 14px; font-family: var(--sans); font-size: 12px; font-weight: 600;
-  color: var(--text2); cursor: pointer; transition: all .15s; white-space: nowrap;
+/* ─── OUTPUT ──────────────────────────────── */
+.output{display:none}
+.output.show{display:block}
+.out-head{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--b1)}
+.out-head h1{
+  font-family:var(--disp);font-size:clamp(28px,5vw,48px);
+  letter-spacing:2px;color:var(--text);line-height:1;margin-bottom:4px;
 }
-.exp-btn:hover { border-color: var(--border3); color: var(--text); }
-.exp-btn.sheets { border-color: rgba(62,207,142,.3); color: var(--green); }
-.exp-btn.sheets:hover { background: rgba(62,207,142,.06); }
-.exp-btn.drive { border-color: rgba(91,156,246,.3); color: var(--blue); }
-.exp-btn.drive:hover { background: rgba(91,156,246,.06); }
-.exp-btn:disabled { opacity: .4; cursor: not-allowed; }
-.reset-btn {
-  margin-left: auto; background: none; border: 1px solid var(--border2); border-radius: var(--radius);
-  padding: 7px 14px; font-family: var(--mono); font-size: 11px; color: var(--text3);
-  cursor: pointer; transition: all .15s;
+.out-head p{font-size:11px;color:var(--t3);font-family:var(--mono)}
+
+/* export toolbar */
+.exp-bar{display:flex;align-items:center;gap:7px;margin-bottom:16px;flex-wrap:wrap}
+.eb{
+  display:flex;align-items:center;gap:5px;
+  background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 13px;font-family:var(--sans);font-size:12px;font-weight:600;
+  color:var(--t2);cursor:pointer;transition:all .15s;white-space:nowrap;
 }
-.reset-btn:hover { color: var(--text2); border-color: var(--border3); }
-
-/* TABS */
-.tabs-bar { display: flex; gap: 2px; border-bottom: 1px solid var(--border2); margin-bottom: 22px; overflow-x: auto; }
-.tab-btn {
-  background: none; border: none; border-bottom: 2px solid transparent;
-  padding: 10px 16px; margin-bottom: -1px;
-  font-family: var(--sans); font-size: 12px; font-weight: 700;
-  letter-spacing: .07em; text-transform: uppercase;
-  color: var(--text3); cursor: pointer; transition: all .15s; white-space: nowrap;
+.eb:hover{border-color:var(--b3);color:var(--text)}
+.eb.sheets{color:var(--green);border-color:rgba(62,207,142,.25)}
+.eb.sheets:hover{background:rgba(62,207,142,.06)}
+.eb.drive{color:var(--blue);border-color:rgba(91,156,246,.25)}
+.eb.drive:hover{background:rgba(91,156,246,.06)}
+.eb:disabled{opacity:.35;cursor:not-allowed}
+.new-btn{
+  margin-left:auto;background:none;border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 13px;font-family:var(--mono);font-size:11px;color:var(--t3);
+  cursor:pointer;transition:all .15s;
 }
-.tab-btn:hover { color: var(--text2); }
-.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-.tab-pane { display: none; }
-.tab-pane.active { display: block; }
+.new-btn:hover{color:var(--t2);border-color:var(--b3)}
 
-/* CARDS */
-.card { background: var(--panel); border: 1px solid var(--border2); border-radius: var(--radius2); margin-bottom: 12px; overflow: hidden; }
-.card-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 18px; border-bottom: 1px solid var(--border); gap: 10px; flex-wrap: wrap;
+/* tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--b2);margin-bottom:20px;overflow-x:auto}
+.tb{
+  background:none;border:none;border-bottom:2px solid transparent;
+  padding:9px 15px;margin-bottom:-1px;
+  font-family:var(--sans);font-size:11px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;
+  color:var(--t3);cursor:pointer;transition:all .15s;white-space:nowrap;
 }
-.card-lbl { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); }
-.card-badge { font-size: 11px; font-family: var(--mono); padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border2); color: var(--text2); }
-.copy-btn {
-  background: none; border: 1px solid var(--border2); border-radius: 6px;
-  padding: 4px 12px; font-family: var(--mono); font-size: 11px;
-  color: var(--text3); cursor: pointer; transition: all .15s; white-space: nowrap;
+.tb:hover{color:var(--t2)}
+.tb.on{color:var(--gold);border-bottom-color:var(--gold)}
+.pane{display:none}
+.pane.on{display:block}
+
+/* cards */
+.card{
+  background:var(--panel);border:1px solid var(--b2);
+  border-radius:var(--r2);margin-bottom:11px;overflow:hidden;
 }
-.copy-btn:hover { border-color: var(--gold); color: var(--gold); }
-.copy-btn.ok { border-color: var(--green); color: var(--green); }
-.card-body { padding: 18px; }
-.out-text { font-family: var(--mono); font-size: 12px; color: var(--text2); line-height: 1.8; white-space: pre-wrap; }
-.out-prose { font-family: var(--sans); font-size: 14px; color: var(--text); line-height: 1.8; white-space: pre-wrap; }
-
-/* GOLDEN LINE */
-.gold-block {
-  background: var(--golddim); border: 1px solid var(--goldborder);
-  border-left: 3px solid var(--gold); border-radius: 0 var(--radius) var(--radius) 0;
-  padding: 14px 16px;
+.ch{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;border-bottom:1px solid var(--b1);gap:9px;flex-wrap:wrap;
 }
-.gold-lbl { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
-.gold-txt { font-size: 15px; color: var(--text); line-height: 1.65; font-style: italic; }
-
-/* TAGS */
-.tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag-pill { font-size: 11px; font-family: var(--mono); padding: 4px 10px; border-radius: 99px; border: 1px solid var(--border2); color: var(--text2); }
-.tag-pill.ht { border-color: rgba(91,156,246,.3); color: var(--blue); }
-
-/* THUMBNAIL */
-.thumb-prev { background: #000; border-radius: var(--radius); aspect-ratio: 16/9; margin-bottom: 12px; position: relative; overflow: hidden; border: 1px solid var(--border2); }
-.spec-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(186px,1fr)); gap: 10px; margin-bottom: 12px; }
-.spec-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 13px; }
-.spec-lbl { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 5px; }
-.spec-val { font-size: 12px; color: var(--text); font-family: var(--mono); line-height: 1.45; }
-.swatch-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-.swatch { width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(255,255,255,.1); cursor: help; flex-shrink: 0; }
-
-/* TOAST */
-.toast {
-  position: fixed; bottom: 24px; right: 24px; z-index: 999;
-  background: var(--panel); border: 1px solid var(--border2);
-  border-radius: var(--radius); padding: 12px 18px;
-  font-family: var(--mono); font-size: 12px; color: var(--text2);
-  box-shadow: 0 8px 32px rgba(0,0,0,.5);
-  transform: translateY(12px); opacity: 0; transition: all .25s; pointer-events: none;
+.clbl{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--t3)}
+.cbadge{
+  font-size:10px;font-family:var(--mono);padding:2px 8px;
+  border-radius:99px;border:1px solid var(--b2);color:var(--t2);
 }
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.ok  { border-color: rgba(62,207,142,.3); color: var(--green); }
-.toast.err { border-color: rgba(224,82,82,.3); color: var(--red); }
+.cbtn{
+  background:none;border:1px solid var(--b2);border-radius:6px;
+  padding:4px 11px;font-family:var(--mono);font-size:11px;
+  color:var(--t3);cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.cbtn:hover{border-color:var(--gold);color:var(--gold)}
+.cbtn.ok{border-color:var(--green);color:var(--green)}
+.cbody{padding:16px}
+.mono{font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.85;white-space:pre-wrap}
+.prose{font-family:var(--sans);font-size:14px;color:var(--text);line-height:1.9;white-space:pre-wrap}
 
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+/* golden line */
+.gold-block{
+  background:var(--golddim);border:1px solid var(--goldbrd);
+  border-left:3px solid var(--gold);
+  border-radius:0 var(--r) var(--r) 0;padding:13px 15px;
+}
+.gold-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.gold-txt{font-size:14px;color:var(--text);line-height:1.7;font-style:italic}
+
+/* tags */
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:11px;font-family:var(--mono);padding:3px 9px;border-radius:99px;border:1px solid var(--b2);color:var(--t2)}
+.tag.ht{border-color:rgba(91,156,246,.3);color:var(--blue)}
+
+/* thumbnail */
+.thumb-prev{
+  background:#000;border-radius:var(--r);aspect-ratio:16/9;
+  margin-bottom:11px;position:relative;overflow:hidden;border:1px solid var(--b2);
+}
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:9px;margin-bottom:11px}
+.si{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:10px 12px}
+.sl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.sv{font-size:11px;color:var(--text);font-family:var(--mono);line-height:1.45}
+.swatch-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.swatch{width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.1);cursor:help;flex-shrink:0}
+
+/* toast */
+.toast{
+  position:fixed;bottom:22px;right:22px;z-index:999;
+  background:var(--panel);border:1px solid var(--b2);border-radius:var(--r);
+  padding:11px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);
+  box-shadow:0 8px 28px rgba(0,0,0,.5);
+  transform:translateY(10px);opacity:0;transition:all .22s;pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:rgba(62,207,142,.3);color:var(--green)}
+.toast.err{border-color:rgba(224,82,82,.3);color:var(--red)}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="z" style="display:flex;flex-direction:column;min-height:100vh">
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="topbar-logo">LEGENDS <span>PIPELINE</span></div>
-  <nav class="topbar-nav">
-    <button class="nav-btn active" onclick="showPage('gen')">Generator</button>
-    <button class="nav-btn" onclick="showPage('hist')">History</button>
+<!-- ══ TOPBAR ══════════════════════════════════════════ -->
+<header class="topbar">
+  <div class="logo">LEGENDS <span>PIPELINE</span></div>
+  <nav class="topnav">
+    <button class="tnb on" onclick="page('gen',this)">Generator</button>
+    <button class="tnb" onclick="page('hist',this)">History</button>
   </nav>
   <div class="topbar-right">
-    <div class="status-pip" id="pip"></div>
-    <button class="settings-btn" id="settBtn" onclick="toggleDrawer()">⚙ Settings ▾</button>
+    <div class="pip" id="pip"></div>
+    <button class="api-toggle" id="apiToggle" onclick="toggleDrawer()">⚙ API Key ▾</button>
   </div>
-</div>
+</header>
 
-<!-- SETTINGS DRAWER -->
-<div class="drawer" id="drawer">
-  <div class="drawer-inner">
+<!-- ══ API KEY DRAWER ═══════════════════════════════════ -->
+<div class="api-drawer" id="apiDrawer">
+  <div class="api-inner">
 
-    <div class="s-group">
-      <label class="s-label">Claude API Key</label>
-      <div class="pw-wrap">
-        <input type="password" class="s-input" id="claudeKey" placeholder="sk-ant-api03-..." style="padding-right:38px">
-        <button class="eye-btn" onclick="toggleVis('claudeKey')">👁</button>
+    <!-- Claude key -->
+    <div class="api-group">
+      <div class="api-lbl">Anthropic API Key</div>
+      <div class="api-row">
+        <input type="password" class="api-input" id="claudeKey"
+          placeholder="sk-ant-api03-..." autocomplete="off">
+        <button class="eye" onclick="toggleEye('claudeKey')" title="Show/hide">👁</button>
       </div>
-      <p class="s-hint">Session only — never saved to disk.<br>
-        Get yours at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></p>
-      <div class="s-row">
-        <button class="save-btn" onclick="saveSettings()">Save</button>
-        <button class="clear-lnk" onclick="clearClaudeKey()">Clear key</button>
+      <p class="api-hint">
+        Key stored in browser memory only — never saved to disk.<br>
+        Get yours at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
+      </p>
+      <div class="api-actions">
+        <button class="save-btn" onclick="saveKey()">Save</button>
+        <button class="clear-btn" onclick="clearKey()">· Clear key</button>
       </div>
     </div>
 
-    <div class="s-group">
-      <label class="s-label">Google OAuth Client ID</label>
-      <input type="text" class="s-input" id="gClientId" placeholder="123456789.apps.googleusercontent.com">
-      <p class="s-hint">For Sheets &amp; Drive export.<br>
-        <a href="#" onclick="openModal();return false">How to get your Client ID →</a></p>
-      <button class="g-btn" id="gBtn" onclick="connectGoogle()">
-        <svg class="g-icon" viewBox="0 0 24 24">
+    <!-- Google OAuth -->
+    <div class="api-group">
+      <div class="api-lbl">Google OAuth Client ID <span style="color:var(--t3);font-weight:400">(for export)</span></div>
+      <input type="text" class="api-input" id="gClientId"
+        placeholder="123456789.apps.googleusercontent.com">
+      <p class="api-hint">
+        Enables export to Sheets &amp; Drive.<br>
+        <a href="#" onclick="openModal();return false">How to get your Client ID →</a>
+      </p>
+      <button class="g-connect" id="gBtn" onclick="googleAuth()">
+        <svg class="g-ico" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
           <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
@@ -435,624 +460,1040 @@ body::after {
       </button>
     </div>
 
-    <div class="s-group">
-      <label class="s-label">Google Sheet ID <span style="color:var(--text3);font-weight:400">(optional)</span></label>
-      <input type="text" class="s-input" id="sheetId" placeholder="Leave blank to auto-create">
-      <p class="s-hint">Paste the ID from your Sheet URL.<br>Blank = new sheet created on first export.</p>
+    <!-- Sheet ID -->
+    <div class="api-group">
+      <div class="api-lbl">Google Sheet ID <span style="color:var(--t3);font-weight:400">(optional)</span></div>
+      <input type="text" class="api-input" id="sheetId"
+        placeholder="Leave blank — auto-creates on first export">
+      <p class="api-hint">
+        Paste the ID from your Sheet URL.<br>
+        Blank = new sheet created automatically.
+      </p>
     </div>
 
   </div>
 </div>
 
-<!-- GOOGLE SETUP MODAL -->
-<div class="modal-bg" id="setupModal">
+<!-- ══ GOOGLE SETUP MODAL ════════════════════════════════ -->
+<div class="modal-bg" id="gModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
+    <button class="modal-x" onclick="closeModal()">✕</button>
     <h2>GOOGLE SETUP</h2>
-    <p style="font-size:13px;color:var(--text2);line-height:1.7">Create a free Google Cloud project — takes about 5 minutes:</p>
+    <p style="font-size:13px;color:var(--t2);line-height:1.7">Takes about 5 minutes — free Google Cloud project:</p>
     <ol>
       <li>Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> — create a project</li>
-      <li>Search <strong style="color:var(--text)">Google Sheets API</strong> → Enable</li>
-      <li>Search <strong style="color:var(--text)">Google Drive API</strong> → Enable</li>
+      <li>Enable <strong style="color:var(--text)">Google Sheets API</strong></li>
+      <li>Enable <strong style="color:var(--text)">Google Drive API</strong></li>
       <li>Go to <strong style="color:var(--text)">APIs &amp; Services → Credentials</strong></li>
-      <li>Click <strong style="color:var(--text)">Create Credentials → OAuth 2.0 Client ID</strong></li>
+      <li>Create Credentials → <strong style="color:var(--text)">OAuth 2.0 Client ID</strong></li>
       <li>Choose <strong style="color:var(--text)">Web application</strong></li>
-      <li>Under <em>Authorised JavaScript origins</em> add your domain (or <code style="color:var(--gold);font-size:11px">http://localhost</code>)</li>
-      <li>Copy the <strong style="color:var(--text)">Client ID</strong> → paste it in Settings</li>
+      <li>Add your domain to <em>Authorised JavaScript origins</em></li>
+      <li>Copy the <strong style="color:var(--text)">Client ID</strong> → paste in the drawer above</li>
     </ol>
-    <p style="font-size:12px;color:var(--text3);margin-top:16px">All API calls go directly from your browser to Google. No server involved.</p>
+    <p style="font-size:11px;color:var(--t3);margin-top:14px">All calls go browser → Google directly. No server involved.</p>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main">
+<!-- ══ MAIN LAYOUT ════════════════════════════════════════ -->
+<div class="layout z" style="flex:1">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sb-section">
-      <div class="sb-label">Enter Legend</div>
-      <input type="text" class="legend-field" id="sideField" placeholder="e.g. Cleopatra..." onkeydown="if(event.key==='Enter')go()">
-      <button class="gen-btn" id="genBtn" onclick="go()">🔥 GENERATE</button>
+    <div class="sb-sec">
+      <div class="sb-lbl">Enter Legend</div>
+      <input type="text" class="legend-inp" id="sideInp"
+        placeholder="e.g. Napoleon..." onkeydown="if(event.key==='Enter')fire()">
+      <button class="fire-btn" id="fireBtn" onclick="fire()">🔥 GENERATE</button>
     </div>
-    <div class="sb-section">
-      <div class="sb-label">Session History</div>
-      <div class="hist-list" id="histList"><p class="sb-empty">No generations yet</p></div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Session History</div>
+      <div class="hist-list" id="histList">
+        <p class="sb-empty">No generations yet</p>
+      </div>
     </div>
   </aside>
 
-  <!-- GENERATOR PAGE -->
+  <!-- ── GENERATOR PAGE ────────────────────── -->
   <div class="content" id="pageGen">
+
     <div class="callout show" id="callout">
-      <h3>⚙ Quick Setup</h3>
-      <p>Click <strong>Settings ▾</strong> top-right → enter your Claude API key → Save. Optionally connect Google to export to Sheets and Drive.</p>
+      <h3>⚙ Quick Start</h3>
+      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Claude API key → Save. Then type any historical figure and hit Generate.</p>
     </div>
 
     <div class="hero">
-      <p class="hero-eye">Out of Context Content Engine</p>
-      <h1 class="hero-title">LEGENDS<br><span>WRONG ROOM</span></h1>
-      <p class="hero-sub">Type a historical figure. AI generates 5 wrong-era pairings. Pick one. Get the full production package — scripts, SEO, and a MrBeast-grade thumbnail brief.</p>
+      <p class="hero-eye">Second-Person Immersion · Out of Context Content Engine</p>
+      <h1 class="hero-h">LEGENDS<br><span>WRONG ROOM</span></h1>
+      <p class="hero-p">Type a historical figure. AI suggests 5 wrong-era collisions. Pick one. Get second-person Day 1→10 scripts, full SEO, and a MrBeast-grade thumbnail brief.</p>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="hero-stat-n">5</div><div class="hero-stat-l">Pairings</div></div>
-        <div class="hero-stat"><div class="hero-stat-n">4</div><div class="hero-stat-l">Output Tabs</div></div>
-        <div class="hero-stat"><div class="hero-stat-n">∞</div><div class="hero-stat-l">Legends</div></div>
-        <div class="hero-stat"><div class="hero-stat-n">1K%</div><div class="hero-stat-l">CTR Target</div></div>
+        <div class="hs"><div class="hs-n">5</div><div class="hs-l">Pairings</div></div>
+        <div class="hs"><div class="hs-n">4</div><div class="hs-l">Output Tabs</div></div>
+        <div class="hs"><div class="hs-n">∞</div><div class="hs-l">Legends</div></div>
+        <div class="hs"><div class="hs-n">1K%</div><div class="hs-l">CTR Target</div></div>
       </div>
+      <!-- mobile input -->
       <div class="hero-mob">
-        <input type="text" class="legend-field" id="mobField" placeholder="Enter a legend..." style="flex:1;margin-bottom:0" onkeydown="if(event.key==='Enter')go()">
-        <button class="gen-btn" style="width:auto;padding:12px 18px;white-space:nowrap" onclick="go()">🔥 Go</button>
+        <input type="text" class="legend-inp" id="mobInp"
+          placeholder="Enter a legend..." style="flex:1;margin-bottom:0"
+          onkeydown="if(event.key==='Enter')fire()">
+        <button class="fire-btn" style="width:auto;padding:11px 16px;white-space:nowrap" onclick="fire()">🔥 Go</button>
       </div>
     </div>
 
-    <div class="err" id="errBox"></div>
+    <div class="err-box" id="errBox"></div>
 
     <!-- PAIRINGS -->
-    <div class="pair-wrap" id="pairWrap">
-      <div class="sec-hd"><h2>WRONG ERA PAIRINGS</h2><p>Select one to build the full package</p></div>
+    <div class="pair-section" id="pairSec">
+      <div class="sec-hd">
+        <h2>WRONG ERA PAIRINGS</h2>
+        <p>Select one to build the full production package</p>
+      </div>
       <div class="pair-grid" id="pairGrid"></div>
     </div>
 
     <!-- LOADING -->
-    <div class="load-wrap" id="loadWrap">
+    <div class="loading" id="loadEl">
       <div class="load-track"><div class="load-fill"></div></div>
-      <p class="load-txt" id="loadTxt">Generating...</p>
+      <p class="load-msg" id="loadMsg">Generating...</p>
     </div>
 
     <!-- OUTPUT -->
-    <div class="out-wrap" id="outWrap">
+    <div class="output" id="outEl">
+
       <div class="out-head">
-        <h1 id="outH1"></h1>
+        <h1 id="outTitle"></h1>
         <p id="outSub"></p>
       </div>
 
-      <div class="exp-row">
-        <button class="exp-btn sheets" id="btnSheets" onclick="exportSheets()" disabled>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3h2v2h-2V6zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM7 6h2v2H7V6zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V6h4v2z"/></svg>
+      <!-- export bar -->
+      <div class="exp-bar">
+        <button class="eb sheets" id="btnSheets" onclick="exportSheets()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3h2v2h-2V6zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM7 6h2v2H7V6zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V6h4v2z"/>
+          </svg>
           Export to Sheets
         </button>
-        <button class="exp-btn drive" id="btnDrive" onclick="exportDrive()" disabled>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7.71 3.5L1.15 15l3.43 5.5h15.85L23.86 15 17.3 3.5H7.71zm.57 1.5h8.43l5.7 9.5H8.57L2.87 5h5.41zM5.5 20L3.07 16h17.86L18.5 20H5.5z"/></svg>
-          Export to Drive
+        <button class="eb drive" id="btnDrive" onclick="exportDrive()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.71 3.5L1.15 15l3.43 5.5h15.85L23.86 15 17.3 3.5H7.71zm.57 1.5h8.43l5.7 9.5H8.57L2.87 5h5.41zM5.5 20L3.07 16h17.86L18.5 20H5.5z"/>
+          </svg>
+          Save to Drive
         </button>
-        <button class="exp-btn" onclick="downloadTxt()">↓ Download .txt</button>
-        <button class="reset-btn" onclick="resetAll()">← New Legend</button>
+        <button class="eb" onclick="dlTxt()">↓ Download .txt</button>
+        <button class="new-btn" onclick="reset()">← New Legend</button>
       </div>
 
-      <div class="tabs-bar">
-        <button class="tab-btn active" onclick="switchTab('short')">📱 Short Form</button>
-        <button class="tab-btn" onclick="switchTab('long')">🎬 Long Form</button>
-        <button class="tab-btn" onclick="switchTab('seo')">🔍 SEO Package</button>
-        <button class="tab-btn" onclick="switchTab('thumb')">🖼 Thumbnail</button>
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tb on" onclick="tab('short',this)">📱 Short Form</button>
+        <button class="tb" onclick="tab('long',this)">🎬 Long Form</button>
+        <button class="tb" onclick="tab('seo',this)">🔍 SEO Package</button>
+        <button class="tb" onclick="tab('thumb',this)">🖼 Thumbnail</button>
       </div>
 
-      <div class="tab-pane active" id="tab-short">
+      <!-- SHORT FORM -->
+      <div class="pane on" id="pane-short">
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Short Form Script</span><span class="card-badge">Day 1 · Day 3 · Day 7 · Second-person narration</span><button class="copy-btn" onclick="cp('shortScr',this)">Copy</button></div>
-          <div class="card-body"><div class="out-prose" id="shortScr"></div></div>
+          <div class="ch">
+            <span class="clbl">Short Form Script</span>
+            <span class="cbadge">Day 1 · Day 3 · Day 7 · Second-person</span>
+            <button class="cbtn" onclick="copy('shortScr',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="prose" id="shortScr"></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Golden Line</span><span class="card-badge">The shareable moment</span><button class="copy-btn" onclick="cp('goldLine',this)">Copy</button></div>
-          <div class="card-body">
-            <div class="gold-block"><div class="gold-lbl">⭐ Clip this — your viral moment</div><div class="gold-txt" id="goldLine"></div></div>
+          <div class="ch">
+            <span class="clbl">Golden Line</span>
+            <span class="cbadge">The shareable moment</span>
+            <button class="cbtn" onclick="copy('goldLine',this)">Copy</button>
+          </div>
+          <div class="cbody">
+            <div class="gold-block">
+              <div class="gold-lbl">⭐ Clip this separately — your viral moment</div>
+              <div class="gold-txt" id="goldLine"></div>
+            </div>
           </div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Hook Analysis</span></div>
-          <div class="card-body"><div class="out-text" id="hookAna"></div></div>
+          <div class="ch"><span class="clbl">Hook Analysis</span></div>
+          <div class="cbody"><div class="mono" id="hookAna"></div></div>
         </div>
       </div>
 
-      <div class="tab-pane" id="tab-long">
+      <!-- LONG FORM -->
+      <div class="pane" id="pane-long">
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Long Form Script</span><span class="card-badge">Day 1 · 3 · 5 · 7 · 10 · Second-person narration</span><button class="copy-btn" onclick="cp('longScr',this)">Copy</button></div>
-          <div class="card-body"><div class="out-prose" id="longScr"></div></div>
+          <div class="ch">
+            <span class="clbl">Long Form Script</span>
+            <span class="cbadge">Day 1 · 3 · 5 · 7 · 10 · Second-person</span>
+            <button class="cbtn" onclick="copy('longScr',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="prose" id="longScr"></div></div>
         </div>
       </div>
 
-      <div class="tab-pane" id="tab-seo">
+      <!-- SEO -->
+      <div class="pane" id="pane-seo">
         <div class="card">
-          <div class="card-head"><span class="card-lbl">YouTube Titles</span><span class="card-badge">A/B variants</span><button class="copy-btn" onclick="cp('seoTit',this)">Copy</button></div>
-          <div class="card-body"><div class="out-text" id="seoTit"></div></div>
+          <div class="ch">
+            <span class="clbl">YouTube Titles</span>
+            <span class="cbadge">A / B / C variants</span>
+            <button class="cbtn" onclick="copy('seoTit',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="mono" id="seoTit"></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Full Description</span><span class="card-badge">With timestamps</span><button class="copy-btn" onclick="cp('seoDesc',this)">Copy</button></div>
-          <div class="card-body"><div class="out-text" id="seoDesc"></div></div>
+          <div class="ch">
+            <span class="clbl">Full Description</span>
+            <span class="cbadge">With timestamps</span>
+            <button class="cbtn" onclick="copy('seoDesc',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="mono" id="seoDesc"></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Tags</span><button class="copy-btn" onclick="cpTags('seoTags',false,this)">Copy</button></div>
-          <div class="card-body"><div class="tags-wrap" id="seoTags"></div></div>
+          <div class="ch">
+            <span class="clbl">Tags</span>
+            <button class="cbtn" onclick="copyTags('seoTags',',',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="tags" id="seoTags"></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Hashtags</span><button class="copy-btn" onclick="cpTags('seoHt',true,this)">Copy</button></div>
-          <div class="card-body"><div class="tags-wrap" id="seoHt"></div></div>
+          <div class="ch">
+            <span class="clbl">Hashtags</span>
+            <button class="cbtn" onclick="copyTags('seoHt',' ',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="tags" id="seoHt"></div></div>
         </div>
       </div>
 
-      <div class="tab-pane" id="tab-thumb">
+      <!-- THUMBNAIL -->
+      <div class="pane" id="pane-thumb">
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Thumbnail Concept</span><span class="card-badge">1280×720 · MrBeast CTR</span></div>
-          <div class="card-body">
+          <div class="ch">
+            <span class="clbl">Thumbnail Concept</span>
+            <span class="cbadge">1280 × 720 · MrBeast CTR</span>
+          </div>
+          <div class="cbody">
             <div class="thumb-prev" id="thumbPrev"></div>
             <div class="spec-grid" id="specGrid"></div>
           </div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Image Generation Prompt</span><span class="card-badge">Midjourney / Flux / KIE</span><button class="copy-btn" onclick="cp('imgProm',this)">Copy</button></div>
-          <div class="card-body"><div class="out-text" id="imgProm"></div></div>
+          <div class="ch">
+            <span class="clbl">Image Generation Prompt</span>
+            <span class="cbadge">Midjourney / Flux / KIE ready</span>
+            <button class="cbtn" onclick="copy('imgProm',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="mono" id="imgProm"></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-lbl">Overlay Text Spec</span><span class="card-badge">Canva / Photoshop</span><button class="copy-btn" onclick="cp('overlayS',this)">Copy</button></div>
-          <div class="card-body"><div class="out-text" id="overlayS"></div></div>
+          <div class="ch">
+            <span class="clbl">Overlay Text Spec</span>
+            <span class="cbadge">Canva / Photoshop</span>
+            <button class="cbtn" onclick="copy('overlayS',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="mono" id="overlayS"></div></div>
         </div>
         <div class="card">
-          <div class="card-head"><span class="card-lbl">CTR Psychology</span></div>
-          <div class="card-body"><div class="out-text" id="ctrAna"></div></div>
+          <div class="ch"><span class="clbl">CTR Psychology</span></div>
+          <div class="cbody"><div class="mono" id="ctrAna"></div></div>
         </div>
       </div>
-    </div><!-- /out-wrap -->
+
+    </div><!-- /output -->
   </div><!-- /pageGen -->
 
-  <!-- HISTORY PAGE -->
+  <!-- ── HISTORY PAGE ───────────────────────── -->
   <div class="content" id="pageHist" style="display:none">
-    <div class="sec-hd" style="margin-bottom:22px">
-      <h2>SESSION HISTORY</h2><p id="histCnt">0 generations</p>
+    <div class="sec-hd" style="margin-bottom:20px">
+      <h2>SESSION HISTORY</h2>
+      <p id="histCount">0 generations</p>
     </div>
     <div id="histCards"></div>
   </div>
 
-</div><!-- /main -->
+</div><!-- /layout -->
 </div><!-- /app -->
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* ─── STATE ─────────────────────────────────────────────── */
-let legend='', pairing=null, data={}, history=[], gToken=null, drawerOpen=false, toastTmr;
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let S = {
+  legend: '',
+  pairing: null,
+  data: {},
+  history: [],
+  gToken: null,
+  drawerOpen: false,
+  toastTimer: null
+};
 
-/* ─── INIT ──────────────────────────────────────────────── */
+/* ════════════════════════════════════════════
+   INIT — restore session keys
+════════════════════════════════════════════ */
 window.addEventListener('load', () => {
-  const k=sessionStorage.getItem('ck'); const g=sessionStorage.getItem('gid'); const s=sessionStorage.getItem('sid');
-  if(k){document.getElementById('claudeKey').value=k; syncKeyStatus();}
-  if(g) document.getElementById('gClientId').value=g;
-  if(s) document.getElementById('sheetId').value=s;
+  const k = sessionStorage.getItem('lp_key');
+  const g = sessionStorage.getItem('lp_gid');
+  const s = sessionStorage.getItem('lp_sid');
+  if (k) { $('claudeKey').value = k; syncStatus(); }
+  if (g) $('gClientId').value = g;
+  if (s) $('sheetId').value = s;
 });
 
-/* ─── SETTINGS ──────────────────────────────────────────── */
-function toggleDrawer(){
-  drawerOpen=!drawerOpen;
-  document.getElementById('drawer').classList.toggle('open',drawerOpen);
-  document.getElementById('settBtn').textContent=drawerOpen?'⚙ Settings ▴':'⚙ Settings ▾';
+/* ════════════════════════════════════════════
+   API DRAWER
+════════════════════════════════════════════ */
+function toggleDrawer() {
+  S.drawerOpen = !S.drawerOpen;
+  $('apiDrawer').classList.toggle('open', S.drawerOpen);
+  $('apiToggle').textContent = S.drawerOpen ? '⚙ API Key ▴' : '⚙ API Key ▾';
 }
-function saveSettings(){
-  const k=document.getElementById('claudeKey').value.trim();
-  const g=document.getElementById('gClientId').value.trim();
-  const s=document.getElementById('sheetId').value.trim();
-  if(k) sessionStorage.setItem('ck',k);
-  if(g) sessionStorage.setItem('gid',g);
-  if(s) sessionStorage.setItem('sid',s);
-  syncKeyStatus();
-  toast('Settings saved','ok');
-  setTimeout(toggleDrawer,400);
-}
-function syncKeyStatus(){
-  const k=sessionStorage.getItem('ck')||'';
-  const live=k.startsWith('sk-ant');
-  document.getElementById('pip').className='status-pip'+(live?' live':'');
-  document.getElementById('settBtn').classList.toggle('ok',live);
-  document.getElementById('callout').classList.toggle('show',!live);
-}
-function toggleVis(id){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
-function clearClaudeKey(){document.getElementById('claudeKey').value='';sessionStorage.removeItem('ck');syncKeyStatus();toast('Key cleared','ok');}
-function openModal(){document.getElementById('setupModal').classList.add('open');}
-function closeModal(){document.getElementById('setupModal').classList.remove('open');}
 
-/* ─── GOOGLE AUTH ───────────────────────────────────────── */
-function connectGoogle(){
-  const cid=document.getElementById('gClientId').value.trim()||sessionStorage.getItem('gid');
-  if(!cid){toast('Enter Google OAuth Client ID in Settings first','err');if(!drawerOpen)toggleDrawer();return;}
-  sessionStorage.setItem('gid',cid);
-  const client=google.accounts.oauth2.initTokenClient({
-    client_id:cid,
-    scope:'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file',
-    callback:(r)=>{
-      if(r.error){toast('Google auth failed: '+r.error,'err');return;}
-      gToken=r.access_token;
-      document.getElementById('gBtn').classList.add('done');
-      document.getElementById('gBtn').textContent='✓ Google Connected';
-      document.getElementById('btnSheets').disabled=false;
-      document.getElementById('btnDrive').disabled=false;
-      toast('Google connected','ok');
-    }
+function saveKey() {
+  const k = $('claudeKey').value.trim();
+  const g = $('gClientId').value.trim();
+  const s = $('sheetId').value.trim();
+  if (k) sessionStorage.setItem('lp_key', k);
+  if (g) sessionStorage.setItem('lp_gid', g);
+  if (s) sessionStorage.setItem('lp_sid', s);
+  syncStatus();
+  toast('Settings saved', 'ok');
+  setTimeout(toggleDrawer, 350);
+}
+
+function clearKey() {
+  $('claudeKey').value = '';
+  sessionStorage.removeItem('lp_key');
+  syncStatus();
+  toast('Key cleared', 'ok');
+}
+
+function syncStatus() {
+  const k = sessionStorage.getItem('lp_key') || '';
+  const live = k.startsWith('sk-ant');
+  $('pip').className = 'pip' + (live ? ' live' : '');
+  $('apiToggle').classList.toggle('live', live);
+  $('callout').classList.toggle('show', !live);
+}
+
+function toggleEye(id) {
+  const el = $(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+function openModal()  { $('gModal').classList.add('open'); }
+function closeModal() { $('gModal').classList.remove('open'); }
+
+/* ════════════════════════════════════════════
+   GOOGLE AUTH
+════════════════════════════════════════════ */
+function googleAuth() {
+  const cid = $('gClientId').value.trim() || sessionStorage.getItem('lp_gid');
+  if (!cid) {
+    toast('Enter your Google Client ID in the drawer first', 'err');
+    if (!S.drawerOpen) toggleDrawer();
+    return;
+  }
+  sessionStorage.setItem('lp_gid', cid);
+  try {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: cid,
+      scope: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file',
+      callback: (res) => {
+        if (res.error) { toast('Google auth failed: ' + res.error, 'err'); return; }
+        S.gToken = res.access_token;
+        $('gBtn').classList.add('done');
+        $('gBtn').textContent = '✓ Google Connected';
+        $('btnSheets').disabled = false;
+        $('btnDrive').disabled = false;
+        toast('Google connected', 'ok');
+      }
+    });
+    client.requestAccessToken();
+  } catch(e) {
+    toast('Google GIS not loaded yet — try again in a moment', 'err');
+  }
+}
+
+/* ════════════════════════════════════════════
+   CLAUDE API CALL
+   — matches TradeIQ pattern exactly:
+     • key from sessionStorage
+     • anthropic-dangerous-direct-browser-access header (CORS fix)
+     • anthropic-version header
+     • try/catch with typed errors
+════════════════════════════════════════════ */
+function getKey() {
+  return sessionStorage.getItem('lp_key') || $('claudeKey').value.trim();
+}
+
+async function callClaude(userPrompt, systemPrompt = '', maxTokens = 4096) {
+  const key = getKey();
+  if (!key) throw new Error('No API key — open ⚙ API Key and save yours first.');
+  if (!key.startsWith('sk-ant')) throw new Error('Invalid key format. Should start with sk-ant-');
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'   // ← CORS fix
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }]
+    })
   });
-  client.requestAccessToken();
+
+  if (!res.ok) {
+    let msg = `API error ${res.status}`;
+    try {
+      const e = await res.json();
+      msg = e.error?.message || msg;
+    } catch(_) {}
+    throw new Error(msg);
+  }
+
+  const json = await res.json();
+  return json.content[0].text;
 }
 
-/* ─── CLAUDE API ────────────────────────────────────────── */
-function getKey(){return sessionStorage.getItem('ck')||document.getElementById('claudeKey').value.trim();}
-async function claude(prompt,sys=''){
-  const k=getKey();
-  if(!k) throw new Error('Add your Claude API key in Settings first.');
-  const r=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4096,system:sys,messages:[{role:'user',content:prompt}]})
-  });
-  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||`API error ${r.status}`);}
-  return (await r.json()).content[0].text;
+function parseJSON(raw) {
+  // Strip markdown code fences if present
+  return JSON.parse(
+    raw.trim()
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```\s*$/i, '')
+      .trim()
+  );
 }
 
-/* ─── STEP 1: PAIRINGS ──────────────────────────────────── */
-async function go(){
+/* ════════════════════════════════════════════
+   STEP 1 — GENERATE PAIRINGS
+════════════════════════════════════════════ */
+async function fire() {
   clearErr();
-  const val=(document.getElementById('sideField').value||document.getElementById('mobField').value).trim();
-  if(!val){showErr('Enter a legend name first.');return;}
-  if(!getKey()){showErr('Add your Claude API key in Settings first.');if(!drawerOpen)toggleDrawer();return;}
-  legend=val;
-  hide('pairWrap');hide('outWrap');
-  setLoad(true,`Finding worst possible settings for ${legend}...`);
-  document.getElementById('genBtn').disabled=true;
-  try{
-    const raw=await claude(`You are an elite YouTube content strategist for viral comedy series "Out of Context Legends." Historical figures in wrong modern settings. Character keeps real personality, misapplies it. Humor = completely serious while completely wrong.
+  const val = ($('sideInp').value || $('mobInp').value).trim();
+  if (!val) { showErr('Enter a legend name first.'); return; }
+  if (!getKey()) {
+    showErr('Add your Claude API key — click ⚙ API Key top-right.');
+    if (!S.drawerOpen) toggleDrawer();
+    return;
+  }
 
-Legend: ${legend}
+  S.legend = val;
+  hide('pairSec'); hide('outEl');
+  load(true, `Scouting the worst possible rooms for ${val}...`);
+  $('fireBtn').disabled = true;
 
-Return ONLY valid JSON, no markdown:
-{"pairings":[{"title":"Mozart in an NBA Game","setting":"Professional basketball arena","tension":"Rhythm absolutist vs shot clock urgency","engine":"Won't shoot until musical tension resolves. Every violation is artistic integrity.","hook":"Mozart was drafted into the NBA. The shot clock means nothing to him.","category":"Sport"}]}
+  try {
+    const raw = await callClaude(
+`You are an elite YouTube content strategist for the viral comedy series "Out of Context Legends / Legends Wrong Room."
 
-Generate exactly 5 wildly creative pairings using the character's REAL personality traits. Settings: sport, podcast, dating app, courtroom, reality TV, hospital, Wall Street, cooking show, TED talk, job interview, startup, courtroom, classroom, etc.`);
-    const json=JSON.parse(raw.trim());
-    renderPairings(json.pairings);
-  }catch(e){showErr(e.message);}
-  finally{setLoad(false);document.getElementById('genBtn').disabled=false;}
+Format: historical figures placed in completely wrong modern settings. Character keeps their real personality and real historical traits, but misapplies them to the modern context with complete seriousness. Humor = they are always right, the world is always wrong.
+
+Legend: ${val}
+
+Return ONLY valid JSON — no markdown, no preamble:
+{
+  "pairings": [
+    {
+      "title": "Mozart in an NBA Game",
+      "setting": "Professional basketball arena, playoffs",
+      "tension": "Rhythm absolutist vs shot clock urgency",
+      "engine": "Won't shoot until musical tension resolves. Every shot clock violation is artistic integrity, not a foul.",
+      "hook": "What if Mozart was drafted into the NBA? The shot clock means nothing to him.",
+      "category": "Sport"
+    }
+  ]
 }
 
-function renderPairings(pairs){
-  const g=document.getElementById('pairGrid');g.innerHTML='';
-  pairs.forEach((p,i)=>{
-    const c=document.createElement('div');c.className='pair-card';
-    c.innerHTML=`<div class="pc-n">${String(i+1).padStart(2,'0')}</div><div class="pc-t">${p.title}</div><div class="pc-e">${p.engine}</div><span class="pc-tag">${p.category}</span>`;
-    c.onclick=()=>buildPackage(p);
+Generate exactly 5 wildly creative pairings. Use the character's REAL documented personality traits and quirks. Settings must span different categories: sport, media/podcast, business/startup, dating, courtroom, cooking show, reality TV, hospital, Wall Street, TED talk, job interview, social media. Each needs a specific comedic engine — the exact personality trait that collides with the exact setting demand.`,
+      '', 800
+    );
+
+    const json = parseJSON(raw);
+    renderPairings(json.pairings);
+  } catch(e) {
+    showErr(e.message);
+  } finally {
+    load(false);
+    $('fireBtn').disabled = false;
+  }
+}
+
+function renderPairings(pairs) {
+  const g = $('pairGrid');
+  g.innerHTML = '';
+  pairs.forEach((p, i) => {
+    const c = document.createElement('div');
+    c.className = 'pair-card';
+    c.innerHTML = `
+      <div class="pc-n">${String(i+1).padStart(2,'0')}</div>
+      <div class="pc-t">${p.title}</div>
+      <div class="pc-e">${p.engine}</div>
+      <span class="pc-tag">${p.category}</span>`;
+    c.onclick = () => buildPackage(p);
     g.appendChild(c);
   });
-  show('pairWrap');
-  document.getElementById('pairWrap').scrollIntoView({behavior:'smooth',block:'start'});
+  show('pairSec');
+  $('pairSec').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-/* ─── STEP 2: FULL PACKAGE ──────────────────────────────── */
-async function buildPackage(p){
-  pairing=p;clearErr();hide('outWrap');
-  setLoad(true,`Building production package for "${p.title}"...`);
-  try{
-    const raw=await claude(
-`Generate a COMPLETE production package. Return ONLY valid JSON, no markdown, no code fences.
+/* ════════════════════════════════════════════
+   STEP 2 — BUILD FULL PRODUCTION PACKAGE
+════════════════════════════════════════════ */
+async function buildPackage(p) {
+  S.pairing = p;
+  clearErr();
+  hide('outEl');
+  load(true, `Writing Day 1 through Day 10 for "${p.title}"...`);
 
-LEGEND: ${legend}
+  const system = `You are an elite YouTube scriptwriter and content strategist for "Out of Context Legends," a viral faceless comedy series. You specialise in second-person immersion narration — the "What if YOU were there" format. Your scripts match the pacing, sensory detail, deadpan understatement, and bite of the fastest-growing hypothetical YouTube Shorts. You write at MrBeast-team production level. Every word earns its place.`;
+
+  const prompt =
+`Generate a COMPLETE production package. Return ONLY valid JSON — no markdown, no code fences, no preamble.
+
+LEGEND: ${S.legend}
 PAIRING: ${p.title}
 SETTING: ${p.setting}
 ENGINE: ${p.engine}
 HOOK: ${p.hook}
 TENSION: ${p.tension}
 
-═══════════════════════════════════════════════
-NARRATION FORMAT — READ THIS BEFORE WRITING
-═══════════════════════════════════════════════
+══════════════════════════════════════════
+NARRATION FORMAT — MANDATORY — READ FIRST
+══════════════════════════════════════════
 
-Both short_script and long_script MUST use SECOND-PERSON IMMERSION format.
-Study these two reference transcripts and match their pacing and bite exactly:
+Both short_script and long_script MUST use SECOND-PERSON IMMERSION.
+Study these reference transcripts and match their pacing and bite EXACTLY:
 
-REFERENCE 1 — "What if you had a flamethrower in the ice age?"
+REFERENCE A — "What if you had a flamethrower in the ice age?"
 "Day one, you wake up buried in snow, glaciers towering in the distance, mammoths moving across the valley like tanks. The cold hits instantly, frost locking your lashes together, ice cracking along your cheekbones. You reach down and realize you're holding a flamethrower. Just then, a woolly mammoth decides you look approachable. You decide otherwise. 10 minutes later, you're eating mammoth steak over open fire. Not bad, actually. Day three. A nearby tribe watches you cook meat without freezing it first. They've been chewing dried strips like leather. You show them controlled heat. The oldest hunter tries it, nods once. That's ice age approval."
 
-REFERENCE 2 — "What if you were a modern soldier in the Aztec Empire?"
-"Day one, you wake up in full special forces gear, rifle across your chest. You sit up and the horizon steals your breath. A city rises from a lake, pyramids slicing into a perfect blue sky. Day three, you walk into the marketplace and it's the most insane thing you've ever seen. Obsidian blades sharper than steel, gold stacked on woven mats. Then the crowd parts. Eagle warriors, feathered helmets shaped like open beaks. One stares at your gear and laughs. He draws his blade. You draw something louder. The sound rips across the canals and the entire plaza falls silent."
+REFERENCE B — "What if you were a modern soldier in the Aztec Empire?"
+"Day one, you wake up in full special forces gear, rifle across your chest. You sit up and the horizon steals your breath. A city rises from a lake, pyramids slicing into a perfect blue sky. Day three, you walk into the marketplace. Obsidian blades sharper than steel, gold stacked on woven mats. Then the crowd parts. Eagle warriors, feathered helmets shaped like open beaks. One stares at your gear and laughs. He draws his blade. You draw something louder. The sound rips across the canals and the entire plaza falls silent."
 
-MANDATORY RULES FOR BOTH SCRIPTS:
+10 MANDATORY RULES — APPLY TO EVERY SENTENCE:
 
 1. SECOND PERSON ALWAYS — "You" is the protagonist throughout. Never switch to third person.
-2. SENSORY ARRIVAL — Start Day 1 with physical sensation before any plot. Cold. Smell. Weight. Sound. The body arrives before the story.
-3. DAY STRUCTURE — Short form: Day One + Day Three + Day Seven. Long form: Day One, Day Three, Day Five, Day Seven, Day Ten.
-4. SHORT SENTENCES — Max 12 words. Most 5-8. One idea. Full stop. Next idea. No compound sentences.
-5. DEADPAN UNDERSTATEMENT — Huge things described in small words. "You decide otherwise." "Not bad, actually." "That's [era] approval." Never oversell the moment.
-6. THE REACTION MIRROR — Every 2-3 beats, someone from that world reacts to what you've done. Their reaction shows the contrast. One person. One gesture. One line.
-7. NO DIALOGUE TAGS — No "he said" / "you said". If the legend speaks, write it bare: He looks at you. "Name your enemies." Not: He looks at you and says "Name your enemies."
-8. END EACH DAY ON AN IMAGE — Not a punchline. A visual outcome. Something happening. "By sunset they're dragging their shelters closer." "Finance approves it without comment."
-9. THE FINAL VERDICT — Last line of the whole script sounds like history has already judged the event. Calm. Final. Slightly absurd. "Nobody questions the Emperor." "History has not corrected him." "The coach did not attend the premiere."
-10. THE GOLDEN LINE — One sentence per script that works completely alone as a quote. Sounds accidentally profound. True in real life, not just in the sketch.
+2. SENSORY ARRIVAL — Every Day starts with a physical sensation before any plot. Cold. Smell. Sound. Weight. Body arrives before story.
+3. SHORT SENTENCES — Hard max 12 words. Most 5-8. One idea. Full stop. Next idea. Never compound.
+4. DEADPAN UNDERSTATEMENT — Huge events in tiny words. "You decide otherwise." "Not bad, actually." "That's [era] approval." Never oversell.
+5. NO DIALOGUE TAGS — No "he said" / "you said". If the legend speaks, write it bare: He looks at you. "Name your enemies." Not: He says "Name your enemies."
+6. REACTION MIRROR — Every 2-3 beats, one person from that world reacts to what you've done. One person. One gesture or line. Shows the world's contrast.
+7. DAY ENDING = IMAGE — End each day section on a visual outcome, not a punchline. Something happening. Something changing. Never a joke button.
+8. FINAL VERDICT — Last sentence of entire script sounds like a historical record. Calm. Final. Slightly absurd. "Nobody questions the Emperor." "History has not corrected him."
+9. GOLDEN LINE — One sentence in the script that works alone as a quote — sounds accidentally profound and true in real life. Build to it.
+10. THE LEGEND IS NEVER CONFUSED — They are always right. The world is always wrong. Their logic is internally consistent throughout.
 
-SHORT FORM PACING MODEL (match this rhythm):
-- Hook sentence: "What if [legend] [entered your world scenario]?" One sentence. Lands alone.
-- Day One: 3-4 sentences. Sensory landing. One immediate absurd action. One deadpan reaction. 
-- Day Three: 3-4 sentences. The world notices. One reaction mirror beat. One line that gets a quiet laugh.
-- Day Seven: 4-5 sentences. World has shifted. The golden line. Final verdict sentence.
-- Total: ~160-200 words. Every word earns its place. Nothing decorative.
+SHORT FORM STRUCTURE (Day 1, Day 3, Day 7):
+- Hook: "What if [legend] [scenario]?" One sentence. Lands alone.
+- Day One: 3-4 sentences. Sensory landing. First contact. One absurd action. Deadpan reaction.
+- Day Three: 3-4 sentences. The world notices. Reaction mirror. Quiet shift.
+- Day Seven: 4-5 sentences. World has changed. Golden line. Final verdict as absolute last sentence.
+- Total: ~180-220 words. Every word earns its place.
 
-LONG FORM PACING MODEL:
-- Day One: Full sensory arrival. 6-8 sentences. Establish the collision completely. First contact with the legend.
-- Day Three: World starts reacting. 6-8 sentences. The legend does something that changes the setting permanently.
-- Day Five: Escalation. 8-10 sentences. Unintended consequence of the legend's instincts. Something breaks or transforms.
-- Day Seven: 8-10 sentences. You start to adapt to them. The dynamic shifts. Golden line lands here.
-- Day Ten: 6-8 sentences. Final image. World is different. Legend is unfazed. Verdict sentence closes everything.
+LONG FORM STRUCTURE (Day 1, 3, 5, 7, 10):
+- Day One: 6-8 sentences. Full sensory arrival. First contact with legend. First absurd action resolved with deadpan.
+- Day Three: 6-8 sentences. World reacts. Legend causes one permanent change to the setting. Reaction mirror — one bystander, one gesture.
+- Day Five: 8-10 sentences. Escalation. Unintended consequence of legend's instincts. Something in setting breaks or transforms. You try to explain something modern. They reframe it in their own terms.
+- Day Seven: 8-10 sentences. You stop resisting. Dynamic shifts. Legend says something that accidentally changes how you see your own life. GOLDEN LINE lands here.
+- Day Ten: 6-8 sentences. Final image. World visibly different. Legend completely unfazed. You are not who you were on Day One. FINAL VERDICT as absolute last sentence.
 
-═══════════════════════════════════════════════
+══════════════════════════════════════════
 
 {
-  "short_script": "HOOK LINE\\n\\nDay One.\\n[3-4 punchy sentences — sensory, one absurd action, deadpan reaction]\\n\\nDay Three.\\n[3-4 sentences — world reacts, reaction mirror, quiet laugh]\\n\\nDay Seven.\\n[4-5 sentences — world has shifted, golden line embedded, final verdict as last sentence]",
+  "short_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[3-4 punchy sentences matching reference pacing — sensory, action, deadpan]\\n\\nDay Three.\\n[3-4 sentences — world reacts, one reaction mirror beat]\\n\\nDay Seven.\\n[4-5 sentences — world shifted, golden line embedded, final verdict as last sentence]",
 
-  "golden_line": "The single most quotable sentence from the short script — one line that sounds accidentally true in real life, not just in the sketch. Must work completely alone with zero context. Include the 1-2 sentences immediately before it that set it up.",
+  "golden_line": "The setup sentence(s) + the golden line itself. The golden line must work completely alone with zero context — sounds accidentally profound in real life.",
 
-  "hook_analysis": "3-4 sentences: what makes the opening hook work psychologically. What sensation or image does it plant in the first 2 seconds. Why the viewer cannot scroll away once they are cast as 'you'. What emotion the day-arc triggers that keeps them through to Day Seven.",
+  "hook_analysis": "3-4 sentences: what the opening hook plants in the viewer's brain in the first 2 seconds. Why the second-person 'you' prevents scrolling. What emotion the day-arc creates that drives through to Day Seven.",
 
-  "long_script": "What if [legend] [scenario]?\\n\\nDay One.\\n[6-8 sentences — full sensory arrival, physical detail, first contact with legend, one immediate absurd action resolved with deadpan understatement]\\n\\nDay Three.\\n[6-8 sentences — world starts noticing, one permanent change caused by legend's instincts, reaction mirror with single gesture from bystander]\\n\\nDay Five.\\n[8-10 sentences — escalation, unintended consequence, something in the setting breaks or transforms, you try to explain something modern, legend misapplies their real expertise]\\n\\nDay Seven.\\n[8-10 sentences — you stop resisting, dynamic shifts, the legend accidentally says something that changes how you see your own life, GOLDEN LINE lands here]\\n\\nDay Ten.\\n[6-8 sentences — final image, world is visibly different because of the legend, legend completely unfazed, you are not the same person you were on Day One, FINAL VERDICT as absolute last sentence — calm, brief, sounds like a historical record]",
+  "long_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[6-8 sentences — full sensory arrival, first contact, first absurd action, deadpan understatement]\\n\\nDay Three.\\n[6-8 sentences — world reacts, permanent change to setting, reaction mirror]\\n\\nDay Five.\\n[8-10 sentences — escalation, unintended consequence, you try to explain something modern, legend reframes it perfectly wrong]\\n\\nDay Seven.\\n[8-10 sentences — you stop resisting, dynamic shifts, GOLDEN LINE lands here]\\n\\nDay Ten.\\n[6-8 sentences — final image, world different, legend unfazed, you changed, FINAL VERDICT as last sentence]",
 
-  "seo_titles": "TITLE A (SEO — 'What if' format, keywords first, under 60 chars): What if [Legend] was your [setting role]?\\nTITLE B (Curiosity gap — outcome first): I Let [Legend] [action]. This Is What Happened.\\nTITLE C (Shorts — emoji + punchy, under 40 chars): [emoji] [Legend] in [setting] hits different\\nRECOMMENDATION: A/B test A vs B in first 48hrs — A wins on search, B wins on suggested feed.",
+  "seo_titles": "TITLE A — What if format, keywords first, under 60 chars\\nTITLE B — Outcome first curiosity gap\\nTITLE C — Shorts emoji lead, under 40 chars\\nRECOMMENDATION: which to test first and why",
 
-  "seo_description": "Full 400-500 word YouTube description. FIRST 2 LINES must work as the visible hook before 'show more' — restate the premise as a question and tease Day Seven without revealing it. Include full timestamps for long form. One paragraph on the series. Subscribe CTA. Hashtags at end.",
+  "seo_description": "Full 400-500 word YouTube description. First 2 lines visible before show-more — restate premise as question, tease Day Seven outcome without revealing it. Timestamps for long form. Series paragraph. Subscribe CTA. Hashtags at end.",
 
   "tags": ["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10","tag11","tag12","tag13","tag14","tag15"],
 
   "hashtags": ["#Tag1","#Tag2","#Tag3","#Tag4","#Tag5","#Tag6","#Tag7","#Tag8","#Tag9","#Tag10"],
 
   "thumbnail": {
-    "concept_title": "One sentence — the visual idea",
-    "character_pose": "Exact pose — body language, facial expression, hand position. Must show the collision between their era and this one.",
-    "character_expression": "Primary + secondary emotion — e.g. 'absolute unblinking authority with mild disappointment, like a genius forced to explain something obvious'",
-    "background_scene": "What is happening behind them that they are completely ignoring — the chaos of the modern setting",
-    "main_object": "Object in their hand or at their feet that shows the absurd era collision",
-    "overlay_text_main": "2-4 WORDS MAX ALL CAPS — must work as a standalone statement",
-    "overlay_text_secondary": "3-6 words — the twist or the punchline to the main text",
+    "concept_title": "One sentence — the visual collision idea",
+    "character_pose": "Exact body pose, hand position, weight distribution. Must embody the era-collision physically.",
+    "character_expression": "Primary emotion + secondary emotion. E.g. 'absolute unblinking authority with faint disappointment — a genius forced to explain something obvious'",
+    "background_scene": "Specific background chaos the character is completely ignoring",
+    "main_object": "Object in hand or at feet — the physical symbol of the era collision",
+    "overlay_text_main": "2-4 WORDS MAX — ALL CAPS — works as standalone statement",
+    "overlay_text_secondary": "3-6 words — the twist or punchline to the main text",
     "color_palette": {
-      "dominant": "#hex — color name and exactly why it triggers CTR for this character",
-      "accent": "#hex — for overlay text, must hit maximum contrast",
-      "character_lighting": "#hex — rim light color on character, should feel slightly dramatic",
-      "background_tone": "#hex — atmosphere, should contrast character silhouette"
+      "dominant": "#hex — name and exactly why this triggers CTR for this character",
+      "accent": "#hex — overlay text color, maximum contrast on dominant",
+      "character_lighting": "#hex — rim light color, should feel cinematic and slightly dramatic",
+      "background_tone": "#hex — atmosphere behind character, must contrast silhouette"
     },
-    "text_style": "Font weight, stroke, shadow treatment — reference MrBeast, Hormozi, or Nollywood Drama overlay styles specifically",
-    "composition": "Exact placement — where character stands, where text sits, what visual element draws the eye first",
-    "ctr_trigger": "The specific psychological mechanism — identity incongruity / curiosity gap / social proof / status threat / etc. Explain why this particular combination will stop the scroll"
+    "text_style": "Specify: MrBeast / Hormozi / Nollywood Drama style. Font weight, stroke thickness, shadow approach.",
+    "composition": "Where character stands (left/center/right %), where text sits, what the eye hits first, second, third.",
+    "ctr_trigger": "Name the specific psychological mechanism: identity incongruity / curiosity gap / social proof / status threat / pattern interrupt. Explain why THIS combination stops the scroll for THIS character."
   },
 
-  "image_gen_prompt": "Full ready-to-paste prompt for Midjourney/Flux/KIE. Format: photorealistic portrait of [character name] as [historical role], wearing [specific period costume details], [exact body pose and hand position], [precise facial expression], [object they are holding], set against [specific background scene], [lighting description — direction, color, intensity], [camera angle], cinematic studio photography, hyperrealistic skin and fabric texture, sharp focus foreground, 8K, --ar 16:9",
+  "image_gen_prompt": "photorealistic portrait of [full character name] as [historical role], wearing [specific period costume — fabric, colour, details], [exact body pose and hand position], [precise facial expression matching character_expression above], [object they are holding or interacting with], set against [specific background scene], [lighting — direction, colour, intensity — e.g. 'hard orange-red rim light from left, deep shadow right'], [camera angle — e.g. 'slight low angle, medium shot'], cinematic studio photography, hyperrealistic skin texture and fabric detail, sharp foreground focus, 8K, --ar 16:9",
 
-  "overlay_spec": "MAIN TEXT: '[exact words]'\\nFont: [specific font name] Bold\\nSize: [pt]\\nColor: #[hex]\\nOutline: [px] solid #[hex]\\nShadow: [offset, blur, opacity]\\nPosition: [exact placement description]\\n\\nSECONDARY TEXT: '[exact words]'\\nFont: [specific font name]\\nSize: [pt]\\nColor: #[hex]\\nOutline: [px] solid #[hex]\\nPosition: [exact placement]",
+  "overlay_spec": "MAIN TEXT: '[exact words]'\\nFont: [specific font] Bold\\nSize: [pt]\\nColour: #[hex]\\nOutline: [px] solid #[hex]\\nShadow: [offset px] [blur px] [opacity%] black\\nPosition: [e.g. right side, top-aligned, 8% from right edge]\\n\\nSECONDARY TEXT: '[exact words]'\\nFont: [specific font]\\nSize: [pt]\\nColour: #[hex]\\nOutline: [px] solid #[hex]\\nPosition: [below main text, same alignment, 6px gap]",
 
-  "ctr_analysis": "4-5 sentences explaining exactly why this thumbnail gets clicked. Name the specific YouTube thumbnail principle being used. Reference what emotion fires in the viewer's brain in the first 200ms. Explain the role of color, composition, and text in that order. Predict a specific CTR range vs the YouTube average of 2-5% and explain the reasoning."
-}`,
-      `You are an elite YouTube scriptwriter and content strategist for a viral faceless comedy series called "Out of Context Legends." You specialise in second-person immersion narration — the "What if YOU were there" format used by the fastest-growing history and hypothetical YouTube Shorts channels. Your scripts match the pacing, bite, and deadpan authority of the best-performing transcripts in this format. You write at MrBeast-team production level. Short sentences. Sensory detail. Understatement. Every word earns its place.`
-    );
-    let clean=raw.trim().replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/i,'');
-    data=JSON.parse(clean);
-    render(p,data);
-    addHistory(p,data);
-  }catch(e){showErr('Generation error: '+e.message);}
-  finally{setLoad(false);}
-}
+  "ctr_analysis": "4-5 sentences. Name the specific thumbnail principle used. Describe what fires in the viewer's brain in the first 200ms — colour response first, then face/expression, then text. Explain why the composition guides the eye correctly. Predict a specific CTR range vs YouTube average 2-5% and justify the number."
+}`;
 
-/* ─── RENDER ────────────────────────────────────────────── */
-function render(p,d){
-  document.getElementById('outH1').textContent=p.title.toUpperCase();
-  document.getElementById('outSub').textContent=`${legend} · ${p.setting} · ${p.tension}`;
-  set('shortScr',d.short_script);set('goldLine',d.golden_line);set('hookAna',d.hook_analysis);
-  set('longScr',d.long_script);set('seoTit',d.seo_titles);set('seoDesc',d.seo_description);
-  set('imgProm',d.image_gen_prompt);set('overlayS',d.overlay_spec);set('ctrAna',d.ctr_analysis);
-  renderTags('seoTags',d.tags,false);renderTags('seoHt',d.hashtags,true);
-  buildThumb(d.thumbnail||{});buildSpecs(d.thumbnail||{});
-  show('outWrap');switchTab('short');
-  document.getElementById('outWrap').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function set(id,v){document.getElementById(id).textContent=v||'';}
-function renderTags(id,arr,ht){
-  const w=document.getElementById(id);w.innerHTML='';
-  if(!Array.isArray(arr)){w.textContent=arr||'';return;}
-  arr.forEach(t=>{const p=document.createElement('span');p.className='tag-pill'+(ht?' ht':'');p.textContent=t;w.appendChild(p);});
-}
-function buildThumb(t){
-  const el=document.getElementById('thumbPrev');
-  const pal=t.color_palette||{};
-  const dom=hexOf(pal.dominant)||'#1a1d27';
-  const acc=hexOf(pal.accent)||'#e8b84b';
-  const bg=hexOf(pal.background_tone)||'#0d0f14';
-  const lit=hexOf(pal.character_lighting)||'#e8b84b';
-  el.style.background=`linear-gradient(135deg,${bg} 0%,${dom} 100%)`;
-  el.innerHTML=`<div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:14px 18px;overflow:hidden">
-    <div style="position:absolute;inset:0;background:radial-gradient(circle at 28% 55%,${lit}35 0%,transparent 55%)"></div>
-    <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:36%;max-width:140px;height:80%;background:linear-gradient(to top,${lit}35,${lit}08);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;font-size:34px;border:1px solid ${lit}25">${emoji(legend)}</div>
-    <div style="position:relative;z-index:2;margin-left:40%">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(15px,3.5vw,32px);color:${acc};text-shadow:2px 2px 0 #000;line-height:1;letter-spacing:1px">${t.overlay_text_main||'WRONG ROOM'}</div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:clamp(9px,1.6vw,12px);font-weight:700;color:#fff;text-shadow:1px 1px 0 #000;margin-top:3px;opacity:.9">${t.overlay_text_secondary||''}</div>
-    </div>
-    <div style="position:absolute;top:7px;right:10px;font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);background:rgba(0,0,0,.4);padding:2px 7px;border-radius:99px">PREVIEW</div>
-  </div>`;
-}
-function buildSpecs(t){
-  const g=document.getElementById('specGrid');g.innerHTML='';
-  [['Character Pose',t.character_pose],['Expression',t.character_expression],['Background',t.background_scene],['Main Object',t.main_object],['Composition',t.composition],['CTR Trigger',t.ctr_trigger]].forEach(([l,v])=>{
-    if(!v)return;
-    const d=document.createElement('div');d.className='spec-item';
-    d.innerHTML=`<div class="spec-lbl">${l}</div><div class="spec-val">${v}</div>`;
-    g.appendChild(d);
-  });
-  const pal=t.color_palette||{};
-  if(Object.keys(pal).length){
-    const d=document.createElement('div');d.className='spec-item';d.style.gridColumn='1/-1';
-    let sw='<div class="spec-lbl">Color Palette</div><div class="swatch-row">';
-    Object.entries(pal).forEach(([k,v])=>{const h=hexOf(v)||'#888';sw+=`<div class="swatch" style="background:${h}" title="${k.replace(/_/g,' ')}: ${v}"></div>`;});
-    sw+='</div>';
-    d.innerHTML=sw;
-    const desc=document.createElement('div');
-    desc.style.cssText='margin-top:7px;font-size:10px;color:var(--text3);font-family:var(--mono);line-height:1.6';
-    desc.textContent=Object.entries(pal).map(([k,v])=>`${k.replace(/_/g,' ')}: ${v}`).join(' · ');
-    d.appendChild(desc);g.appendChild(d);
+  try {
+    const raw = await callClaude(prompt, system, 8000);
+    S.data = parseJSON(raw);
+    renderOutput(p, S.data);
+    addHistory(p, S.data);
+  } catch(e) {
+    showErr('Generation error: ' + e.message);
+  } finally {
+    load(false);
   }
 }
-function hexOf(s){if(!s)return null;const m=String(s).match(/#[0-9a-fA-F]{3,8}/);return m?m[0]:null;}
-function emoji(n){
-  const m={'mozart':'🎵','einstein':'🧠','socrates':'🏛','aristotle':'📚','churchill':'🎖','cleopatra':'👑','newton':'🍎','darwin':'🦎','tesla':'⚡','curie':'⚗','napoleon':'🎖','shakespeare':'✍','beethoven':'🎻','da vinci':'🎨','galileo':'🔭','sun tzu':'⚔','genghis':'🏹','confucius':'☯','freud':'🛋','plato':'🏺'};
-  const l=n.toLowerCase();
-  for(const[k,v]of Object.entries(m))if(l.includes(k))return v;
+
+/* ════════════════════════════════════════════
+   RENDER OUTPUT
+════════════════════════════════════════════ */
+function renderOutput(p, d) {
+  $('outTitle').textContent = p.title.toUpperCase();
+  $('outSub').textContent = `${S.legend} · ${p.setting} · ${p.tension}`;
+
+  setText('shortScr', d.short_script);
+  setText('goldLine', d.golden_line);
+  setText('hookAna',  d.hook_analysis);
+  setText('longScr',  d.long_script);
+  setText('seoTit',   d.seo_titles);
+  setText('seoDesc',  d.seo_description);
+  setText('imgProm',  d.image_gen_prompt);
+  setText('overlayS', d.overlay_spec);
+  setText('ctrAna',   d.ctr_analysis);
+
+  renderTags('seoTags', d.tags,     false);
+  renderTags('seoHt',   d.hashtags, true);
+  buildThumb(d.thumbnail || {});
+  buildSpecs(d.thumbnail || {});
+
+  show('outEl');
+  tab('short', document.querySelector('.tb'));
+  $('outEl').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setText(id, v) { $(id).textContent = v || ''; }
+
+function renderTags(id, arr, isHt) {
+  const w = $(id);
+  w.innerHTML = '';
+  if (!Array.isArray(arr)) { w.textContent = arr || ''; return; }
+  arr.forEach(t => {
+    const s = document.createElement('span');
+    s.className = 'tag' + (isHt ? ' ht' : '');
+    s.textContent = t;
+    w.appendChild(s);
+  });
+}
+
+function buildThumb(t) {
+  const el = $('thumbPrev');
+  const pal = t.color_palette || {};
+  const dom = hx(pal.dominant)          || '#1a1d27';
+  const acc = hx(pal.accent)            || '#e8b84b';
+  const bg  = hx(pal.background_tone)  || '#0d0f14';
+  const lit = hx(pal.character_lighting)|| '#e8b84b';
+
+  el.style.background = `linear-gradient(135deg, ${bg} 0%, ${dom} 100%)`;
+  el.innerHTML = `
+    <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:12px 16px;overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 28% 55%,${lit}38 0%,transparent 52%)"></div>
+      <div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:35%;max-width:130px;height:78%;background:linear-gradient(to top,${lit}38,${lit}06);border-radius:7px 7px 0 0;display:flex;align-items:center;justify-content:center;font-size:32px;border:1px solid ${lit}28">${legendEmoji(S.legend)}</div>
+      <div style="position:relative;z-index:2;margin-left:40%">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(14px,3.2vw,30px);color:${acc};text-shadow:2px 2px 0 #000,3px 3px 6px rgba(0,0,0,.6);line-height:1;letter-spacing:1px">${t.overlay_text_main || 'WRONG ROOM'}</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:clamp(9px,1.5vw,11px);font-weight:700;color:#fff;text-shadow:1px 1px 0 #000;margin-top:3px;opacity:.92">${t.overlay_text_secondary || ''}</div>
+      </div>
+      <div style="position:absolute;top:6px;right:9px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,.28);background:rgba(0,0,0,.42);padding:2px 6px;border-radius:99px">PREVIEW</div>
+    </div>`;
+}
+
+function buildSpecs(t) {
+  const g = $('specGrid');
+  g.innerHTML = '';
+  [
+    ['Character Pose',   t.character_pose],
+    ['Expression',       t.character_expression],
+    ['Background',       t.background_scene],
+    ['Main Object',      t.main_object],
+    ['Composition',      t.composition],
+    ['CTR Trigger',      t.ctr_trigger],
+  ].forEach(([lbl, val]) => {
+    if (!val) return;
+    const d = document.createElement('div');
+    d.className = 'si';
+    d.innerHTML = `<div class="sl">${lbl}</div><div class="sv">${val}</div>`;
+    g.appendChild(d);
+  });
+
+  const pal = t.color_palette || {};
+  if (Object.keys(pal).length) {
+    const d = document.createElement('div');
+    d.className = 'si';
+    d.style.gridColumn = '1 / -1';
+    let sw = '<div class="sl">Color Palette</div><div class="swatch-row">';
+    Object.entries(pal).forEach(([k, v]) => {
+      const h = hx(v) || '#888';
+      sw += `<div class="swatch" style="background:${h}" title="${k.replace(/_/g,' ')}: ${v}"></div>`;
+    });
+    sw += '</div>';
+    d.innerHTML = sw;
+    const note = document.createElement('div');
+    note.style.cssText = 'margin-top:6px;font-size:10px;color:var(--t3);font-family:var(--mono);line-height:1.6';
+    note.textContent = Object.entries(pal).map(([k,v])=>`${k.replace(/_/g,' ')}: ${v}`).join(' · ');
+    d.appendChild(note);
+    g.appendChild(d);
+  }
+}
+
+function hx(s) {
+  if (!s) return null;
+  const m = String(s).match(/#[0-9a-fA-F]{3,8}/);
+  return m ? m[0] : null;
+}
+
+function legendEmoji(n) {
+  const map = {
+    'mozart':'🎵','einstein':'🧠','socrates':'🏛','aristotle':'📚',
+    'churchill':'🎖','cleopatra':'👑','newton':'🍎','darwin':'🦎',
+    'tesla':'⚡','curie':'⚗','napoleon':'🎖','shakespeare':'✍',
+    'beethoven':'🎻','da vinci':'🎨','galileo':'🔭','sun tzu':'⚔',
+    'genghis':'🏹','confucius':'☯','freud':'🛋','plato':'🏺',
+    'hannibal':'🐘','caesar':'🦅','alexander':'⚔','joan':'⚜'
+  };
+  const l = n.toLowerCase();
+  for (const [k, v] of Object.entries(map)) if (l.includes(k)) return v;
   return '👤';
 }
 
-/* ─── HISTORY ───────────────────────────────────────────── */
-function addHistory(p,d){
-  history.unshift({p,d,legend,ts:Date.now()});
+/* ════════════════════════════════════════════
+   HISTORY
+════════════════════════════════════════════ */
+function addHistory(p, d) {
+  S.history.unshift({ legend: S.legend, p, d, ts: Date.now() });
   refreshHistSidebar();
 }
-function refreshHistSidebar(){
-  const l=document.getElementById('histList');
-  if(!history.length){l.innerHTML='<p class="sb-empty">No generations yet</p>';return;}
-  l.innerHTML='';
-  history.slice(0,8).forEach(h=>{
-    const el=document.createElement('div');el.className='hist-item';
-    el.innerHTML=`<div class="hist-title">${h.p.title}</div><div class="hist-sub">${h.legend} · ${new Date(h.ts).toLocaleTimeString()}</div>`;
-    el.onclick=()=>{legend=h.legend;pairing=h.p;data=h.d;render(h.p,h.d);showPage('gen');};
-    l.appendChild(el);
-  });
-}
-function refreshHistPage(){
-  const cards=document.getElementById('histCards');
-  document.getElementById('histCnt').textContent=`${history.length} generation${history.length!==1?'s':''}`;
-  if(!history.length){cards.innerHTML='<p style="color:var(--text3);font-family:var(--mono);font-size:12px">No generations yet.</p>';return;}
-  cards.innerHTML='';
-  history.forEach(h=>{
-    const d=document.createElement('div');d.className='card';d.style.cursor='pointer';
-    d.innerHTML=`<div class="card-head"><span class="card-lbl">${h.legend}</span><span class="card-badge">${h.p.title}</span><span class="card-badge">${new Date(h.ts).toLocaleTimeString()}</span></div><div class="card-body" style="font-size:12px;color:var(--text3);font-family:var(--mono)">${h.p.engine}</div>`;
-    d.onclick=()=>{legend=h.legend;pairing=h.p;data=h.d;render(h.p,h.d);showPage('gen');};
-    cards.appendChild(d);
+
+function refreshHistSidebar() {
+  const el = $('histList');
+  if (!S.history.length) { el.innerHTML = '<p class="sb-empty">No generations yet</p>'; return; }
+  el.innerHTML = '';
+  S.history.slice(0, 10).forEach(h => {
+    const c = document.createElement('div');
+    c.className = 'hist-card';
+    c.innerHTML = `<div class="hist-t">${h.p.title}</div><div class="hist-s">${h.legend} · ${new Date(h.ts).toLocaleTimeString()}</div>`;
+    c.onclick = () => { S.legend = h.legend; S.pairing = h.p; S.data = h.d; renderOutput(h.p, h.d); page('gen'); };
+    el.appendChild(c);
   });
 }
 
-/* ─── EXPORT: SHEETS ────────────────────────────────────── */
-async function exportSheets(){
-  if(!gToken){toast('Connect Google first in Settings','err');return;}
-  if(!data||!pairing){toast('Generate content first','err');return;}
-  toast('Exporting to Google Sheets...','');
-  try{
-    const d=data,t=d.thumbnail||{};
-    let sid=sessionStorage.getItem('sid')||document.getElementById('sheetId').value.trim();
-    if(!sid){
-      const cr=await gapi('https://sheets.googleapis.com/v4/spreadsheets',{method:'POST',body:JSON.stringify({
-        properties:{title:`Legends Pipeline — ${legend}`},
-        sheets:[{properties:{title:'Scripts'}},{properties:{title:'SEO'}},{properties:{title:'Thumbnail'}}]
-      })});
-      sid=cr.spreadsheetId;
-      sessionStorage.setItem('sid',sid);
-      document.getElementById('sheetId').value=sid;
+function refreshHistPage() {
+  const el = $('histCards');
+  $('histCount').textContent = `${S.history.length} generation${S.history.length !== 1 ? 's' : ''}`;
+  if (!S.history.length) { el.innerHTML = '<p style="color:var(--t3);font-family:var(--mono);font-size:12px">No generations yet.</p>'; return; }
+  el.innerHTML = '';
+  S.history.forEach(h => {
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.style.cursor = 'pointer';
+    c.innerHTML = `<div class="ch"><span class="clbl">${h.legend}</span><span class="cbadge">${h.p.title}</span><span class="cbadge">${new Date(h.ts).toLocaleTimeString()}</span></div><div class="cbody" style="font-size:11px;color:var(--t3);font-family:var(--mono)">${h.p.engine}</div>`;
+    c.onclick = () => { S.legend = h.legend; S.pairing = h.p; S.data = h.d; renderOutput(h.p, h.d); page('gen'); };
+    el.appendChild(c);
+  });
+}
+
+/* ════════════════════════════════════════════
+   EXPORT — GOOGLE SHEETS
+════════════════════════════════════════════ */
+async function exportSheets() {
+  if (!S.gToken) { toast('Connect Google first in the API drawer', 'err'); return; }
+  if (!S.data || !S.pairing) { toast('Generate content first', 'err'); return; }
+  toast('Exporting to Sheets...', '');
+
+  try {
+    const d = S.data, t = d.thumbnail || {};
+    const tags = Array.isArray(d.tags) ? d.tags.join(', ') : (d.tags || '');
+    const hts  = Array.isArray(d.hashtags) ? d.hashtags.join(' ') : (d.hashtags || '');
+    let sid = sessionStorage.getItem('lp_sid') || $('sheetId').value.trim();
+
+    if (!sid) {
+      const cr = await gCall('https://sheets.googleapis.com/v4/spreadsheets', {
+        method: 'POST',
+        body: JSON.stringify({
+          properties: { title: `Legends Pipeline — ${S.legend}` },
+          sheets: [
+            { properties: { title: 'Scripts' } },
+            { properties: { title: 'SEO' } },
+            { properties: { title: 'Thumbnail' } }
+          ]
+        })
+      });
+      sid = cr.spreadsheetId;
+      sessionStorage.setItem('lp_sid', sid);
+      $('sheetId').value = sid;
     }
-    const ts=new Date().toLocaleString();const ti=pairing.title;
-    const tags=Array.isArray(d.tags)?d.tags.join(', '):(d.tags||'');
-    const hts=Array.isArray(d.hashtags)?d.hashtags.join(' '):(d.hashtags||'');
-    await gapi(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Scripts!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[
-      ['=== '+ti+' ===',ts],['LEGEND',legend],['SETTING',pairing.setting],['',''],
-      ['SHORT FORM SCRIPT',d.short_script||''],['',''],['GOLDEN LINE',d.golden_line||''],['',''],
-      ['HOOK ANALYSIS',d.hook_analysis||''],['',''],['LONG FORM SCRIPT',d.long_script||''],['---','---']
-    ]})});
-    await gapi(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/SEO!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[
-      ['=== '+ti+' ===',ts],['TITLES',d.seo_titles||''],['DESCRIPTION',d.seo_description||''],['TAGS',tags],['HASHTAGS',hts],['---','---']
-    ]})});
-    await gapi(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Thumbnail!A1:append?valueInputOption=RAW`,{method:'POST',body:JSON.stringify({values:[
-      ['=== '+ti+' ===',ts],['CONCEPT',t.concept_title||''],['CHARACTER POSE',t.character_pose||''],
-      ['EXPRESSION',t.character_expression||''],['BACKGROUND',t.background_scene||''],['MAIN OBJECT',t.main_object||''],
-      ['OVERLAY MAIN',t.overlay_text_main||''],['OVERLAY SECONDARY',t.overlay_text_secondary||''],
-      ['TEXT STYLE',t.text_style||''],['COMPOSITION',t.composition||''],['CTR TRIGGER',t.ctr_trigger||''],
-      ['IMAGE GEN PROMPT',d.image_gen_prompt||''],['OVERLAY SPEC',d.overlay_spec||''],['CTR ANALYSIS',d.ctr_analysis||''],['---','---']
-    ]})});
-    toast(`✓ Exported to Sheets (ID: ${sid.slice(0,14)}...)`, 'ok');
-  }catch(e){toast('Sheets error: '+e.message,'err');}
-}
 
-/* ─── EXPORT: DRIVE ─────────────────────────────────────── */
-async function exportDrive(){
-  if(!gToken){toast('Connect Google first in Settings','err');return;}
-  if(!data||!pairing){toast('Generate content first','err');return;}
-  toast('Uploading to Drive...','');
-  try{
-    const txt=buildTxt();
-    const fname=`${legend} — ${pairing.title}.txt`;
-    const form=new FormData();
-    form.append('metadata',new Blob([JSON.stringify({name:fname,mimeType:'text/plain'})],{type:'application/json'}));
-    form.append('file',new Blob([txt],{type:'text/plain'}));
-    const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{
-      method:'POST',headers:{Authorization:'Bearer '+gToken},body:form
+    const ts = new Date().toLocaleString();
+    const ti = S.pairing.title;
+
+    await gCall(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Scripts!A1:append?valueInputOption=RAW`, {
+      method: 'POST',
+      body: JSON.stringify({ values: [
+        [`=== ${ti} ===`, ts],
+        ['LEGEND', S.legend], ['SETTING', S.pairing.setting], ['', ''],
+        ['SHORT FORM (Day 1·3·7)', d.short_script || ''], ['', ''],
+        ['GOLDEN LINE', d.golden_line || ''], ['', ''],
+        ['HOOK ANALYSIS', d.hook_analysis || ''], ['', ''],
+        ['LONG FORM (Day 1·3·5·7·10)', d.long_script || ''],
+        ['---', '---']
+      ]})
     });
-    if(!r.ok)throw new Error('Drive upload failed: '+r.status);
-    toast(`✓ Saved to Drive: "${fname}"`, 'ok');
-  }catch(e){toast('Drive error: '+e.message,'err');}
+
+    await gCall(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/SEO!A1:append?valueInputOption=RAW`, {
+      method: 'POST',
+      body: JSON.stringify({ values: [
+        [`=== ${ti} ===`, ts],
+        ['TITLES', d.seo_titles || ''],
+        ['DESCRIPTION', d.seo_description || ''],
+        ['TAGS', tags], ['HASHTAGS', hts],
+        ['---', '---']
+      ]})
+    });
+
+    await gCall(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Thumbnail!A1:append?valueInputOption=RAW`, {
+      method: 'POST',
+      body: JSON.stringify({ values: [
+        [`=== ${ti} ===`, ts],
+        ['CONCEPT', t.concept_title || ''],
+        ['POSE', t.character_pose || ''],
+        ['EXPRESSION', t.character_expression || ''],
+        ['BACKGROUND', t.background_scene || ''],
+        ['OBJECT', t.main_object || ''],
+        ['OVERLAY MAIN', t.overlay_text_main || ''],
+        ['OVERLAY SECONDARY', t.overlay_text_secondary || ''],
+        ['TEXT STYLE', t.text_style || ''],
+        ['COMPOSITION', t.composition || ''],
+        ['CTR TRIGGER', t.ctr_trigger || ''],
+        ['IMAGE GEN PROMPT', d.image_gen_prompt || ''],
+        ['OVERLAY SPEC', d.overlay_spec || ''],
+        ['CTR ANALYSIS', d.ctr_analysis || ''],
+        ['---', '---']
+      ]})
+    });
+
+    toast(`✓ Exported to Sheets`, 'ok');
+  } catch(e) {
+    toast('Sheets error: ' + e.message, 'err');
+  }
 }
 
-async function gapi(url,opts){
-  const r=await fetch(url,{...opts,headers:{Authorization:'Bearer '+gToken,'Content-Type':'application/json',...(opts.headers||{})}});
-  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${r.status}`);}
+/* ════════════════════════════════════════════
+   EXPORT — GOOGLE DRIVE
+════════════════════════════════════════════ */
+async function exportDrive() {
+  if (!S.gToken) { toast('Connect Google first', 'err'); return; }
+  if (!S.data || !S.pairing) { toast('Generate content first', 'err'); return; }
+  toast('Uploading to Drive...', '');
+
+  try {
+    const txt = buildTxt();
+    const fname = `${S.legend} — ${S.pairing.title}.txt`;
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify({ name: fname, mimeType: 'text/plain' })], { type: 'application/json' }));
+    form.append('file', new Blob([txt], { type: 'text/plain' }));
+
+    const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + S.gToken },
+      body: form
+    });
+    if (!r.ok) throw new Error('Drive upload failed: ' + r.status);
+    toast(`✓ Saved to Drive: "${fname}"`, 'ok');
+  } catch(e) {
+    toast('Drive error: ' + e.message, 'err');
+  }
+}
+
+async function gCall(url, opts = {}) {
+  const r = await fetch(url, {
+    ...opts,
+    headers: {
+      Authorization: 'Bearer ' + S.gToken,
+      'Content-Type': 'application/json',
+      ...(opts.headers || {})
+    }
+  });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    throw new Error(e.error?.message || `HTTP ${r.status}`);
+  }
   return r.json();
 }
 
-function downloadTxt(){
-  if(!data||!pairing){toast('Generate content first','err');return;}
-  const b=new Blob([buildTxt()],{type:'text/plain'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${legend} — ${pairing.title}.txt`;a.click();
-  toast('Downloaded','ok');
+/* ════════════════════════════════════════════
+   DOWNLOAD .TXT
+════════════════════════════════════════════ */
+function dlTxt() {
+  if (!S.data || !S.pairing) { toast('Generate content first', 'err'); return; }
+  const b = new Blob([buildTxt()], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = `${S.legend} — ${S.pairing.title}.txt`;
+  a.click();
+  toast('Downloaded', 'ok');
 }
 
-function buildTxt(){
-  const d=data,t=d.thumbnail||{};
-  const tags=Array.isArray(d.tags)?d.tags.join(', '):(d.tags||'');
-  const hts=Array.isArray(d.hashtags)?d.hashtags.join(' '):(d.hashtags||'');
-  return `LEGENDS PIPELINE — PRODUCTION PACKAGE\nGenerated: ${new Date().toLocaleString()}\n${'='.repeat(44)}\n\nLEGEND: ${legend}\nPAIRING: ${pairing.title}\nSETTING: ${pairing.setting}\nTENSION: ${pairing.tension}\n\n${'═'.repeat(44)}\nSHORT FORM SCRIPT\n${'═'.repeat(44)}\n${d.short_script||''}\n\n${'═'.repeat(44)}\nGOLDEN LINE\n${'═'.repeat(44)}\n${d.golden_line||''}\n\n${'═'.repeat(44)}\nHOOK ANALYSIS\n${'═'.repeat(44)}\n${d.hook_analysis||''}\n\n${'═'.repeat(44)}\nLONG FORM SCRIPT\n${'═'.repeat(44)}\n${d.long_script||''}\n\n${'═'.repeat(44)}\nSEO TITLES\n${'═'.repeat(44)}\n${d.seo_titles||''}\n\n${'═'.repeat(44)}\nDESCRIPTION\n${'═'.repeat(44)}\n${d.seo_description||''}\n\n${'═'.repeat(44)}\nTAGS\n${'═'.repeat(44)}\n${tags}\n\n${'═'.repeat(44)}\nHASHTAGS\n${'═'.repeat(44)}\n${hts}\n\n${'═'.repeat(44)}\nTHUMBNAIL BRIEF\n${'═'.repeat(44)}\nConcept: ${t.concept_title||''}\nCharacter Pose: ${t.character_pose||''}\nExpression: ${t.character_expression||''}\nBackground: ${t.background_scene||''}\nMain Object: ${t.main_object||''}\nOverlay Main: ${t.overlay_text_main||''}\nOverlay Secondary: ${t.overlay_text_secondary||''}\nText Style: ${t.text_style||''}\nComposition: ${t.composition||''}\nCTR Trigger: ${t.ctr_trigger||''}\n\nIMAGE GEN PROMPT:\n${d.image_gen_prompt||''}\n\nOVERLAY SPEC:\n${d.overlay_spec||''}\n\nCTR ANALYSIS:\n${d.ctr_analysis||''}`;
+function buildTxt() {
+  const d = S.data, t = d.thumbnail || {};
+  const tags = Array.isArray(d.tags) ? d.tags.join(', ') : (d.tags || '');
+  const hts  = Array.isArray(d.hashtags) ? d.hashtags.join(' ') : (d.hashtags || '');
+  const line = (n) => '═'.repeat(n || 44);
+  return [
+    `LEGENDS PIPELINE — PRODUCTION PACKAGE`,
+    `Generated: ${new Date().toLocaleString()}`,
+    `Format: Second-Person Immersion (What If YOU)`,
+    `${'='.repeat(44)}`,
+    ``,
+    `LEGEND:  ${S.legend}`,
+    `PAIRING: ${S.pairing.title}`,
+    `SETTING: ${S.pairing.setting}`,
+    `TENSION: ${S.pairing.tension}`,
+    ``,
+    line(), `SHORT FORM SCRIPT — Day 1 · Day 3 · Day 7`, line(),
+    d.short_script || '',
+    ``,
+    line(), `GOLDEN LINE`, line(),
+    d.golden_line || '',
+    ``,
+    line(), `HOOK ANALYSIS`, line(),
+    d.hook_analysis || '',
+    ``,
+    line(), `LONG FORM SCRIPT — Day 1 · 3 · 5 · 7 · 10`, line(),
+    d.long_script || '',
+    ``,
+    line(), `SEO TITLES (A / B / C)`, line(),
+    d.seo_titles || '',
+    ``,
+    line(), `YOUTUBE DESCRIPTION`, line(),
+    d.seo_description || '',
+    ``,
+    line(), `TAGS`, line(), tags,
+    ``,
+    line(), `HASHTAGS`, line(), hts,
+    ``,
+    line(), `THUMBNAIL BRIEF`, line(),
+    `Concept:   ${t.concept_title || ''}`,
+    `Pose:      ${t.character_pose || ''}`,
+    `Expression:${t.character_expression || ''}`,
+    `Background:${t.background_scene || ''}`,
+    `Object:    ${t.main_object || ''}`,
+    `Overlay A: ${t.overlay_text_main || ''}`,
+    `Overlay B: ${t.overlay_text_secondary || ''}`,
+    `Text Style:${t.text_style || ''}`,
+    `Composit:  ${t.composition || ''}`,
+    `CTR Trig:  ${t.ctr_trigger || ''}`,
+    ``,
+    line(), `IMAGE GENERATION PROMPT`, line(),
+    d.image_gen_prompt || '',
+    ``,
+    line(), `OVERLAY SPEC (Canva/Photoshop)`, line(),
+    d.overlay_spec || '',
+    ``,
+    line(), `CTR PSYCHOLOGY`, line(),
+    d.ctr_analysis || '',
+  ].join('\n');
 }
 
-/* ─── UI HELPERS ────────────────────────────────────────── */
-function switchTab(id){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  const m={short:0,long:1,seo:2,thumb:3};
-  document.querySelectorAll('.tab-btn')[m[id]].classList.add('active');
+/* ════════════════════════════════════════════
+   UI HELPERS
+════════════════════════════════════════════ */
+function $(id) { return document.getElementById(id); }
+
+function tab(id, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
+  $('pane-' + id).classList.add('on');
+  // find the right button
+  const btns = document.querySelectorAll('.tb');
+  const map = { short:0, long:1, seo:2, thumb:3 };
+  if (map[id] !== undefined) btns[map[id]].classList.add('on');
+  else if (btn) btn.classList.add('on');
 }
-function showPage(id){
-  document.getElementById('pageGen').style.display=id==='gen'?'block':'none';
-  document.getElementById('pageHist').style.display=id==='hist'?'block':'none';
-  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&id==='gen')||(i===1&&id==='hist')));
-  if(id==='hist')refreshHistPage();
+
+function page(id, btn) {
+  $('pageGen').style.display  = id === 'gen'  ? 'block' : 'none';
+  $('pageHist').style.display = id === 'hist' ? 'block' : 'none';
+  document.querySelectorAll('.tnb').forEach((b, i) => {
+    b.classList.toggle('on', (i === 0 && id === 'gen') || (i === 1 && id === 'hist'));
+  });
+  if (id === 'hist') refreshHistPage();
 }
-function show(id){document.getElementById(id).classList.add('show');}
-function hide(id){document.getElementById(id).classList.remove('show');}
-function setLoad(on,msg=''){document.getElementById('loadWrap').classList.toggle('show',on);document.getElementById('loadTxt').textContent=msg;}
-function showErr(m){const b=document.getElementById('errBox');b.textContent='⚠ '+m;b.classList.add('show');}
-function clearErr(){document.getElementById('errBox').classList.remove('show');}
-function cp(id,btn){
-  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{btn.textContent='✓ Copied';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok');},2000);});
+
+function show(id) { $(id).classList.add('show'); }
+function hide(id) { $(id).classList.remove('show'); }
+
+function load(on, msg = '') {
+  $('loadEl').classList.toggle('show', on);
+  $('loadMsg').textContent = msg;
 }
-function cpTags(id,ht,btn){
-  const t=Array.from(document.getElementById(id).querySelectorAll('.tag-pill')).map(p=>p.textContent).join(ht?' ':',');
-  navigator.clipboard.writeText(t).then(()=>{btn.textContent='✓ Copied';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok');},2000);});
+
+function showErr(msg) {
+  const b = $('errBox');
+  b.textContent = '⚠ ' + msg;
+  b.classList.add('show');
 }
-function toast(msg,type){
-  const el=document.getElementById('toast');el.textContent=msg;el.className='toast show'+(type?' '+type:'');
-  clearTimeout(toastTmr);toastTmr=setTimeout(()=>el.classList.remove('show'),3500);
+function clearErr() { $('errBox').classList.remove('show'); }
+
+function copy(id, btn) {
+  navigator.clipboard.writeText($(id).textContent || '').then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
 }
-function resetAll(){
-  legend='';pairing=null;data={};
-  document.getElementById('sideField').value='';document.getElementById('mobField').value='';
-  hide('pairWrap');hide('outWrap');clearErr();
-  window.scrollTo({top:0,behavior:'smooth'});
+
+function copyTags(id, sep, btn) {
+  const text = Array.from($(id).querySelectorAll('.tag'))
+    .map(t => t.textContent).join(sep);
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+
+function toast(msg, type) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(S.toastTimer);
+  S.toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+function reset() {
+  S.legend = ''; S.pairing = null; S.data = {};
+  $('sideInp').value = ''; $('mobInp').value = '';
+  hide('pairSec'); hide('outEl'); clearErr();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
