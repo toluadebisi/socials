@@ -500,9 +500,12 @@ body::after{
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sb-sec">
-      <div class="sb-lbl">Enter Legend</div>
+      <div class="sb-lbl">Historical Figure</div>
       <input type="text" class="legend-inp" id="sideInp"
-        placeholder="e.g. Napoleon..." onkeydown="if(event.key==='Enter')fire()">
+        placeholder="e.g. Cleopatra, Napoleon..." onkeydown="if(event.key==='Enter')fire()">
+      <div class="sb-lbl" style="margin-top:10px;margin-bottom:6px">Your Topic <span style="color:var(--t3);font-weight:400">(optional)</span></div>
+      <input type="text" class="legend-inp" id="sideTopic"
+        placeholder="e.g. the Bachelorette, Wall St..." onkeydown="if(event.key==='Enter')fire()" style="font-size:12px;font-weight:500">
       <button class="fire-btn" id="fireBtn" onclick="fire()">🔥 GENERATE</button>
     </div>
     <div class="sb-sec">
@@ -518,7 +521,7 @@ body::after{
 
     <div class="callout show" id="callout">
       <h3>⚙ Quick Start</h3>
-      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Claude API key → Save. Then type any historical figure and hit Generate.</p>
+      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Claude API key → Save. Then type any historical figure, optionally add a topic or setting, and hit Generate.</p>
     </div>
 
     <div class="hero">
@@ -534,7 +537,10 @@ body::after{
       <!-- mobile input -->
       <div class="hero-mob">
         <input type="text" class="legend-inp" id="mobInp"
-          placeholder="Enter a legend..." style="flex:1;margin-bottom:0"
+          placeholder="Historical figure..." style="flex:1;margin-bottom:0"
+          onkeydown="if(event.key==='Enter')fire()">
+        <input type="text" class="legend-inp" id="mobTopic"
+          placeholder="Topic (optional)..." style="flex:1;margin-bottom:0;font-size:12px"
           onkeydown="if(event.key==='Enter')fire()">
         <button class="fire-btn" style="width:auto;padding:11px 16px;white-space:nowrap" onclick="fire()">🔥 Go</button>
       </div>
@@ -723,6 +729,7 @@ body::after{
 ════════════════════════════════════════════ */
 let S = {
   legend: '',
+  topic: '',
   pairing: null,
   data: {},
   history: [],
@@ -880,8 +887,12 @@ function parseJSON(raw) {
 ════════════════════════════════════════════ */
 async function fire() {
   clearErr();
-  const val = ($('sideInp').value || $('mobInp').value).trim();
-  if (!val) { showErr('Enter a legend name first.'); return; }
+  const val   = ($('sideInp').value  || $('mobInp').value).trim();
+  const topic = ($('sideTopic') ? $('sideTopic').value : '') ||
+                ($('mobTopic')  ? $('mobTopic').value  : '');
+  const topicClean = topic.trim();
+
+  if (!val) { showErr('Enter a historical figure first.'); return; }
   if (!getKey()) {
     showErr('Add your Claude API key — click ⚙ API Key top-right.');
     if (!S.drawerOpen) toggleDrawer();
@@ -889,34 +900,44 @@ async function fire() {
   }
 
   S.legend = val;
+  S.topic  = topicClean;
   hide('pairSec'); hide('outEl');
-  load(true, `Scouting the worst possible rooms for ${val}...`);
+  load(true, `Scouting the wrong rooms for ${val}...`);
   $('fireBtn').disabled = true;
+
+  const topicLine = topicClean
+    ? `The user has suggested this topic/setting: "${topicClean}". Generate pairings around this theme and 4 additional creative ones.`
+    : `Generate 5 wildly creative pairings across different categories.`;
 
   try {
     const raw = await callClaude(
 `You are an elite YouTube content strategist for the viral comedy series "Out of Context Legends / Legends Wrong Room."
 
-Format: historical figures placed in completely wrong modern settings. Character keeps their real personality and real historical traits, but misapplies them to the modern context with complete seriousness. Humor = they are always right, the world is always wrong.
+CRITICAL FORMAT RULE — SECOND-PERSON IMMERSION:
+All hooks and titles use "YOU" framing — the viewer IS the legend.
+CORRECT: "What if you were Cleopatra on the Bachelorette? You are not here to find love — love finds YOU."
+WRONG:   "What if Cleopatra was on the Bachelorette? She's not here to find love."
+The viewer is placed INSIDE the legend's body and perspective. Always.
 
 Legend: ${val}
+${topicLine}
 
 Return ONLY valid JSON — no markdown, no preamble:
 {
   "pairings": [
     {
-      "title": "Mozart in an NBA Game",
+      "title": "You Are Mozart. The NBA Has a Shot Clock.",
       "setting": "Professional basketball arena, playoffs",
-      "tension": "Rhythm absolutist vs shot clock urgency",
-      "engine": "Won't shoot until musical tension resolves. Every shot clock violation is artistic integrity, not a foul.",
-      "hook": "What if Mozart was drafted into the NBA? The shot clock means nothing to him.",
+      "tension": "Your rhythm instincts vs a 24-second mechanical deadline",
+      "engine": "You won't shoot until the musical tension resolves. Every violation is artistic integrity, not a foul.",
+      "hook": "What if you were Mozart drafted into the NBA? The shot clock means nothing to you.",
       "category": "Sport"
     }
   ]
 }
 
-Generate exactly 5 wildly creative pairings. Use the character's REAL documented personality traits and quirks. Settings must span different categories: sport, media/podcast, business/startup, dating, courtroom, cooking show, reality TV, hospital, Wall Street, TED talk, job interview, social media. Each needs a specific comedic engine — the exact personality trait that collides with the exact setting demand.`,
-      '', 800
+Generate exactly 5 pairings. Use the character's REAL documented personality traits. Settings: sport, podcast, dating/reality TV, business/startup, courtroom, cooking show, hospital, Wall Street, TED talk, job interview, social media, classroom. Each needs: a YOU-framed title, a specific comedic engine (exact trait vs exact setting demand), and a second-person hook sentence.`,
+      '', 900
     );
 
     const json = parseJSON(raw);
@@ -962,11 +983,18 @@ async function buildPackage(p) {
 `Generate a COMPLETE production package. Return ONLY valid JSON — no markdown, no code fences, no preamble.
 
 LEGEND: ${S.legend}
+TOPIC/SETTING: ${S.topic || p.setting}
 PAIRING: ${p.title}
 SETTING: ${p.setting}
 ENGINE: ${p.engine}
 HOOK: ${p.hook}
 TENSION: ${p.tension}
+
+CRITICAL — SECOND-PERSON IMMERSION THROUGHOUT:
+The viewer IS the legend. Every script line uses "you" and "your."
+CORRECT hook: "What if you were Cleopatra on the Bachelorette? You are not here to find love — love finds YOU."
+WRONG hook:   "What if Cleopatra was on the Bachelorette? She's not here to find love."
+This applies to EVERY line of short_script and long_script. No exceptions.
 
 ══════════════════════════════════════════
 NARRATION FORMAT — MANDATORY — READ FIRST
@@ -1029,28 +1057,28 @@ LONG FORM STRUCTURE (Day 1, 3, 5, 7, 10):
 
   "thumbnail": {
     "concept_title": "One sentence — the visual collision idea",
-    "character_pose": "Exact body pose, hand position, weight distribution. Must embody the era-collision physically.",
-    "character_expression": "Primary emotion + secondary emotion. E.g. 'absolute unblinking authority with faint disappointment — a genius forced to explain something obvious'",
-    "background_scene": "Specific background chaos the character is completely ignoring",
-    "main_object": "Object in hand or at feet — the physical symbol of the era collision",
-    "overlay_text_main": "2-4 WORDS MAX — ALL CAPS — works as standalone statement",
-    "overlay_text_secondary": "3-6 words — the twist or punchline to the main text",
+    "character_expression": "Single exaggerated emotion — shock / triumph / disbelief / outrage. Must read clearly on a phone screen from 20 feet. Specify: eyes wide, brows raised, mouth open, teeth visible, etc.",
+    "character_pose": "Body pose with at least 40% of frame. Facing camera, slight turn. Hand gesture that amplifies the emotion.",
+    "background_scene": "One dominant visual that SHOWS the premise without words — e.g. a rose ceremony stage, a trading floor in flames, a basketball court with a clock at 0. Clean, high-contrast, 1-2 colours max.",
+    "main_object": "The single prop that makes the era-collision undeniable. In hand or foregrounded.",
+    "overlay_text_main": "2-5 WORDS MAX — ALL CAPS — Obelix Pro / Anton style — the curiosity gap in text form",
+    "overlay_text_secondary": "3-6 words — subtext or punchline — smaller, below main text",
     "color_palette": {
-      "dominant": "#hex — name and exactly why this triggers CTR for this character",
-      "accent": "#hex — overlay text color, maximum contrast on dominant",
-      "character_lighting": "#hex — rim light color, should feel cinematic and slightly dramatic",
-      "background_tone": "#hex — atmosphere behind character, must contrast silhouette"
+      "dominant": "#hex — bold primary: red / electric blue / deep gold. Must pop against YouTube grey/white UI.",
+      "accent": "#hex — overlay text colour. White with black stroke is default. Override only if stronger.",
+      "character_lighting": "#hex — dramatic rim light direction and colour to isolate subject from background.",
+      "background_tone": "#hex — clean and simple. One colour wash. Must maximise subject contrast."
     },
-    "text_style": "Specify: MrBeast / Hormozi / Nollywood Drama style. Font weight, stroke thickness, shadow approach.",
-    "composition": "Where character stands (left/center/right %), where text sits, what the eye hits first, second, third.",
-    "ctr_trigger": "Name the specific psychological mechanism: identity incongruity / curiosity gap / social proof / status threat / pattern interrupt. Explain why THIS combination stops the scroll for THIS character."
+    "text_style": "Heavy blocky font (Obelix Pro / Anton / Impact). White fill. 8-12px black stroke. Drop shadow 4px offset. Placed top or bottom — NEVER over the face.",
+    "composition": "Subject left-centre, text right or bottom. Face takes 40%+ of frame. Background simplified to 1-2 elements. Mobile-legible at thumbnail size (320×180px).",
+    "ctr_trigger": "Name the mechanism: curiosity gap / identity incongruity / high stakes / impossible scenario. Explain in 1-2 sentences why this specific combination stops the scroll in under 50ms for this legend + setting."
   },
 
-  "image_gen_prompt": "photorealistic portrait of [full character name] as [historical role], wearing [specific period costume — fabric, colour, details], [exact body pose and hand position], [precise facial expression matching character_expression above], [object they are holding or interacting with], set against [specific background scene], [lighting — direction, colour, intensity — e.g. 'hard orange-red rim light from left, deep shadow right'], [camera angle — e.g. 'slight low angle, medium shot'], cinematic studio photography, hyperrealistic skin texture and fabric detail, sharp foreground focus, 8K, --ar 16:9",
+  "image_gen_prompt": "STRICT LIMIT: output must be under 1000 characters. MrBeast-style thumbnail: photorealistic [legend name] in [period costume], facing camera, [single extreme emotion — e.g. wide-eyed shock / open-mouth triumph], [hand gesture], holding [era-collision prop], [dominant background — clean, 1-2 colour, shows premise], dramatic [colour] rim lighting, slight low angle, sharp focus, hyperrealistic, 8K, 16:9. Background: [one vivid descriptive phrase]. No text in image.",
 
-  "overlay_spec": "MAIN TEXT: '[exact words]'\\nFont: [specific font] Bold\\nSize: [pt]\\nColour: #[hex]\\nOutline: [px] solid #[hex]\\nShadow: [offset px] [blur px] [opacity%] black\\nPosition: [e.g. right side, top-aligned, 8% from right edge]\\n\\nSECONDARY TEXT: '[exact words]'\\nFont: [specific font]\\nSize: [pt]\\nColour: #[hex]\\nOutline: [px] solid #[hex]\\nPosition: [below main text, same alignment, 6px gap]",
+  "overlay_spec": "MAIN TEXT: '[exact 2-5 word phrase]'\\nFont: Anton Bold (or Obelix Pro)\\nSize: 120-160pt\\nColour: #FFFFFF\\nStroke: 10px solid #000000\\nShadow: 4px 4px 0px #000000\\nPosition: bottom 12% of frame, centred\\n\\nSECONDARY TEXT: '[exact phrase]'\\nFont: Anton Bold\\nSize: 60-80pt\\nColour: #FFDD00 (or accent hex)\\nStroke: 6px solid #000000\\nPosition: directly above main text, same alignment",
 
-  "ctr_analysis": "4-5 sentences. Name the specific thumbnail principle used. Describe what fires in the viewer's brain in the first 200ms — colour response first, then face/expression, then text. Explain why the composition guides the eye correctly. Predict a specific CTR range vs YouTube average 2-5% and justify the number."
+  "ctr_analysis": "4-5 sentences. State the CTR mechanism (curiosity gap / incongruity / high-stakes). Describe the 50ms visual sequence: what colour hits first, then what the face communicates, then what the text confirms. Explain how the composition works on a 320px phone screen. Predict CTR range vs 2-5% YouTube average with specific reasoning for this legend + setting combination."
 }`;
 
   try {
@@ -1490,8 +1518,10 @@ function toast(msg, type) {
 }
 
 function reset() {
-  S.legend = ''; S.pairing = null; S.data = {};
+  S.legend = ''; S.topic = ''; S.pairing = null; S.data = {};
   $('sideInp').value = ''; $('mobInp').value = '';
+  if ($('sideTopic')) $('sideTopic').value = '';
+  if ($('mobTopic'))  $('mobTopic').value  = '';
   hide('pairSec'); hide('outEl'); clearErr();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
