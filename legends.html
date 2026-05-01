@@ -373,16 +373,7 @@ body::after{
 .tag.ht{border-color:rgba(91,156,246,.3);color:var(--blue)}
 
 /* thumbnail */
-.thumb-prev{
-  background:#000;border-radius:var(--r);aspect-ratio:16/9;
-  margin-bottom:11px;position:relative;overflow:hidden;border:1px solid var(--b2);
-}
-.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:9px;margin-bottom:11px}
-.si{background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);padding:10px 12px}
-.sl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
-.sv{font-size:11px;color:var(--text);font-family:var(--mono);line-height:1.45}
-.swatch-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
-.swatch{width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.1);cursor:help;flex-shrink:0}
+
 
 /* toast */
 .toast{
@@ -400,6 +391,68 @@ body::after{
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
+
+/* ─── LIBRARY ─────────────────────────────── */
+.lib-search{
+  background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);
+  padding:9px 12px;font-family:var(--sans);font-size:13px;
+  color:var(--text);outline:none;width:100%;margin-bottom:10px;
+  transition:border-color .2s;
+}
+.lib-search:focus{border-color:var(--gold)}
+.lib-search::placeholder{color:var(--t3)}
+.tier-tabs{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap}
+.tier-tab{
+  background:none;border:1px solid var(--b2);border-radius:var(--r);
+  padding:4px 11px;font-size:11px;font-weight:600;letter-spacing:.04em;
+  color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--sans);
+}
+.tier-tab:hover{border-color:var(--b3);color:var(--text)}
+.tier-tab.on{color:#000;border-color:transparent}
+.tier-tab.t1.on{background:var(--gold)}
+.tier-tab.t2.on{background:var(--blue)}
+.tier-tab.t3.on{background:var(--green)}
+.lib-list{display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 260px);overflow-y:auto;padding-right:2px}
+.lib-leg{
+  background:var(--bg2);border:1px solid var(--b1);
+  border-radius:var(--r);overflow:hidden;
+}
+.lib-leg-head{
+  display:flex;align-items:center;gap:8px;padding:9px 11px;
+  cursor:pointer;transition:background .15s;
+}
+.lib-leg-head:hover{background:var(--bg3)}
+.lib-leg-emoji{font-size:16px;flex-shrink:0;line-height:1}
+.lib-leg-info{flex:1;min-width:0}
+.lib-leg-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lib-leg-tier{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.lib-chev{font-size:11px;color:var(--t3);transition:transform .18s}
+.lib-chev.open{transform:rotate(180deg)}
+.lib-titles{display:none;border-top:1px solid var(--b1)}
+.lib-titles.open{display:block}
+.lib-title-btn{
+  display:block;width:100%;text-align:left;
+  padding:7px 11px 7px 36px;
+  font-family:var(--sans);font-size:11px;color:var(--t2);
+  background:none;border:none;cursor:pointer;
+  border-bottom:1px solid var(--b1);line-height:1.4;
+  transition:all .15s;
+}
+.lib-title-btn:last-child{border-bottom:none}
+.lib-title-btn:hover{background:var(--bg3);color:var(--text)}
+.lib-title-btn::before{content:"▸ ";color:var(--t3);font-size:10px}
+
+/* sidebar mode tabs */
+.sb-mode{display:flex;gap:2px;margin-bottom:14px}
+.sbm{
+  flex:1;background:none;border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 0;font-size:11px;font-weight:600;letter-spacing:.04em;
+  color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--sans);
+}
+.sbm:hover{color:var(--text);border-color:var(--b3)}
+.sbm.on{background:var(--golddim);border-color:var(--goldbrd);color:var(--gold)}
+.sb-panel{display:none}
+.sb-panel.on{display:block}
 </style>
 </head>
 <body>
@@ -500,18 +553,41 @@ body::after{
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sb-sec">
-      <div class="sb-lbl">Historical Figure</div>
-      <input type="text" class="legend-inp" id="sideInp"
-        placeholder="e.g. Cleopatra, Napoleon..." onkeydown="if(event.key==='Enter')fire()">
-      <div class="sb-lbl" style="margin-top:10px;margin-bottom:6px">Your Topic <span style="color:var(--t3);font-weight:400">(optional)</span></div>
-      <input type="text" class="legend-inp" id="sideTopic"
-        placeholder="e.g. the Bachelorette, Wall St..." onkeydown="if(event.key==='Enter')fire()" style="font-size:12px;font-weight:500">
-      <button class="fire-btn" id="fireBtn" onclick="fire()">🔥 GENERATE</button>
-    </div>
-    <div class="sb-sec">
-      <div class="sb-lbl">Session History</div>
-      <div class="hist-list" id="histList">
-        <p class="sb-empty">No generations yet</p>
+      <!-- mode switch -->
+      <div class="sb-mode">
+        <button class="sbm on" onclick="sbMode('custom',this)">Custom</button>
+        <button class="sbm" onclick="sbMode('library',this)">Library</button>
+        <button class="sbm" onclick="sbMode('history',this)">History</button>
+      </div>
+
+      <!-- CUSTOM INPUT PANEL -->
+      <div class="sb-panel on" id="sbCustom">
+        <div class="sb-lbl">Historical Figure</div>
+        <input type="text" class="legend-inp" id="sideInp"
+          placeholder="e.g. Cleopatra, Napoleon..." onkeydown="if(event.key==='Enter')fire()">
+        <div class="sb-lbl" style="margin-top:10px;margin-bottom:6px">Your Topic <span style="color:var(--t3);font-weight:400">(optional)</span></div>
+        <input type="text" class="legend-inp" id="sideTopic"
+          placeholder="e.g. the Bachelorette, Wall St..." onkeydown="if(event.key==='Enter')fire()" style="font-size:12px;font-weight:500">
+        <button class="fire-btn" id="fireBtn" onclick="fire()">🔥 GENERATE</button>
+      </div>
+
+      <!-- LIBRARY PANEL -->
+      <div class="sb-panel" id="sbLibrary">
+        <input type="text" class="lib-search" id="libSearch" placeholder="Search legends..." oninput="filterLib()">
+        <div class="tier-tabs">
+          <button class="tier-tab t1 on" onclick="filterTier('all',this)">All</button>
+          <button class="tier-tab t1" onclick="filterTier('1',this)">🥇 Tier 1</button>
+          <button class="tier-tab t2" onclick="filterTier('2',this)">🥈 Tier 2</button>
+          <button class="tier-tab t3" onclick="filterTier('3',this)">🥉 Tier 3</button>
+        </div>
+        <div class="lib-list" id="libList"></div>
+      </div>
+
+      <!-- HISTORY PANEL -->
+      <div class="sb-panel" id="sbHistory">
+        <div class="hist-list" id="histList">
+          <p class="sb-empty">No generations yet</p>
+        </div>
       </div>
     </div>
   </aside>
@@ -676,26 +752,19 @@ body::after{
       <div class="pane" id="pane-thumb">
         <div class="card">
           <div class="ch">
-            <span class="clbl">Thumbnail Concept</span>
-            <span class="cbadge">1280 × 720 · MrBeast CTR</span>
+            <span class="clbl">Thumbnail Prompt</span>
+            <span class="cbadge">MrBeast style · Midjourney / Flux / KIE · ≤1000 chars</span>
+            <button class="cbtn" onclick="copy('thumbPrompt',this)">Copy</button>
           </div>
           <div class="cbody">
-            <div class="thumb-prev" id="thumbPrev"></div>
-            <div class="spec-grid" id="specGrid"></div>
+            <div class="mono" id="thumbPrompt" style="font-size:13px;line-height:1.75;color:var(--text);word-break:break-word"></div>
+            <div id="thumbCharCount" style="margin-top:10px;font-size:10px;font-family:var(--mono);color:var(--t3);text-align:right"></div>
           </div>
-        </div>
-        <div class="card">
-          <div class="ch">
-            <span class="clbl">Image Generation Prompt</span>
-            <span class="cbadge">Midjourney / Flux / KIE ready</span>
-            <button class="cbtn" onclick="copy('imgProm',this)">Copy</button>
-          </div>
-          <div class="cbody"><div class="mono" id="imgProm"></div></div>
         </div>
         <div class="card">
           <div class="ch">
             <span class="clbl">Overlay Text Spec</span>
-            <span class="cbadge">Canva / Photoshop</span>
+            <span class="cbadge">Canva / Photoshop / CapCut</span>
             <button class="cbtn" onclick="copy('overlayS',this)">Copy</button>
           </div>
           <div class="cbody"><div class="mono" id="overlayS"></div></div>
@@ -727,9 +796,188 @@ body::after{
 /* ════════════════════════════════════════════
    STATE
 ════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════
+   LEGEND LIBRARY — 30 legends, exact titles
+════════════════════════════════════════════ */
+const LIBRARY = [
+  {tier:1,name:"Albert Einstein",emoji:"🧠",era:"1879–1955",
+   engine:"Reframes every question as a physics problem. Cannot give a binary answer.",
+   titles:["Einstein Explains Modern Dating","Einstein in a Political Debate","Einstein Tries to Use TikTok"]},
+  {tier:1,name:"Napoleon Bonaparte",emoji:"🎖",era:"1769–1821",
+   engine:"Measures everything in territory. Cannot process 'no' as an outcome.",
+   titles:["Napoleon Runs a Startup","Napoleon Leads a Corporate Meeting","Napoleon Gets Rejected on a Dating App"]},
+  {tier:1,name:"Cleopatra",emoji:"👑",era:"69–30 BC",
+   engine:"Love finds her — she doesn't chase anything. Power is her default state.",
+   titles:["Cleopatra Becomes an Influencer","Cleopatra on a Reality Dating Show","Cleopatra Reviews Modern Men"]},
+  {tier:1,name:"Socrates",emoji:"🏛",era:"470–399 BC",
+   engine:"Cannot accept any term as defined. The more frustrated people get, the closer he thinks they are to wisdom.",
+   titles:["Socrates on a Podcast","Socrates in a Job Interview","Socrates Tries Online Dating"]},
+  {tier:1,name:"Julius Caesar",emoji:"🦅",era:"100–44 BC",
+   engine:"Turns everything into a political opportunity. Treats all betrayal as statistically inevitable.",
+   titles:["Julius Caesar Gets Betrayed at Work","Caesar Leads a Group Project","Caesar in Office Politics"]},
+  {tier:1,name:"William Shakespeare",emoji:"✍",era:"1564–1616",
+   engine:"Cannot communicate in under 40 words. Everything becomes a soliloquy. Tragedy lurks in every misread text.",
+   titles:["Shakespeare Writes Text Messages","Shakespeare on Twitter","Shakespeare Tries Stand-Up Comedy"]},
+  {tier:1,name:"Leonardo da Vinci",emoji:"🎨",era:"1452–1519",
+   engine:"Starts 17 projects simultaneously. Finishes two. Has ideas for the next 300 years but struggles with deadlines.",
+   titles:["Da Vinci Designs an iPhone","Da Vinci in a Tech Startup","Da Vinci Overthinks Everything"]},
+  {tier:1,name:"Abraham Lincoln",emoji:"🎩",era:"1809–1865",
+   engine:"Resolves everything through principled patience. Cannot be rattled. Cannot be rushed. Cannot be bullied.",
+   titles:["Lincoln Mediates Office Drama","Lincoln as HR Manager","Lincoln Handles Internet Arguments"]},
+  {tier:1,name:"George Washington",emoji:"🇺🇸",era:"1732–1799",
+   engine:"Constitutionally incapable of lying. Treats every group as a fledgling democracy.",
+   titles:["Washington Leads a Startup Team","Washington Refuses to Lie Online","Washington in a Group Chat"]},
+  {tier:1,name:"Wolfgang Amadeus Mozart",emoji:"🎵",era:"1756–1791",
+   engine:"Won't release anything until the tension resolves. Shot clocks and deadlines are artistically offensive.",
+   titles:["Mozart Produces a Rap Song","Mozart in a Music Studio","Mozart Judges Modern Music"]},
+  {tier:2,name:"Winston Churchill",emoji:"🎖",era:"1874–1965",
+   engine:"Every situation is historically significant. Always at his greatest hour, regardless of what the hour is.",
+   titles:["Churchill Gives a Locker Room Speech","Churchill in Customer Service","Churchill Writes Emails"]},
+  {tier:2,name:"Aristotle",emoji:"📚",era:"384–322 BC",
+   engine:"Cannot act until the situation is formally classified into four categories. Always right, always three hours behind schedule.",
+   titles:["Aristotle Teaches Fitness","Aristotle Explains Love","Aristotle in a Debate Club"]},
+  {tier:2,name:"Nikola Tesla",emoji:"⚡",era:"1856–1943",
+   engine:"Obsessive, sleepless, 100 years ahead of everyone. Has already solved your problem — in 1899. Hates Edison.",
+   titles:["Tesla Competes with Modern Tech CEOs","Tesla Explains Wi-Fi","Tesla Gets Ignored Again"]},
+  {tier:2,name:"Isaac Newton",emoji:"🍎",era:"1643–1727",
+   engine:"Everything is a law. Mildly irritated you didn't notice gravity before he explained it.",
+   titles:["Newton Discovers Gravity at the Gym","Newton in a Physics Class Today","Newton vs Modern Science"]},
+  {tier:2,name:"Galileo Galilei",emoji:"🔭",era:"1564–1642",
+   engine:"Correct about everything. Surrounded by people who disagree. Cannot stop being right.",
+   titles:["Galileo Argues with Flat Earthers","Galileo on Social Media","Galileo vs Internet Experts"]},
+  {tier:2,name:"Marie Curie",emoji:"⚗",era:"1867–1934",
+   engine:"Works through everything alone and is mildly puzzled others find this difficult. Casually handles radioactive materials.",
+   titles:["Marie Curie in a Lab Today","Curie Handles Workplace Safety","Curie Explains Radiation to Influencers"]},
+  {tier:2,name:"Alexander the Great",emoji:"⚔",era:"356–323 BC",
+   engine:"Has never lost. Cannot conceive of 'no' as an outcome. Confused by situations that can't be solved by moving forward.",
+   titles:["Alexander Conquers a Startup","Alexander in Competitive Gaming","Alexander Hates Losing"]},
+  {tier:2,name:"Queen Elizabeth I",emoji:"👸",era:"1533–1603",
+   engine:"Absolute authority delivered with icy elegance. Has outlasted every threat by simply refusing to break.",
+   titles:["Elizabeth Runs Social Media","Elizabeth as a CEO","Elizabeth Deals with Drama"]},
+  {tier:2,name:"Genghis Khan",emoji:"🏹",era:"1162–1227",
+   engine:"Measures everything in territory. Has never heard 'no' and genuinely doesn't understand what it means.",
+   titles:["Genghis Khan Runs a Sales Team","Genghis in Corporate Takeovers","Genghis vs Office Politics"]},
+  {tier:2,name:"Martin Luther King Jr.",emoji:"✊",era:"1929–1968",
+   engine:"Cannot communicate without making it a movement. Every injustice — even a minor one — gets the full speech.",
+   titles:["MLK Delivers a Modern Speech","MLK in a Debate","MLK Addresses Social Media"]},
+  {tier:3,name:"Frida Kahlo",emoji:"🌺",era:"1907–1954",
+   engine:"Turns all suffering into unflinching art immediately. Everything personal becomes universal and published.",
+   titles:["Frida as a Content Creator","Frida Explores Identity Today","Frida on Instagram"]},
+  {tier:3,name:"Vincent van Gogh",emoji:"🎨",era:"1853–1890",
+   engine:"Misunderstood in his time. Sells nothing. Everyone around him has worse art and more success. He is fine with this.",
+   titles:["Van Gogh Gets Art Critiqued Online","Van Gogh Sells NFTs","Van Gogh as a Streamer"]},
+  {tier:3,name:"Charles Darwin",emoji:"🦎",era:"1809–1882",
+   engine:"Observes everything clinically. Cannot attend a social event without noting which behaviours aid survival.",
+   titles:["Darwin Explains Dating Evolution","Darwin Observes Humans Today","Darwin on Reality TV"]},
+  {tier:3,name:"Plato",emoji:"🏺",era:"428–348 BC",
+   engine:"Everything visible is a shadow of a more perfect version. Cannot just enjoy things.",
+   titles:["Plato Explains Reality TV","Plato in the Matrix","Plato Questions Everything"]},
+  {tier:3,name:"Confucius",emoji:"☯",era:"551–479 BC",
+   engine:"Responds to every question with a profound statement about a completely different topic.",
+   titles:["Confucius Gives Life Advice","Confucius on Social Media Etiquette","Confucius in Modern Culture"]},
+  {tier:3,name:"Joan of Arc",emoji:"⚜",era:"1412–1431",
+   engine:"Absolute conviction. Treats all modern bureaucracy as the English army. Will not be moved.",
+   titles:["Joan Leads a Team Project","Joan in Competitive Sports","Joan Faces Criticism Online"]},
+  {tier:3,name:"Sigmund Freud",emoji:"🛋",era:"1856–1939",
+   engine:"Diagnoses everyone within 90 seconds. Everything is about the unconscious, the mother, or repression.",
+   titles:["Freud Analyzes Your Texts","Freud on Dating Apps","Freud Diagnoses Everyone"]},
+  {tier:3,name:"Karl Marx",emoji:"✊",era:"1818–1883",
+   engine:"Sees every modern system as capitalism in a new costume. Cannot have a casual conversation about anything.",
+   titles:["Marx in Corporate America","Marx Explains Billionaires","Marx on Hustle Culture"]},
+  {tier:3,name:"Pablo Picasso",emoji:"🖼",era:"1881–1973",
+   engine:"Sees reality differently from everyone and considers this everyone else's problem, not his.",
+   titles:["Picasso Designs Modern Logos","Picasso in Graphic Design","Picasso Confuses Everyone"]},
+  {tier:3,name:"Ludwig van Beethoven",emoji:"🎻",era:"1770–1827",
+   engine:"Composed his greatest work while deaf. Treats all modern audio as an insult to what sound could be.",
+   titles:["Beethoven Hears Modern Music","Beethoven Produces Beats","Beethoven in a Studio Session"]}
+];
+
+let libCurrentTier = 'all';
+let libCurrentSearch = '';
+
+function buildLibrary() {
+  const list = $('libList');
+  const q = libCurrentSearch.toLowerCase();
+  const filtered = LIBRARY.filter(l => {
+    const matchTier = libCurrentTier === 'all' || String(l.tier) === libCurrentTier;
+    const matchQ = !q || l.name.toLowerCase().includes(q);
+    return matchTier && matchQ;
+  });
+  list.innerHTML = filtered.length ? '' : '<p class="sb-empty">No matches</p>';
+  filtered.forEach((l,i) => {
+    const id = 'lib_' + l.name.replace(/\s+/g,'_');
+    const div = document.createElement('div');
+    div.className = 'lib-leg';
+    div.innerHTML = `
+      <div class="lib-leg-head" onclick="toggleLib('${id}')">
+        <span class="lib-leg-emoji">${l.emoji}</span>
+        <div class="lib-leg-info">
+          <div class="lib-leg-name">${l.name}</div>
+          <div class="lib-leg-tier">Tier ${l.tier} · ${l.era}</div>
+        </div>
+        <span class="lib-chev" id="chev_${id}">▾</span>
+      </div>
+      <div class="lib-titles" id="titles_${id}">
+        ${l.titles.map(t => `<button class="lib-title-btn" onclick="pickTitle('${l.name.replace(/'/g,"\'")}','${t.replace(/'/g,"\'")}')">${t}</button>`).join('')}
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function toggleLib(id) {
+  const body = document.getElementById('titles_' + id);
+  const chev = document.getElementById('chev_' + id);
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+function filterTier(tier, btn) {
+  document.querySelectorAll('.tier-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  libCurrentTier = tier;
+  buildLibrary();
+}
+
+function filterLib() {
+  libCurrentSearch = $('libSearch').value;
+  buildLibrary();
+}
+
+function pickTitle(legendName, titleText) {
+  // Switch to custom panel, pre-fill fields, show ready state
+  sbMode('custom', document.querySelectorAll('.sbm')[0]);
+  $('sideInp').value = legendName;
+  $('sideTopic').value = titleText;
+  $('sideInp').focus();
+  // Flash the generate button
+  const btn = $('fireBtn');
+  btn.style.background = 'var(--green)';
+  btn.textContent = '✓ Ready — hit Generate!';
+  setTimeout(() => {
+    btn.style.background = '';
+    btn.textContent = '🔥 GENERATE';
+  }, 2200);
+}
+
+function sbMode(mode, btn) {
+  document.querySelectorAll('.sbm').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  else {
+    const modeMap = {custom:0, library:1, history:2};
+    document.querySelectorAll('.sbm')[modeMap[mode]]?.classList.add('on');
+  }
+  ['sbCustom','sbLibrary','sbHistory'].forEach(id => {
+    const el = $(id);
+    if (el) el.classList.toggle('on', id === 'sb' + mode.charAt(0).toUpperCase() + mode.slice(1));
+  });
+  if (mode === 'library') buildLibrary();
+}
+
 let S = {
   legend: '',
   topic: '',
+  libraryTitle: '',
   pairing: null,
   data: {},
   history: [],
@@ -902,10 +1150,17 @@ async function fire() {
   S.legend = val;
   S.topic  = topicClean;
   hide('pairSec'); hide('outEl');
-  load(true, `Scouting the wrong rooms for ${val}...`);
+
+  // Check if the topic looks like a pre-picked library title (contains spaces, reads like a title)
+  const isLibraryTitle = topicClean.length > 8 && !topicClean.toLowerCase().startsWith('the ') && topicClean.split(' ').length >= 3;
+  S.libraryTitle = isLibraryTitle ? topicClean : '';
+
+  load(true, isLibraryTitle ? `Generating "${topicClean}"...` : `Scouting the wrong rooms for ${val}...`);
   $('fireBtn').disabled = true;
 
-  const topicLine = topicClean
+  const topicLine = S.libraryTitle
+    ? `EXACT VIDEO CONCEPT: "${S.libraryTitle}" — generate 5 pairing variations that fit this exact concept, all in second-person YOU format. The first pairing must match the title most directly.`
+    : topicClean
     ? `The user has suggested this topic/setting: "${topicClean}". Generate pairings around this theme and 4 additional creative ones.`
     : `Generate 5 wildly creative pairings across different categories.`;
 
@@ -983,12 +1238,15 @@ async function buildPackage(p) {
 `Generate a COMPLETE production package. Return ONLY valid JSON — no markdown, no code fences, no preamble.
 
 LEGEND: ${S.legend}
+VIDEO TITLE: ${S.libraryTitle || p.title}
 TOPIC/SETTING: ${S.topic || p.setting}
 PAIRING: ${p.title}
 SETTING: ${p.setting}
 ENGINE: ${p.engine}
 HOOK: ${p.hook}
 TENSION: ${p.tension}
+
+${S.libraryTitle ? `EXACT TITLE LOCK: The video is titled "${S.libraryTitle}". All scripts, SEO titles, and hooks must be built around this exact concept. The short_script hook line must begin: "What if you were ${S.legend}... [and directly set up the ${S.libraryTitle} scenario]"` : ''}
 
 CRITICAL — SECOND-PERSON IMMERSION THROUGHOUT:
 The viewer IS the legend. Every script line uses "you" and "your."
@@ -1055,30 +1313,11 @@ LONG FORM STRUCTURE (Day 1, 3, 5, 7, 10):
 
   "hashtags": ["#Tag1","#Tag2","#Tag3","#Tag4","#Tag5","#Tag6","#Tag7","#Tag8","#Tag9","#Tag10"],
 
-  "thumbnail": {
-    "concept_title": "One sentence — the visual collision idea",
-    "character_expression": "Single exaggerated emotion — shock / triumph / disbelief / outrage. Must read clearly on a phone screen from 20 feet. Specify: eyes wide, brows raised, mouth open, teeth visible, etc.",
-    "character_pose": "Body pose with at least 40% of frame. Facing camera, slight turn. Hand gesture that amplifies the emotion.",
-    "background_scene": "One dominant visual that SHOWS the premise without words — e.g. a rose ceremony stage, a trading floor in flames, a basketball court with a clock at 0. Clean, high-contrast, 1-2 colours max.",
-    "main_object": "The single prop that makes the era-collision undeniable. In hand or foregrounded.",
-    "overlay_text_main": "2-5 WORDS MAX — ALL CAPS — Obelix Pro / Anton style — the curiosity gap in text form",
-    "overlay_text_secondary": "3-6 words — subtext or punchline — smaller, below main text",
-    "color_palette": {
-      "dominant": "#hex — bold primary: red / electric blue / deep gold. Must pop against YouTube grey/white UI.",
-      "accent": "#hex — overlay text colour. White with black stroke is default. Override only if stronger.",
-      "character_lighting": "#hex — dramatic rim light direction and colour to isolate subject from background.",
-      "background_tone": "#hex — clean and simple. One colour wash. Must maximise subject contrast."
-    },
-    "text_style": "Heavy blocky font (Obelix Pro / Anton / Impact). White fill. 8-12px black stroke. Drop shadow 4px offset. Placed top or bottom — NEVER over the face.",
-    "composition": "Subject left-centre, text right or bottom. Face takes 40%+ of frame. Background simplified to 1-2 elements. Mobile-legible at thumbnail size (320×180px).",
-    "ctr_trigger": "Name the mechanism: curiosity gap / identity incongruity / high stakes / impossible scenario. Explain in 1-2 sentences why this specific combination stops the scroll in under 50ms for this legend + setting."
-  },
+  "thumbnail_prompt": "HARD LIMIT — THIS FIELD MUST BE UNDER 1000 CHARACTERS TOTAL. COUNT BEFORE OUTPUTTING. Write a single MrBeast-style image generation prompt. Rules: (1) Subject takes 40%+ of frame, facing camera, extreme single emotion — wide-eyed shock OR open-mouth triumph OR jaw-dropped disbelief — never neutral. (2) One dominant bold background that SHOWS the premise visually with no words needed — clean, 1-2 colours max, high contrast. (3) One era-collision prop in hand or foreground. (4) Dramatic rim lighting named by colour and direction. (5) Slight low-angle shot. (6) NO TEXT in the image. (7) Hyperrealistic, 8K, 16:9. Format: photorealistic [legend name] dressed in [specific period costume], [extreme emotion with specific face details — e.g. eyes wide, brows raised, mouth open], [exact hand/body pose], holding [specific prop], set against [vivid 1-sentence background scene], [lighting: colour + direction], slight low camera angle, hyperrealistic skin detail, sharp focus, 8K, --ar 16:9",
 
-  "image_gen_prompt": "STRICT LIMIT: output must be under 1000 characters. MrBeast-style thumbnail: photorealistic [legend name] in [period costume], facing camera, [single extreme emotion — e.g. wide-eyed shock / open-mouth triumph], [hand gesture], holding [era-collision prop], [dominant background — clean, 1-2 colour, shows premise], dramatic [colour] rim lighting, slight low angle, sharp focus, hyperrealistic, 8K, 16:9. Background: [one vivid descriptive phrase]. No text in image.",
+  "overlay_spec": "MAIN TEXT: '[2-5 words ALL CAPS — the curiosity gap]'\\nFont: Anton Bold\\nSize: 140pt\\nFill: #FFFFFF\\nStroke: 10px #000000\\nShadow: 4px 4px 0px rgba(0,0,0,0.9)\\nPosition: bottom 10% of frame, horizontally centred\\n\\nSECONDARY TEXT: '[3-6 words — the punchline or subtext]'\\nFont: Anton Bold\\nSize: 72pt\\nFill: #FFE033\\nStroke: 6px #000000\\nPosition: directly above main text, same centre alignment, 8px gap\\n\\nRULE: Never place text over the face. Top or bottom only.",
 
-  "overlay_spec": "MAIN TEXT: '[exact 2-5 word phrase]'\\nFont: Anton Bold (or Obelix Pro)\\nSize: 120-160pt\\nColour: #FFFFFF\\nStroke: 10px solid #000000\\nShadow: 4px 4px 0px #000000\\nPosition: bottom 12% of frame, centred\\n\\nSECONDARY TEXT: '[exact phrase]'\\nFont: Anton Bold\\nSize: 60-80pt\\nColour: #FFDD00 (or accent hex)\\nStroke: 6px solid #000000\\nPosition: directly above main text, same alignment",
-
-  "ctr_analysis": "4-5 sentences. State the CTR mechanism (curiosity gap / incongruity / high-stakes). Describe the 50ms visual sequence: what colour hits first, then what the face communicates, then what the text confirms. Explain how the composition works on a 320px phone screen. Predict CTR range vs 2-5% YouTube average with specific reasoning for this legend + setting combination."
+  "ctr_analysis": "4-5 sentences. Name the exact CTR mechanism used (curiosity gap / identity incongruity / impossible scenario / high stakes). Walk through the 50ms visual hit sequence: colour first, then face emotion, then text. Explain why the background visual proves the premise without needing words. State how every element reads at 320×180px on a phone screen. Predict a specific CTR percentage range vs the 2-5% YouTube average and justify it for this exact legend-setting combination."
 }`;
 
   try {
@@ -1106,14 +1345,21 @@ function renderOutput(p, d) {
   setText('longScr',  d.long_script);
   setText('seoTit',   d.seo_titles);
   setText('seoDesc',  d.seo_description);
-  setText('imgProm',  d.image_gen_prompt);
   setText('overlayS', d.overlay_spec);
   setText('ctrAna',   d.ctr_analysis);
 
+  // Thumbnail prompt — single field with char count
+  const tp = d.thumbnail_prompt || d.image_gen_prompt || '';
+  setText('thumbPrompt', tp);
+  const countEl = $('thumbCharCount');
+  if (countEl) {
+    const len = tp.length;
+    countEl.textContent = `${len} / 1000 characters${len > 1000 ? ' ⚠ OVER LIMIT' : ' ✓'}`;
+    countEl.style.color = len > 1000 ? 'var(--red)' : 'var(--green)';
+  }
+
   renderTags('seoTags', d.tags,     false);
   renderTags('seoHt',   d.hashtags, true);
-  buildThumb(d.thumbnail || {});
-  buildSpecs(d.thumbnail || {});
 
   show('outEl');
   tab('short', document.querySelector('.tb'));
@@ -1132,65 +1378,6 @@ function renderTags(id, arr, isHt) {
     s.textContent = t;
     w.appendChild(s);
   });
-}
-
-function buildThumb(t) {
-  const el = $('thumbPrev');
-  const pal = t.color_palette || {};
-  const dom = hx(pal.dominant)          || '#1a1d27';
-  const acc = hx(pal.accent)            || '#e8b84b';
-  const bg  = hx(pal.background_tone)  || '#0d0f14';
-  const lit = hx(pal.character_lighting)|| '#e8b84b';
-
-  el.style.background = `linear-gradient(135deg, ${bg} 0%, ${dom} 100%)`;
-  el.innerHTML = `
-    <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:12px 16px;overflow:hidden">
-      <div style="position:absolute;inset:0;background:radial-gradient(circle at 28% 55%,${lit}38 0%,transparent 52%)"></div>
-      <div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:35%;max-width:130px;height:78%;background:linear-gradient(to top,${lit}38,${lit}06);border-radius:7px 7px 0 0;display:flex;align-items:center;justify-content:center;font-size:32px;border:1px solid ${lit}28">${legendEmoji(S.legend)}</div>
-      <div style="position:relative;z-index:2;margin-left:40%">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(14px,3.2vw,30px);color:${acc};text-shadow:2px 2px 0 #000,3px 3px 6px rgba(0,0,0,.6);line-height:1;letter-spacing:1px">${t.overlay_text_main || 'WRONG ROOM'}</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:clamp(9px,1.5vw,11px);font-weight:700;color:#fff;text-shadow:1px 1px 0 #000;margin-top:3px;opacity:.92">${t.overlay_text_secondary || ''}</div>
-      </div>
-      <div style="position:absolute;top:6px;right:9px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,.28);background:rgba(0,0,0,.42);padding:2px 6px;border-radius:99px">PREVIEW</div>
-    </div>`;
-}
-
-function buildSpecs(t) {
-  const g = $('specGrid');
-  g.innerHTML = '';
-  [
-    ['Character Pose',   t.character_pose],
-    ['Expression',       t.character_expression],
-    ['Background',       t.background_scene],
-    ['Main Object',      t.main_object],
-    ['Composition',      t.composition],
-    ['CTR Trigger',      t.ctr_trigger],
-  ].forEach(([lbl, val]) => {
-    if (!val) return;
-    const d = document.createElement('div');
-    d.className = 'si';
-    d.innerHTML = `<div class="sl">${lbl}</div><div class="sv">${val}</div>`;
-    g.appendChild(d);
-  });
-
-  const pal = t.color_palette || {};
-  if (Object.keys(pal).length) {
-    const d = document.createElement('div');
-    d.className = 'si';
-    d.style.gridColumn = '1 / -1';
-    let sw = '<div class="sl">Color Palette</div><div class="swatch-row">';
-    Object.entries(pal).forEach(([k, v]) => {
-      const h = hx(v) || '#888';
-      sw += `<div class="swatch" style="background:${h}" title="${k.replace(/_/g,' ')}: ${v}"></div>`;
-    });
-    sw += '</div>';
-    d.innerHTML = sw;
-    const note = document.createElement('div');
-    note.style.cssText = 'margin-top:6px;font-size:10px;color:var(--t3);font-family:var(--mono);line-height:1.6';
-    note.textContent = Object.entries(pal).map(([k,v])=>`${k.replace(/_/g,' ')}: ${v}`).join(' · ');
-    d.appendChild(note);
-    g.appendChild(d);
-  }
 }
 
 function hx(s) {
@@ -1217,7 +1404,7 @@ function legendEmoji(n) {
    HISTORY
 ════════════════════════════════════════════ */
 function addHistory(p, d) {
-  S.history.unshift({ legend: S.legend, p, d, ts: Date.now() });
+  S.history.unshift({ legend: S.legend, libraryTitle: S.libraryTitle, topic: S.topic, p, d, ts: Date.now() });
   refreshHistSidebar();
 }
 
@@ -1228,8 +1415,9 @@ function refreshHistSidebar() {
   S.history.slice(0, 10).forEach(h => {
     const c = document.createElement('div');
     c.className = 'hist-card';
-    c.innerHTML = `<div class="hist-t">${h.p.title}</div><div class="hist-s">${h.legend} · ${new Date(h.ts).toLocaleTimeString()}</div>`;
-    c.onclick = () => { S.legend = h.legend; S.pairing = h.p; S.data = h.d; renderOutput(h.p, h.d); page('gen'); };
+    const dt = h.libraryTitle || h.p.title;
+    c.innerHTML = `<div class="hist-t">${dt}</div><div class="hist-s">${h.legend} · ${new Date(h.ts).toLocaleTimeString()}</div>`;
+    c.onclick = () => { S.legend=h.legend; S.libraryTitle=h.libraryTitle||''; S.topic=h.topic||''; S.pairing=h.p; S.data=h.d; renderOutput(h.p,h.d); page('gen'); };
     el.appendChild(c);
   });
 }
@@ -1243,8 +1431,9 @@ function refreshHistPage() {
     const c = document.createElement('div');
     c.className = 'card';
     c.style.cursor = 'pointer';
-    c.innerHTML = `<div class="ch"><span class="clbl">${h.legend}</span><span class="cbadge">${h.p.title}</span><span class="cbadge">${new Date(h.ts).toLocaleTimeString()}</span></div><div class="cbody" style="font-size:11px;color:var(--t3);font-family:var(--mono)">${h.p.engine}</div>`;
-    c.onclick = () => { S.legend = h.legend; S.pairing = h.p; S.data = h.d; renderOutput(h.p, h.d); page('gen'); };
+    const ht = h.libraryTitle || h.p.title;
+    c.innerHTML = `<div class="ch"><span class="clbl">${h.legend}</span><span class="cbadge">${ht}</span><span class="cbadge">${new Date(h.ts).toLocaleTimeString()}</span></div><div class="cbody" style="font-size:11px;color:var(--t3);font-family:var(--mono)">${h.p.engine}</div>`;
+    c.onclick = () => { S.legend=h.legend; S.libraryTitle=h.libraryTitle||''; S.topic=h.topic||''; S.pairing=h.p; S.data=h.d; renderOutput(h.p,h.d); page('gen'); };
     el.appendChild(c);
   });
 }
@@ -1311,17 +1500,7 @@ async function exportSheets() {
       method: 'POST',
       body: JSON.stringify({ values: [
         [`=== ${ti} ===`, ts],
-        ['CONCEPT', t.concept_title || ''],
-        ['POSE', t.character_pose || ''],
-        ['EXPRESSION', t.character_expression || ''],
-        ['BACKGROUND', t.background_scene || ''],
-        ['OBJECT', t.main_object || ''],
-        ['OVERLAY MAIN', t.overlay_text_main || ''],
-        ['OVERLAY SECONDARY', t.overlay_text_secondary || ''],
-        ['TEXT STYLE', t.text_style || ''],
-        ['COMPOSITION', t.composition || ''],
-        ['CTR TRIGGER', t.ctr_trigger || ''],
-        ['IMAGE GEN PROMPT', d.image_gen_prompt || ''],
+        ['THUMBNAIL PROMPT (≤1000 chars)', d.thumbnail_prompt || d.image_gen_prompt || ''],
         ['OVERLAY SPEC', d.overlay_spec || ''],
         ['CTR ANALYSIS', d.ctr_analysis || ''],
         ['---', '---']
@@ -1428,22 +1607,10 @@ function buildTxt() {
     ``,
     line(), `HASHTAGS`, line(), hts,
     ``,
-    line(), `THUMBNAIL BRIEF`, line(),
-    `Concept:   ${t.concept_title || ''}`,
-    `Pose:      ${t.character_pose || ''}`,
-    `Expression:${t.character_expression || ''}`,
-    `Background:${t.background_scene || ''}`,
-    `Object:    ${t.main_object || ''}`,
-    `Overlay A: ${t.overlay_text_main || ''}`,
-    `Overlay B: ${t.overlay_text_secondary || ''}`,
-    `Text Style:${t.text_style || ''}`,
-    `Composit:  ${t.composition || ''}`,
-    `CTR Trig:  ${t.ctr_trigger || ''}`,
+    line(), `THUMBNAIL PROMPT (MrBeast Style — ≤1000 chars)`, line(),
+    d.thumbnail_prompt || d.image_gen_prompt || '',
     ``,
-    line(), `IMAGE GENERATION PROMPT`, line(),
-    d.image_gen_prompt || '',
-    ``,
-    line(), `OVERLAY SPEC (Canva/Photoshop)`, line(),
+    line(), `OVERLAY TEXT SPEC (Canva / Photoshop / CapCut)`, line(),
     d.overlay_spec || '',
     ``,
     line(), `CTR PSYCHOLOGY`, line(),
@@ -1518,7 +1685,7 @@ function toast(msg, type) {
 }
 
 function reset() {
-  S.legend = ''; S.topic = ''; S.pairing = null; S.data = {};
+  S.legend = ''; S.topic = ''; S.libraryTitle = ''; S.pairing = null; S.data = {};
   $('sideInp').value = ''; $('mobInp').value = '';
   if ($('sideTopic')) $('sideTopic').value = '';
   if ($('mobTopic'))  $('mobTopic').value  = '';
