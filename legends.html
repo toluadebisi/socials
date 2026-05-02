@@ -9,7 +9,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 /* ═══════════════════════════════════════
-   DESIGN TOKENS — TradeIQ aesthetic
+   DESIGN TOKENS
 ═══════════════════════════════════════ */
 :root {
   --bg:       #0d0f14;
@@ -231,7 +231,7 @@ body::after{
 }
 .hero-h span{color:var(--gold)}
 .hero-p{
-  font-size:14px;color:var(--t2);max-width:480px;
+  font-size:14px;color:var(--t2);max-width:540px;
   margin:0 auto 24px;line-height:1.7;
 }
 .hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:28px}
@@ -372,9 +372,6 @@ body::after{
 .tag{font-size:11px;font-family:var(--mono);padding:3px 9px;border-radius:99px;border:1px solid var(--b2);color:var(--t2)}
 .tag.ht{border-color:rgba(91,156,246,.3);color:var(--blue)}
 
-/* thumbnail */
-
-
 /* toast */
 .toast{
   position:fixed;bottom:22px;right:22px;z-index:999;
@@ -428,19 +425,24 @@ body::after{
 .lib-leg-tier{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
 .lib-chev{font-size:11px;color:var(--t3);transition:transform .18s}
 .lib-chev.open{transform:rotate(180deg)}
-.lib-titles{display:none;border-top:1px solid var(--b1)}
-.lib-titles.open{display:block}
-.lib-title-btn{
-  display:block;width:100%;text-align:left;
-  padding:7px 11px 7px 36px;
-  font-family:var(--sans);font-size:11px;color:var(--t2);
-  background:none;border:none;cursor:pointer;
-  border-bottom:1px solid var(--b1);line-height:1.4;
-  transition:all .15s;
+.lib-titles{
+  display:none; background:var(--bg); padding:8px; gap:6px;
+  border-top:1px solid var(--b1); box-shadow:inset 0 4px 6px rgba(0,0,0,0.15);
 }
-.lib-title-btn:last-child{border-bottom:none}
-.lib-title-btn:hover{background:var(--bg3);color:var(--text)}
-.lib-title-btn::before{content:"▸ ";color:var(--t3);font-size:10px}
+.lib-titles.open{display:flex;flex-direction:column}
+.lib-title-btn{
+  display:flex; align-items:flex-start; width:100%; text-align:left;
+  padding:14px 16px; font-family:var(--sans); font-size:13px; font-weight:600;
+  color:var(--text); background:var(--bg2); border:1px solid var(--b2);
+  border-radius:var(--r); cursor:pointer; line-height:1.4; transition:all .2s;
+}
+.lib-title-btn:hover{
+  background:var(--panel); border-color:var(--goldbrd); color:var(--gold2);
+  box-shadow:0 6px 16px rgba(0,0,0,0.4); transform:translateY(-2px);
+}
+.lib-title-btn::before{
+  content:"🔥"; font-size:14px; margin-right:10px; margin-top:1px; flex-shrink:0; opacity:0.9;
+}
 
 /* sidebar mode tabs */
 .sb-mode{display:flex;gap:2px;margin-bottom:14px}
@@ -547,6 +549,17 @@ body::after{
   </div>
 </div>
 
+<!-- ══ LIBRARY SELECTION MODAL ═══════════════════════════ -->
+<div class="modal-bg" id="libModal">
+  <div class="modal" style="max-width:540px;">
+    <button class="modal-x" onclick="closeLibModal()">✕</button>
+    <div id="libModalHead" style="display:flex;align-items:center;gap:14px;margin-bottom:12px;"></div>
+    <p id="libModalEngine" style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--b1);"></p>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:12px;">Select a Viral Concept</div>
+    <div id="libModalTitles" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+</div>
+
 <!-- ══ MAIN LAYOUT ════════════════════════════════════════ -->
 <div class="layout z" style="flex:1">
 
@@ -565,9 +578,9 @@ body::after{
         <div class="sb-lbl">Historical Figure</div>
         <input type="text" class="legend-inp" id="sideInp"
           placeholder="e.g. Cleopatra, Napoleon..." onkeydown="if(event.key==='Enter')fire()">
-        <div class="sb-lbl" style="margin-top:10px;margin-bottom:6px">Your Topic <span style="color:var(--t3);font-weight:400">(optional)</span></div>
+        <div class="sb-lbl" style="margin-top:10px;margin-bottom:6px">Environment / Topic <span style="color:var(--t3);font-weight:400">(optional)</span></div>
         <input type="text" class="legend-inp" id="sideTopic"
-          placeholder="e.g. the Bachelorette, Wall St..." onkeydown="if(event.key==='Enter')fire()" style="font-size:12px;font-weight:500">
+          placeholder="e.g. Wall Street, TikTok Live..." onkeydown="if(event.key==='Enter')fire()" style="font-size:12px;font-weight:500">
         <button class="fire-btn" id="fireBtn" onclick="fire()">🔥 GENERATE</button>
       </div>
 
@@ -597,16 +610,16 @@ body::after{
 
     <div class="callout show" id="callout">
       <h3>⚙ Quick Start</h3>
-      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Claude API key → Save. Then type any historical figure, optionally add a topic or setting, and hit Generate.</p>
+      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Claude API key → Save. Then pick a legend and a high-viral environment (e.g. Vegas, Wall St) and hit Generate.</p>
     </div>
 
     <div class="hero">
-      <p class="hero-eye">Second-Person Immersion · Out of Context Content Engine</p>
+      <p class="hero-eye">Second-Person Immersion · High-Viral Chaos Engine</p>
       <h1 class="hero-h">LEGENDS<br><span>WRONG ROOM</span></h1>
-      <p class="hero-p">Type a historical figure. AI suggests 5 wrong-era collisions. Pick one. Get second-person Day 1→10 scripts, full SEO, and a MrBeast-grade thumbnail brief.</p>
+      <p class="hero-p">Pick a legend + high-viral environment + pressure. AI suggests 5 wrong-era collisions. Pick one. Get second-person Day 1→10 scripts, full SEO, and a MrBeast-grade thumbnail brief.</p>
       <div class="hero-stats">
+        <div class="hs"><div class="hs-n">60</div><div class="hs-l">Environments</div></div>
         <div class="hs"><div class="hs-n">5</div><div class="hs-l">Pairings</div></div>
-        <div class="hs"><div class="hs-n">4</div><div class="hs-l">Output Tabs</div></div>
         <div class="hs"><div class="hs-n">∞</div><div class="hs-l">Legends</div></div>
         <div class="hs"><div class="hs-n">1K%</div><div class="hs-l">CTR Target</div></div>
       </div>
@@ -616,7 +629,7 @@ body::after{
           placeholder="Historical figure..." style="flex:1;margin-bottom:0"
           onkeydown="if(event.key==='Enter')fire()">
         <input type="text" class="legend-inp" id="mobTopic"
-          placeholder="Topic (optional)..." style="flex:1;margin-bottom:0;font-size:12px"
+          placeholder="Environment (Vegas, Wall St)..." style="flex:1;margin-bottom:0;font-size:12px"
           onkeydown="if(event.key==='Enter')fire()">
         <button class="fire-btn" style="width:auto;padding:11px 16px;white-space:nowrap" onclick="fire()">🔥 Go</button>
       </div>
@@ -798,99 +811,120 @@ body::after{
 ════════════════════════════════════════════ */
 
 /* ════════════════════════════════════════════
-   LEGEND LIBRARY — 30 legends, exact titles
+   LEGEND LIBRARY — 30 legends, high-viral titles
 ════════════════════════════════════════════ */
 const LIBRARY = [
+  {tier:1,name:"Elon Musk",emoji:"🚀",era:"Present",
+   engine:"Innovation trapped in old worlds. Over-optimizing ancient systems.",
+   titles:["Elon Musk Building Pyramids in Ancient Egypt","Elon Musk Redesigning the Roman Senate","Elon Musk Digitizing the Library of Alexandria"]},
+  {tier:1,name:"Donald Trump",emoji:"🏢",era:"Present",
+   engine:"Ego + authority systems = chaos. Treating history like a real estate deal.",
+   titles:["Donald Trump Interrupting the Roman Senate","Donald Trump at a Medieval Royal Court","Donald Trump at a French Revolution Tribunal"]},
+  {tier:1,name:"Kanye West",emoji:"🎤",era:"Present",
+   engine:"Disruption in structured civilizations. Unfiltered god complex.",
+   titles:["Kanye West Interrupting a Royal Coronation","Kanye West in a Greek Philosophy Debate","Kanye West in the Roman Senate"]},
+  {tier:1,name:"MrBeast",emoji:"💸",era:"Present",
+   engine:"Modern spectacle injected into ancient survival worlds.",
+   titles:["MrBeast Funding the Colosseum Games","MrBeast Giving Away Gold During Pyramid Construction","MrBeast Hosting Trojan War Giveaways"]},
+  {tier:1,name:"Taylor Swift",emoji:"🎸",era:"Present",
+   engine:"Emotion + storytelling = timeless crossover.",
+   titles:["Taylor Swift at a Medieval Royal Court","Taylor Swift in a Greek Mythology Storytelling Circle","Taylor Swift at a Royal Alliance Ceremony"]},
+  {tier:1,name:"LeBron James",emoji:"🏀",era:"Present",
+   engine:"Leadership + dominance in any system. The ultimate ancient general.",
+   titles:["LeBron James in the Colosseum","LeBron James in a Spartan Training System","LeBron James Leading a Tribal Battlefield Formation"]},
+  {tier:1,name:"Cristiano Ronaldo",emoji:"⚽",era:"Present",
+   engine:"Perfection + competition across eras. Flawless execution.",
+   titles:["Ronaldo in the Ancient Olympic Stadium","Ronaldo in Roman Gladiator Arena Trials","Ronaldo in a Medieval Jousting Tournament"]},
   {tier:1,name:"Albert Einstein",emoji:"🧠",era:"1879–1955",
-   engine:"Reframes every question as a physics problem. Cannot give a binary answer.",
-   titles:["Einstein Explains Modern Dating","Einstein in a Political Debate","Einstein Tries to Use TikTok"]},
+   engine:"Overthinking, relativity. Too smart for simple situations.",
+   titles:["Einstein as a Grade 10 Physics Teacher","Einstein on the Joe Rogan Experience","Einstein Trying to Assemble IKEA Furniture"]},
   {tier:1,name:"Napoleon Bonaparte",emoji:"🎖",era:"1769–1821",
-   engine:"Measures everything in territory. Cannot process 'no' as an outcome.",
-   titles:["Napoleon Runs a Startup","Napoleon Leads a Corporate Meeting","Napoleon Gets Rejected on a Dating App"]},
+   engine:"Control, dominance, strategy. Tries to command uncontrollable systems.",
+   titles:["Napoleon as a US Marine Drill Instructor","Napoleon Playing Risk at Family Game Night","Napoleon as an NFL Head Coach"]},
   {tier:1,name:"Cleopatra",emoji:"👑",era:"69–30 BC",
-   engine:"Love finds her — she doesn't chase anything. Power is her default state.",
-   titles:["Cleopatra Becomes an Influencer","Cleopatra on a Reality Dating Show","Cleopatra Reviews Modern Men"]},
+   engine:"Charisma, power, seduction. Effortlessly dominates modern influencers.",
+   titles:["Cleopatra on Real Housewives of Beverly Hills","Cleopatra on the Met Gala Red Carpet","Cleopatra Running an OnlyFans Empire"]},
   {tier:1,name:"Socrates",emoji:"🏛",era:"470–399 BC",
-   engine:"Cannot accept any term as defined. The more frustrated people get, the closer he thinks they are to wisdom.",
-   titles:["Socrates on a Podcast","Socrates in a Job Interview","Socrates Tries Online Dating"]},
+   engine:"Questioning everything. Derails everything.",
+   titles:["Socrates on a Flat Earth Podcast","Socrates as a Comcast Customer Service Rep","Socrates at the DMV"]},
   {tier:1,name:"Julius Caesar",emoji:"🦅",era:"100–44 BC",
-   engine:"Turns everything into a political opportunity. Treats all betrayal as statistically inevitable.",
-   titles:["Julius Caesar Gets Betrayed at Work","Caesar Leads a Group Project","Caesar in Office Politics"]},
+   engine:"Leadership, betrayal sensitivity. Sees 'betrayal' everywhere.",
+   titles:["Julius Caesar on Survivor","Julius Caesar During a Wall Street Mutiny","Julius Caesar in a Middle School Group Project"]},
   {tier:1,name:"William Shakespeare",emoji:"✍",era:"1564–1616",
-   engine:"Cannot communicate in under 40 words. Everything becomes a soliloquy. Tragedy lurks in every misread text.",
-   titles:["Shakespeare Writes Text Messages","Shakespeare on Twitter","Shakespeare Tries Stand-Up Comedy"]},
+   engine:"Cannot communicate in under 40 words. Tragedy lurks in every misread text.",
+   titles:["Shakespeare Ghostwriting Drake's Diss Tracks","Shakespeare as a Twitter Community Notes Mod","Shakespeare Trying to Write a TikTok Hook"]},
   {tier:1,name:"Leonardo da Vinci",emoji:"🎨",era:"1452–1519",
-   engine:"Starts 17 projects simultaneously. Finishes two. Has ideas for the next 300 years but struggles with deadlines.",
-   titles:["Da Vinci Designs an iPhone","Da Vinci in a Tech Startup","Da Vinci Overthinks Everything"]},
+   engine:"Over-engineering genius. Builds too much.",
+   titles:["Da Vinci Pitching on Shark Tank","Da Vinci at a Silicon Valley Hackathon","Da Vinci as a Minecraft Speedrunner"]},
   {tier:1,name:"Abraham Lincoln",emoji:"🎩",era:"1809–1865",
-   engine:"Resolves everything through principled patience. Cannot be rattled. Cannot be rushed. Cannot be bullied.",
-   titles:["Lincoln Mediates Office Drama","Lincoln as HR Manager","Lincoln Handles Internet Arguments"]},
+   engine:"Resolves everything through principled patience. Cannot be bullied.",
+   titles:["Lincoln on a Real Housewives Reunion","Lincoln as an MMA Referee","Lincoln Trying to Survive Black Friday"]},
   {tier:1,name:"George Washington",emoji:"🇺🇸",era:"1732–1799",
    engine:"Constitutionally incapable of lying. Treats every group as a fledgling democracy.",
-   titles:["Washington Leads a Startup Team","Washington Refuses to Lie Online","Washington in a Group Chat"]},
+   titles:["Washington Taking a YouTube Lie Detector Test","Washington as a Startup Founder Forced to Pivot","Washington at a Modern HOA Meeting"]},
   {tier:1,name:"Wolfgang Amadeus Mozart",emoji:"🎵",era:"1756–1791",
-   engine:"Won't release anything until the tension resolves. Shot clocks and deadlines are artistically offensive.",
-   titles:["Mozart Produces a Rap Song","Mozart in a Music Studio","Mozart Judges Modern Music"]},
+   engine:"Musical obsession. Ignores everything except rhythm.",
+   titles:["Mozart at a Skrillex DJ Set","Mozart as a Broadway Musical Director","Mozart Judging America's Got Talent"]},
   {tier:2,name:"Winston Churchill",emoji:"🎖",era:"1874–1965",
-   engine:"Every situation is historically significant. Always at his greatest hour, regardless of what the hour is.",
-   titles:["Churchill Gives a Locker Room Speech","Churchill in Customer Service","Churchill Writes Emails"]},
+   engine:"Every situation is historically significant. Always at his greatest hour.",
+   titles:["Churchill Giving a Super Bowl Halftime Speech","Churchill Dealing with an HR Complaint","Churchill on Hot Ones"]},
   {tier:2,name:"Aristotle",emoji:"📚",era:"384–322 BC",
-   engine:"Cannot act until the situation is formally classified into four categories. Always right, always three hours behind schedule.",
-   titles:["Aristotle Teaches Fitness","Aristotle Explains Love","Aristotle in a Debate Club"]},
+   engine:"Cannot act until the situation is formally classified. Always three hours behind schedule.",
+   titles:["Aristotle Ranking Marvel Movies on Twitch","Aristotle as an NFL Color Commentator","Aristotle Trying to Organize a Frat Party"]},
   {tier:2,name:"Nikola Tesla",emoji:"⚡",era:"1856–1943",
-   engine:"Obsessive, sleepless, 100 years ahead of everyone. Has already solved your problem — in 1899. Hates Edison.",
-   titles:["Tesla Competes with Modern Tech CEOs","Tesla Explains Wi-Fi","Tesla Gets Ignored Again"]},
+   engine:"Obsessive, sleepless, 100 years ahead. Has already solved your problem.",
+   titles:["Tesla Reacting to Elon Musk's Cybertruck","Tesla on a Blind First Date","Tesla Trying to Fix Hotel Wi-Fi"]},
   {tier:2,name:"Isaac Newton",emoji:"🍎",era:"1643–1727",
-   engine:"Everything is a law. Mildly irritated you didn't notice gravity before he explained it.",
-   titles:["Newton Discovers Gravity at the Gym","Newton in a Physics Class Today","Newton vs Modern Science"]},
+   engine:"Everything is a law. Mildly irritated you didn't notice gravity.",
+   titles:["Newton at a WWE Wrestling Match","Newton Auditing a Vegas Casino","Newton Playing Kerbal Space Program"]},
   {tier:2,name:"Galileo Galilei",emoji:"🔭",era:"1564–1642",
-   engine:"Correct about everything. Surrounded by people who disagree. Cannot stop being right.",
-   titles:["Galileo Argues with Flat Earthers","Galileo on Social Media","Galileo vs Internet Experts"]},
+   engine:"Correct about everything. Surrounded by people who disagree.",
+   titles:["Galileo Debating Flat Earthers on Reddit","Galileo Surviving Twitter Cancel Culture","Galileo at a SpaceX Launch"]},
   {tier:2,name:"Marie Curie",emoji:"⚗",era:"1867–1934",
-   engine:"Works through everything alone and is mildly puzzled others find this difficult. Casually handles radioactive materials.",
-   titles:["Marie Curie in a Lab Today","Curie Handles Workplace Safety","Curie Explains Radiation to Influencers"]},
+   engine:"Works through everything alone. Casually handles dangerous situations.",
+   titles:["Marie Curie on a Celebrity Baking Show","Marie Curie as a Chernobyl Inspector","Marie Curie Trying to Pass Airport Security"]},
   {tier:2,name:"Alexander the Great",emoji:"⚔",era:"356–323 BC",
-   engine:"Has never lost. Cannot conceive of 'no' as an outcome. Confused by situations that can't be solved by moving forward.",
-   titles:["Alexander Conquers a Startup","Alexander in Competitive Gaming","Alexander Hates Losing"]},
+   engine:"Has never lost. Cannot conceive of 'no' as an outcome.",
+   titles:["Alexander the Great Playing Call of Duty Warzone","Alexander as an Aggressive Investment Banker","Alexander at an All-You-Can-Eat Buffet"]},
   {tier:2,name:"Queen Elizabeth I",emoji:"👸",era:"1533–1603",
-   engine:"Absolute authority delivered with icy elegance. Has outlasted every threat by simply refusing to break.",
-   titles:["Elizabeth Runs Social Media","Elizabeth as a CEO","Elizabeth Deals with Drama"]},
+   engine:"Absolute authority delivered with icy elegance. Refuses to break.",
+   titles:["Queen Elizabeth I on The Bachelor","Queen Elizabeth I as a Vogue Editor-in-Chief","Elizabeth I Managing a Kardashian PR Crisis"]},
   {tier:2,name:"Genghis Khan",emoji:"🏹",era:"1162–1227",
-   engine:"Measures everything in territory. Has never heard 'no' and genuinely doesn't understand what it means.",
-   titles:["Genghis Khan Runs a Sales Team","Genghis in Corporate Takeovers","Genghis vs Office Politics"]},
+   engine:"Conquest mindset. Treats everything like war.",
+   titles:["Genghis Khan Playing Monopoly","Genghis Khan as a Corporate Acquisitions CEO","Genghis Khan at a Black Friday Sale"]},
   {tier:2,name:"Martin Luther King Jr.",emoji:"✊",era:"1929–1968",
-   engine:"Cannot communicate without making it a movement. Every injustice — even a minor one — gets the full speech.",
-   titles:["MLK Delivers a Modern Speech","MLK in a Debate","MLK Addresses Social Media"]},
+   engine:"Cannot communicate without making it a movement. Everything gets the full speech.",
+   titles:["MLK in a Chaotic Twitter Space","MLK Mediating a Family Feud","MLK at an Award Show Chaos"]},
   {tier:3,name:"Frida Kahlo",emoji:"🌺",era:"1907–1954",
-   engine:"Turns all suffering into unflinching art immediately. Everything personal becomes universal and published.",
-   titles:["Frida as a Content Creator","Frida Explores Identity Today","Frida on Instagram"]},
+   engine:"Turns all suffering into unflinching art immediately.",
+   titles:["Frida Kahlo as an Instagram Baddie","Frida Kahlo Judging Project Runway","Frida Kahlo Getting a Tattoo"]},
   {tier:3,name:"Vincent van Gogh",emoji:"🎨",era:"1853–1890",
-   engine:"Misunderstood in his time. Sells nothing. Everyone around him has worse art and more success. He is fine with this.",
-   titles:["Van Gogh Gets Art Critiqued Online","Van Gogh Sells NFTs","Van Gogh as a Streamer"]},
+   engine:"Misunderstood in his time. Everyone around him has worse art and more success.",
+   titles:["Van Gogh Minting Bored Ape NFTs","Van Gogh on a Reality TV Art Competition","Van Gogh Getting Roast Critiqued by TikTokers"]},
   {tier:3,name:"Charles Darwin",emoji:"🦎",era:"1809–1882",
-   engine:"Observes everything clinically. Cannot attend a social event without noting which behaviours aid survival.",
-   titles:["Darwin Explains Dating Evolution","Darwin Observes Humans Today","Darwin on Reality TV"]},
+   engine:"Observes everything clinically. Notes which behaviours aid survival.",
+   titles:["Charles Darwin on Who Wants to Be a Millionaire","Darwin on Love Island","Darwin Reviewing Modern Bodybuilders"]},
   {tier:3,name:"Plato",emoji:"🏺",era:"428–348 BC",
    engine:"Everything visible is a shadow of a more perfect version. Cannot just enjoy things.",
-   titles:["Plato Explains Reality TV","Plato in the Matrix","Plato Questions Everything"]},
+   titles:["Plato Trying to Explain the Matrix to Gen Z","Plato at a Virtual Reality Convention","Plato Reviewing an Escape Room"]},
   {tier:3,name:"Confucius",emoji:"☯",era:"551–479 BC",
    engine:"Responds to every question with a profound statement about a completely different topic.",
-   titles:["Confucius Gives Life Advice","Confucius on Social Media Etiquette","Confucius in Modern Culture"]},
+   titles:["Confucius as a Life Coach for YouTubers","Confucius Giving Advice on a Discord Server","Confucius Trying to Write a Fortune Cookie"]},
   {tier:3,name:"Joan of Arc",emoji:"⚜",era:"1412–1431",
-   engine:"Absolute conviction. Treats all modern bureaucracy as the English army. Will not be moved.",
-   titles:["Joan Leads a Team Project","Joan in Competitive Sports","Joan Faces Criticism Online"]},
+   engine:"Absolute conviction. Treats all modern bureaucracy as the English army.",
+   titles:["Joan of Arc Leading a Paintball Team","Joan of Arc at High School Debate Nationals","Joan of Arc Playing World of Warcraft"]},
   {tier:3,name:"Sigmund Freud",emoji:"🛋",era:"1856–1939",
-   engine:"Diagnoses everyone within 90 seconds. Everything is about the unconscious, the mother, or repression.",
-   titles:["Freud Analyzes Your Texts","Freud on Dating Apps","Freud Diagnoses Everyone"]},
+   engine:"Diagnoses everyone within 90 seconds. Everything is about the unconscious.",
+   titles:["Freud Analyzing a Kardashian Family Dinner","Freud as a Tinder Profile Consultant","Freud on a True Crime Podcast"]},
   {tier:3,name:"Karl Marx",emoji:"✊",era:"1818–1883",
-   engine:"Sees every modern system as capitalism in a new costume. Cannot have a casual conversation about anything.",
-   titles:["Marx in Corporate America","Marx Explains Billionaires","Marx on Hustle Culture"]},
+   engine:"Sees every modern system as capitalism in a new costume.",
+   titles:["Karl Marx Working at an Amazon Fulfillment Center","Karl Marx at a Billionaire Networking Event","Karl Marx Reviewing Hustle Culture TikToks"]},
   {tier:3,name:"Pablo Picasso",emoji:"🖼",era:"1881–1973",
-   engine:"Sees reality differently from everyone and considers this everyone else's problem, not his.",
-   titles:["Picasso Designs Modern Logos","Picasso in Graphic Design","Picasso Confuses Everyone"]},
+   engine:"Sees reality differently from everyone and considers this everyone else's problem.",
+   titles:["Picasso Designing a Modern Corporate Logo","Picasso as a Graphic Designer on Fiverr","Picasso Reviewing AI Art"]},
   {tier:3,name:"Ludwig van Beethoven",emoji:"🎻",era:"1770–1827",
-   engine:"Composed his greatest work while deaf. Treats all modern audio as an insult to what sound could be.",
-   titles:["Beethoven Hears Modern Music","Beethoven Produces Beats","Beethoven in a Studio Session"]}
+   engine:"Composed his greatest work while deaf. Treats all modern audio as an insult.",
+   titles:["Beethoven Testing Noise-Canceling Headphones","Beethoven Producing a Rap Beat","Beethoven at a Heavy Metal Concert"]}
 ];
 
 let libCurrentTier = 'all';
@@ -906,30 +940,43 @@ function buildLibrary() {
   });
   list.innerHTML = filtered.length ? '' : '<p class="sb-empty">No matches</p>';
   filtered.forEach((l,i) => {
-    const id = 'lib_' + l.name.replace(/\s+/g,'_');
     const div = document.createElement('div');
     div.className = 'lib-leg';
     div.innerHTML = `
-      <div class="lib-leg-head" onclick="toggleLib('${id}')">
+      <div class="lib-leg-head" onclick="openLibModal('${l.name.replace(/'/g,"\\'")}')">
         <span class="lib-leg-emoji">${l.emoji}</span>
         <div class="lib-leg-info">
           <div class="lib-leg-name">${l.name}</div>
           <div class="lib-leg-tier">Tier ${l.tier} · ${l.era}</div>
         </div>
-        <span class="lib-chev" id="chev_${id}">▾</span>
-      </div>
-      <div class="lib-titles" id="titles_${id}">
-        ${l.titles.map(t => `<button class="lib-title-btn" onclick="pickTitle('${l.name.replace(/'/g,"\'")}','${t.replace(/'/g,"\'")}')">${t}</button>`).join('')}
       </div>`;
     list.appendChild(div);
   });
 }
 
-function toggleLib(id) {
-  const body = document.getElementById('titles_' + id);
-  const chev = document.getElementById('chev_' + id);
-  const open = body.classList.toggle('open');
-  chev.classList.toggle('open', open);
+function openLibModal(name) {
+  const l = LIBRARY.find(x => x.name === name);
+  if (!l) return;
+  
+  $('libModalHead').innerHTML = `
+    <div style="font-size:36px;line-height:1">${l.emoji}</div>
+    <div>
+      <h2 style="margin:0;font-size:24px;letter-spacing:1px;font-family:var(--disp);color:var(--text);">${l.name}</h2>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-top:2px;">Tier ${l.tier} · ${l.era}</div>
+    </div>
+  `;
+  
+  $('libModalEngine').innerHTML = `<strong style="color:var(--text)">Engine:</strong> ${l.engine}`;
+  
+  $('libModalTitles').innerHTML = l.titles.map(t => 
+    `<button class="lib-title-btn" onclick="pickTitle('${l.name.replace(/'/g,"\\'")}','${t.replace(/'/g,"\\'")}')">${t}</button>`
+  ).join('');
+  
+  $('libModal').classList.add('open');
+}
+
+function closeLibModal() {
+  $('libModal').classList.remove('open');
 }
 
 function filterTier(tier, btn) {
@@ -945,6 +992,7 @@ function filterLib() {
 }
 
 function pickTitle(legendName, titleText) {
+  closeLibModal();
   // Switch to custom panel, pre-fill fields, show ready state
   sbMode('custom', document.querySelectorAll('.sbm')[0]);
   $('sideInp').value = legendName;
@@ -1075,11 +1123,6 @@ function googleAuth() {
 
 /* ════════════════════════════════════════════
    CLAUDE API CALL
-   — matches TradeIQ pattern exactly:
-     • key from sessionStorage
-     • anthropic-dangerous-direct-browser-access header (CORS fix)
-     • anthropic-version header
-     • try/catch with typed errors
 ════════════════════════════════════════════ */
 function getKey() {
   return sessionStorage.getItem('lp_key') || $('claudeKey').value.trim();
@@ -1096,7 +1139,7 @@ async function callClaude(userPrompt, systemPrompt = '', maxTokens = 4096) {
       'Content-Type': 'application/json',
       'x-api-key': key,
       'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'   // ← CORS fix
+      'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
@@ -1151,22 +1194,27 @@ async function fire() {
   S.topic  = topicClean;
   hide('pairSec'); hide('outEl');
 
-  // Check if the topic looks like a pre-picked library title (contains spaces, reads like a title)
+  // Check if the topic looks like a pre-picked library title
   const isLibraryTitle = topicClean.length > 8 && !topicClean.toLowerCase().startsWith('the ') && topicClean.split(' ').length >= 3;
   S.libraryTitle = isLibraryTitle ? topicClean : '';
 
-  load(true, isLibraryTitle ? `Generating "${topicClean}"...` : `Scouting the wrong rooms for ${val}...`);
+  load(true, isLibraryTitle ? `Generating "${topicClean}"...` : `Scouting the high-viral wrong rooms for ${val}...`);
   $('fireBtn').disabled = true;
 
   const topicLine = S.libraryTitle
     ? `EXACT VIDEO CONCEPT: "${S.libraryTitle}" — generate 5 pairing variations that fit this exact concept, all in second-person YOU format. The first pairing must match the title most directly.`
     : topicClean
-    ? `The user has suggested this topic/setting: "${topicClean}". Generate pairings around this theme and 4 additional creative ones.`
-    : `Generate 5 wildly creative pairings across different categories.`;
+    ? `The user has suggested this environment: "${topicClean}". Generate pairings around this theme and 4 additional high-viral ones.`
+    : `Generate 5 wildly creative, high-pressure pairings across different high-viral categories.`;
 
   try {
     const raw = await callClaude(
 `You are an elite YouTube content strategist for the viral comedy series "Out of Context Legends / Legends Wrong Room."
+
+CRITICAL RULE — CHARACTER + ENVIRONMENT + PRESSURE = VIRAL CONTENT:
+Instead of boring settings, you MUST place the legend in HIGH-VIRAL ENVIRONMENTS (places with energy, money, pressure, or chaos).
+Examples: Wall Street trading floor, Las Vegas casino, Silicon Valley pitch room, VIP nightclub, Military bootcamp, Emergency room, Group project meltdown, HR meeting, TikTok live, NBA locker room, Award show chaos, etc.
+What would the legend misunderstand in this specific high-pressure environment based on their core traits?
 
 CRITICAL FORMAT RULE — SECOND-PERSON IMMERSION:
 All hooks and titles use "YOU" framing — the viewer IS the legend.
@@ -1191,7 +1239,7 @@ Return ONLY valid JSON — no markdown, no preamble:
   ]
 }
 
-Generate exactly 5 pairings. Use the character's REAL documented personality traits. Settings: sport, podcast, dating/reality TV, business/startup, courtroom, cooking show, hospital, Wall Street, TED talk, job interview, social media, classroom. Each needs: a YOU-framed title, a specific comedic engine (exact trait vs exact setting demand), and a second-person hook sentence.`,
+Generate exactly 5 pairings. Use the character's REAL documented personality traits. Each needs: a YOU-framed title, a specific comedic engine (exact trait vs exact setting demand), and a second-person hook sentence.`,
       '', 900
     );
 
@@ -1258,52 +1306,49 @@ This applies to EVERY line of short_script and long_script. No exceptions.
 NARRATION FORMAT — MANDATORY — READ FIRST
 ══════════════════════════════════════════
 
-Both short_script and long_script MUST use SECOND-PERSON IMMERSION.
-Study these reference transcripts and match their pacing and bite EXACTLY:
+Both short_script and long_script MUST be naturally paced for 2-second visual cuts.
+Do NOT include timestamps. Do NOT include visual directions or brackets. Write ONLY the spoken script.
+To force a 2-second editing pace, you must use EXTREMELY SHORT SENTENCES (4-7 words max) separated by hard punctuation (periods).
 
-REFERENCE A — "What if you had a flamethrower in the ice age?"
-"Day one, you wake up buried in snow, glaciers towering in the distance, mammoths moving across the valley like tanks. The cold hits instantly, frost locking your lashes together, ice cracking along your cheekbones. You reach down and realize you're holding a flamethrower. Just then, a woolly mammoth decides you look approachable. You decide otherwise. 10 minutes later, you're eating mammoth steak over open fire. Not bad, actually. Day three. A nearby tribe watches you cook meat without freezing it first. They've been chewing dried strips like leather. You show them controlled heat. The oldest hunter tries it, nods once. That's ice age approval."
-
-REFERENCE B — "What if you were a modern soldier in the Aztec Empire?"
-"Day one, you wake up in full special forces gear, rifle across your chest. You sit up and the horizon steals your breath. A city rises from a lake, pyramids slicing into a perfect blue sky. Day three, you walk into the marketplace. Obsidian blades sharper than steel, gold stacked on woven mats. Then the crowd parts. Eagle warriors, feathered helmets shaped like open beaks. One stares at your gear and laughs. He draws his blade. You draw something louder. The sound rips across the canals and the entire plaza falls silent."
+REFERENCE PACING (Read the rhythm):
+Day one. You wake up in snow. Glaciers tower in the distance. Mammoths move like tanks. The cold hits instantly. Frost locks your lashes. You hold a flamethrower. A mammoth approaches. He thinks you're approachable. You decide otherwise. Ten minutes later. You eat a mammoth steak. Not bad, actually.
 
 10 MANDATORY RULES — APPLY TO EVERY SENTENCE:
 
-1. SECOND PERSON ALWAYS — "You" is the protagonist throughout. Never switch to third person.
-2. SENSORY ARRIVAL — Every Day starts with a physical sensation before any plot. Cold. Smell. Sound. Weight. Body arrives before story.
-3. SHORT SENTENCES — Hard max 12 words. Most 5-8. One idea. Full stop. Next idea. Never compound.
-4. DEADPAN UNDERSTATEMENT — Huge events in tiny words. "You decide otherwise." "Not bad, actually." "That's [era] approval." Never oversell.
-5. NO DIALOGUE TAGS — No "he said" / "you said". If the legend speaks, write it bare: He looks at you. "Name your enemies." Not: He says "Name your enemies."
-6. REACTION MIRROR — Every 2-3 beats, one person from that world reacts to what you've done. One person. One gesture or line. Shows the world's contrast.
-7. DAY ENDING = IMAGE — End each day section on a visual outcome, not a punchline. Something happening. Something changing. Never a joke button.
-8. FINAL VERDICT — Last sentence of entire script sounds like a historical record. Calm. Final. Slightly absurd. "Nobody questions the Emperor." "History has not corrected him."
-9. GOLDEN LINE — One sentence in the script that works alone as a quote — sounds accidentally profound and true in real life. Build to it.
-10. THE LEGEND IS NEVER CONFUSED — They are always right. The world is always wrong. Their logic is internally consistent throughout.
+1. 2-SECOND PACING — Hard max 4-7 words per sentence. One quick idea. Full stop. Next idea.
+2. NO EXTRA TEXT — No timestamps, no visual cues, no bracketed directions. Just the raw spoken script.
+3. SECOND PERSON ALWAYS — "You" is the protagonist throughout. Never switch to third person.
+4. SENSORY ARRIVAL — Day 1 starts with a physical sensation. Cold. Smell. Weight.
+5. DEADPAN UNDERSTATEMENT — Huge events in tiny words. "You decide otherwise." Never oversell.
+6. NO DIALOGUE TAGS — No "he said" / "you said". If they speak, write it bare: He looks at you. "Name your enemies."
+7. REACTION MIRROR — Every few lines, one person from that world reacts to you. One gesture.
+8. DAY ENDING = IMAGE — End each day section on a visual outcome described in words, not a punchline.
+9. FINAL VERDICT — Last line sounds like a historical record. Calm. Final.
+10. THE LEGEND IS NEVER CONFUSED — They are always right. The world is wrong.
 
 SHORT FORM STRUCTURE (Day 1, Day 3, Day 7):
-- Hook: "What if [legend] [scenario]?" One sentence. Lands alone.
-- Day One: 3-4 sentences. Sensory landing. First contact. One absurd action. Deadpan reaction.
-- Day Three: 3-4 sentences. The world notices. Reaction mirror. Quiet shift.
-- Day Seven: 4-5 sentences. World has changed. Golden line. Final verdict as absolute last sentence.
-- Total: ~180-220 words. Every word earns its place.
+- Hook: "What if you were [legend] [scenario]?"
+- Day One: Sensory landing. First contact. One absurd action. Deadpan reaction.
+- Day Three: The world notices. Reaction mirror.
+- Day Seven: World shifted. Golden line. Final verdict as last line.
 
 LONG FORM STRUCTURE (Day 1, 3, 5, 7, 10):
-- Day One: 6-8 sentences. Full sensory arrival. First contact with legend. First absurd action resolved with deadpan.
-- Day Three: 6-8 sentences. World reacts. Legend causes one permanent change to the setting. Reaction mirror — one bystander, one gesture.
-- Day Five: 8-10 sentences. Escalation. Unintended consequence of legend's instincts. Something in setting breaks or transforms. You try to explain something modern. They reframe it in their own terms.
-- Day Seven: 8-10 sentences. You stop resisting. Dynamic shifts. Legend says something that accidentally changes how you see your own life. GOLDEN LINE lands here.
-- Day Ten: 6-8 sentences. Final image. World visibly different. Legend completely unfazed. You are not who you were on Day One. FINAL VERDICT as absolute last sentence.
+- Day One: Full sensory arrival, first contact, deadpan understatement.
+- Day Three: World reacts. Permanent change to setting.
+- Day Five: Escalation. Unintended consequence. You explain, they reframe.
+- Day Seven: You stop resisting. GOLDEN LINE lands here.
+- Day Ten: Final image. Legend unfazed. FINAL VERDICT as absolute last line.
 
 ══════════════════════════════════════════
 
 {
-  "short_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[3-4 punchy sentences matching reference pacing — sensory, action, deadpan]\\n\\nDay Three.\\n[3-4 sentences — world reacts, one reaction mirror beat]\\n\\nDay Seven.\\n[4-5 sentences — world shifted, golden line embedded, final verdict as last sentence]",
+  "short_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[Extremely short sentences. 4-7 words max. Full stops.]\\n\\nDay Three.\\n[Extremely short sentences. 4-7 words max. Full stops.]... etc",
 
-  "golden_line": "The setup sentence(s) + the golden line itself. The golden line must work completely alone with zero context — sounds accidentally profound in real life.",
+  "golden_line": "The setup sentence(s) + the golden line itself. The golden line must work completely alone with zero context.",
 
-  "hook_analysis": "3-4 sentences: what the opening hook plants in the viewer's brain in the first 2 seconds. Why the second-person 'you' prevents scrolling. What emotion the day-arc creates that drives through to Day Seven.",
+  "hook_analysis": "3-4 sentences: what the opening hook plants in the viewer's brain in the first 2 seconds. Why the second-person 'you' prevents scrolling.",
 
-  "long_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[6-8 sentences — full sensory arrival, first contact, first absurd action, deadpan understatement]\\n\\nDay Three.\\n[6-8 sentences — world reacts, permanent change to setting, reaction mirror]\\n\\nDay Five.\\n[8-10 sentences — escalation, unintended consequence, you try to explain something modern, legend reframes it perfectly wrong]\\n\\nDay Seven.\\n[8-10 sentences — you stop resisting, dynamic shifts, GOLDEN LINE lands here]\\n\\nDay Ten.\\n[6-8 sentences — final image, world different, legend unfazed, you changed, FINAL VERDICT as last sentence]",
+  "long_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[Extremely short sentences. 4-7 words max. Full stops.]\\n\\nDay Three.\\n[Extremely short sentences. 4-7 words max. Full stops.]... etc",
 
   "seo_titles": "TITLE A — What if format, keywords first, under 60 chars\\nTITLE B — Outcome first curiosity gap\\nTITLE C — Shorts emoji lead, under 40 chars\\nRECOMMENDATION: which to test first and why",
 
@@ -1388,6 +1433,7 @@ function hx(s) {
 
 function legendEmoji(n) {
   const map = {
+    'musk':'🚀','trump':'🏢','kanye':'🎤','beast':'💸','taylor':'🎸','swift':'🎸','lebron':'🏀','ronaldo':'⚽',
     'mozart':'🎵','einstein':'🧠','socrates':'🏛','aristotle':'📚',
     'churchill':'🎖','cleopatra':'👑','newton':'🍎','darwin':'🦎',
     'tesla':'⚡','curie':'⚗','napoleon':'🎖','shakespeare':'✍',
@@ -1453,7 +1499,7 @@ async function exportSheets() {
     let sid = sessionStorage.getItem('lp_sid') || $('sheetId').value.trim();
 
     if (!sid) {
-      const cr = await gCall('https://sheets.googleapis.com/v4/spreadsheets', {
+      const cr = await gCall('[https://sheets.googleapis.com/v4/spreadsheets](https://sheets.googleapis.com/v4/spreadsheets)', {
         method: 'POST',
         body: JSON.stringify({
           properties: { title: `Legends Pipeline — ${S.legend}` },
@@ -1528,7 +1574,7 @@ async function exportDrive() {
     form.append('metadata', new Blob([JSON.stringify({ name: fname, mimeType: 'text/plain' })], { type: 'application/json' }));
     form.append('file', new Blob([txt], { type: 'text/plain' }));
 
-    const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    const r = await fetch('[https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart](https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart)', {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + S.gToken },
       body: form
