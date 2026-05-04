@@ -168,7 +168,7 @@ body::after{
 
 /* ─── SIDEBAR ─────────────────────────────── */
 .sidebar{
-  width:264px;flex-shrink:0;background:var(--panel);
+  width:320px;flex-shrink:0;background:var(--panel);
   border-right:1px solid var(--b2);
   position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;
   padding:20px 0;
@@ -205,6 +205,27 @@ body::after{
 .hist-t{font-size:12px;font-weight:600;color:var(--text)}
 .hist-s{font-size:10px;color:var(--t3);margin-top:2px;font-family:var(--mono)}
 .sb-empty{font-size:12px;color:var(--t3);font-family:var(--mono)}
+
+/* ─── CLAUDE LEGENDS STYLING ─────────────── */
+.claude-group { margin-bottom: 12px; }
+.claude-hdr {
+  font-family: var(--disp); font-size: 20px; letter-spacing: 1px; color: var(--gold);
+  padding: 8px 12px; background: var(--bg2); border: 1px solid var(--b2);
+  border-radius: var(--r); cursor: pointer; display: flex; justify-content: space-between;
+  align-items: center; transition: all .2s;
+}
+.claude-hdr:hover { background: var(--panel); border-color: var(--goldbrd); }
+.claude-titles { display: none; padding: 6px 0; gap: 4px; flex-direction: column; }
+.claude-titles.open { display: flex; }
+.claude-title-btn {
+  text-align: left; padding: 10px 12px; background: var(--bg); border: 1px solid var(--b1);
+  border-radius: var(--r); font-family: var(--sans); font-size: 12px; color: var(--text);
+  cursor: pointer; transition: all .15s; line-height: 1.4;
+}
+.claude-title-btn:hover {
+  background: var(--bg2); border-color: var(--blue); color: #fff;
+  transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
 
 /* ─── CONTENT ─────────────────────────────── */
 .content{flex:1;padding:24px;min-width:0}
@@ -425,6 +446,20 @@ body::after{
 .lib-leg-tier{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
 .lib-chev{font-size:11px;color:var(--t3);transition:transform .18s}
 .lib-chev.open{transform:rotate(180deg)}
+
+/* sidebar mode tabs */
+.sb-mode{display:flex;gap:2px;margin-bottom:14px}
+.sbm{
+  flex:1;background:none;border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 0;font-size:11px;font-weight:600;letter-spacing:.04em;
+  color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--sans);
+}
+.sbm:hover{color:var(--text);border-color:var(--b3)}
+.sbm.on{background:var(--golddim);border-color:var(--goldbrd);color:var(--gold)}
+.sb-panel{display:none}
+.sb-panel.on{display:block}
+
+/* Fix library titles button inside openLibModal */
 .lib-titles{
   display:none; background:var(--bg); padding:8px; gap:6px;
   border-top:1px solid var(--b1); box-shadow:inset 0 4px 6px rgba(0,0,0,0.15);
@@ -443,18 +478,6 @@ body::after{
 .lib-title-btn::before{
   content:"🔥"; font-size:14px; margin-right:10px; margin-top:1px; flex-shrink:0; opacity:0.9;
 }
-
-/* sidebar mode tabs */
-.sb-mode{display:flex;gap:2px;margin-bottom:14px}
-.sbm{
-  flex:1;background:none;border:1px solid var(--b2);border-radius:var(--r);
-  padding:6px 0;font-size:11px;font-weight:600;letter-spacing:.04em;
-  color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--sans);
-}
-.sbm:hover{color:var(--text);border-color:var(--b3)}
-.sbm.on{background:var(--golddim);border-color:var(--goldbrd);color:var(--gold)}
-.sb-panel{display:none}
-.sb-panel.on{display:block}
 </style>
 </head>
 <body>
@@ -570,6 +593,7 @@ body::after{
       <div class="sb-mode">
         <button class="sbm on" onclick="sbMode('custom',this)">Custom</button>
         <button class="sbm" onclick="sbMode('library',this)">Library</button>
+        <button class="sbm" onclick="sbMode('claude',this)">Claude</button>
         <button class="sbm" onclick="sbMode('history',this)">History</button>
       </div>
 
@@ -596,6 +620,12 @@ body::after{
         <div class="lib-list" id="libList"></div>
       </div>
 
+      <!-- CLAUDE LEGENDS PANEL -->
+      <div class="sb-panel" id="sbClaude">
+        <div class="sb-lbl" style="margin-bottom: 12px;">Top 100 Viral Concepts</div>
+        <div id="claudeList" style="max-height:calc(100vh - 200px);overflow-y:auto;padding-right:4px;"></div>
+      </div>
+
       <!-- HISTORY PANEL -->
       <div class="sb-panel" id="sbHistory">
         <div class="hist-list" id="histList">
@@ -610,16 +640,16 @@ body::after{
 
     <div class="callout show" id="callout">
       <h3>⚙ Quick Start</h3>
-      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Claude API key → Save. Then pick a legend and a high-viral environment (e.g. Vegas, Wall St) and hit Generate.</p>
+      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Claude API key → Save. Then pick a legend from the Library/Claude tabs to instantly generate a package, or use Custom to scout ideas.</p>
     </div>
 
     <div class="hero">
       <p class="hero-eye">Second-Person Immersion · High-Viral Chaos Engine</p>
       <h1 class="hero-h">LEGENDS<br><span>WRONG ROOM</span></h1>
-      <p class="hero-p">Pick a legend + high-viral environment + pressure. AI suggests 5 wrong-era collisions. Pick one. Get second-person Day 1→10 scripts, full SEO, and a MrBeast-grade thumbnail brief.</p>
+      <p class="hero-p">Pick a legend + high-viral environment + pressure. AI builds the full second-person Day 1→10 scripts, SEO, and MrBeast-grade thumbnail brief.</p>
       <div class="hero-stats">
-        <div class="hs"><div class="hs-n">60</div><div class="hs-l">Environments</div></div>
-        <div class="hs"><div class="hs-n">5</div><div class="hs-l">Pairings</div></div>
+        <div class="hs"><div class="hs-n">100</div><div class="hs-l">Curated Titles</div></div>
+        <div class="hs"><div class="hs-n">10</div><div class="hs-l">Eras</div></div>
         <div class="hs"><div class="hs-n">∞</div><div class="hs-l">Legends</div></div>
         <div class="hs"><div class="hs-n">1K%</div><div class="hs-l">CTR Target</div></div>
       </div>
@@ -807,12 +837,21 @@ body::after{
 
 <script>
 /* ════════════════════════════════════════════
-   STATE
+   STATE & DATA
 ════════════════════════════════════════════ */
+const CLAUDE_100_TITLES = [
+  { legend: "Elon Musk", titles: ["Elon Musk Tries to Build a Rocket in Ancient Egypt (They Worship Him)", "Elon Musk Crashes the Roman Senate and Gets Immediately Exiled", "Elon Musk Pitches the Internet to Ancient Babylon — It Does Not Go Well", "Elon Musk in the Library of Alexandria: \"I Need Wi-Fi\"", "Elon Musk Walks Into a Medieval Alchemy Lab and Takes Over", "Elon Musk Buys the Roman Colosseum and Turns It Into a Tesla Showroom", "Elon Musk in Ancient Greece Trying to Explain Twitter to Socrates", "Elon Musk as an Egyptian Pharaoh Designing Pyramids With AI", "Elon Musk vs Julius Caesar: Who Actually Built More?", "Elon Musk in Ancient China Pitching the First Electric Chariot"] },
+  { legend: "Donald Trump", titles: ["Trump Gives a Speech in the Roman Senate — The Senators Walk Out", "Trump Tries to Build a Wall Around Ancient Rome (Rome Says No)", "Trump Negotiates With the Pharaoh Over Pyramid Construction Costs", "Trump at the French Revolution Tribunal: \"This Is a Witch Hunt\"", "Trump Interrupts the Spartan King Mid-Battle to Declare Victory", "Trump in Medieval Court: \"I Have the Best Knights, Maybe Ever\"", "Trump Tries to Buy Ancient Athens. Athens Is Not for Sale.", "Trump at the Ancient Olympics: Claims He Would Have Won Every Event", "Trump vs Caesar: Who Has the Better Betrayal Story?", "Trump in the Viking Age: \"The Greatest Longships in History — Mine\""] },
+  { legend: "Kanye West", titles: ["Kanye West Interrupts a Greek Philosophy Debate to Drop an Album", "Kanye West Gets Kicked Out of the Roman Senate in 4 Minutes", "Kanye West Walks Into a Medieval Coronation and Says \"I Should Be King\"", "Kanye West at the Temple of Zeus: \"I Am a God\" — Zeus Responds", "Kanye West Tries to Redesign Ancient Egypt's Aesthetic", "Kanye West in Ancient Sparta: Eliminated Day 1", "Kanye West vs Socrates: Philosophy Battle That Breaks Reality", "Kanye West Releases an Album in Ancient Rome — Critics Destroy It", "Kanye West Interrupts the Trojan War to Talk About His Shoes", "Kanye West Tries to Become Pharaoh. It Lasts 3 Days."] },
+  { legend: "MrBeast", titles: ["MrBeast Funds the Colosseum Games — Last Gladiator Wins $1 Million", "MrBeast Gives Away Gold to Every Worker at the Pyramids", "MrBeast Sponsors the Trojan War and It Immediately Gets Out of Hand", "MrBeast Rebuilds the Library of Alexandria in 24 Hours", "MrBeast vs Ancient Olympics: Can He Win Every Event?", "MrBeast Opens a Medieval Food Bank — The Kingdom Loses Its Mind", "MrBeast Challenges 100 Roman Soldiers — Loser Buys the Empire", "MrBeast Tries to Buy Ancient Egypt. The Pharaoh Doesn't Know What Money Is.", "MrBeast Hires Every Unemployed Person in Ancient Rome", "MrBeast Last to Leave Ancient Greece Gets 1 Million Gold Coins"] },
+  { legend: "Taylor Swift", titles: ["Taylor Swift Performs at a Medieval Royal Court — The King Cries", "Taylor Swift Writes a Breakup Song About Julius Caesar", "Taylor Swift at the Ancient Olympic Festival — First Woman on Stage", "Taylor Swift in the Greek Gods' Court: Aphrodite Is Threatened", "Taylor Swift vs Cleopatra: The Ultimate Feminine Power Battle", "Taylor Swift Crashes a Viking Feast and Somehow Takes Over", "Taylor Swift Writing Songs About the Trojan War — Achilles Is Upset", "Taylor Swift as a Roman Senator's Daughter Who Runs the Senate", "Taylor Swift's Ancient Egypt Era Is Her Most Powerful Yet", "Taylor Swift at the Court of King Arthur — Merlin Takes Notes"] },
+  { legend: "LeBron James", titles: ["LeBron James Enters the Roman Colosseum — Every Gladiator Quits", "LeBron James in Spartan Training — He Finishes First by Two Days", "LeBron James as Ancient War General — He Actually Wins", "LeBron James at the Ancient Olympics: Every Record Shattered", "LeBron vs Achilles: Who Actually Is the Greatest Warrior?", "LeBron James Leads a Viking Raid. It Ends Very Differently.", "LeBron James in the Roman Senate: \"I'm Taking My Talents to Carthage\"", "LeBron James Builds a Basketball Court in Ancient Egypt", "LeBron James vs the Egyptian Army in a Leadership Challenge", "LeBron James Opens a Training Academy in Ancient Greece. Greece Wins the Next War."] },
+  { legend: "Cristiano Ronaldo", titles: ["Ronaldo at the Ancient Olympics — Judges Don't Know What to Do", "Ronaldo vs Roman Gladiators in the Colosseum — He Wins With Skills", "Ronaldo in Spartan Endurance Training — The Spartans Ask for Tips", "Ronaldo on the Trojan War Battlefield: Fastest Man in Any Era", "Ronaldo vs Achilles: A Sprint That Changes Ancient History", "Ronaldo Introduces Football to Ancient Rome — It Collapses Society", "Ronaldo in Medieval Tournament — Knights Retire on the Spot", "Ronaldo Scores a Freekick at the Colosseum — The Crowd Goes Insane", "Ronaldo vs Messi: But Make It Ancient Greece", "Ronaldo Trains the Spartan Army. Sparta Conquers Everything."] },
+  { legend: "Socrates", titles: ["Socrates Gets on a Podcast and the Host Has a Breakdown", "Socrates in a Corporate Boardroom: He Questions Everything, Gets Fired", "Socrates in a Job Interview — Never Answers a Single Question", "Socrates on TikTok: Every Comment Is Another Question", "Socrates in a Group Chat at 2am — Nobody Sleeps", "Socrates vs a Modern Lawyer: The Judge Quits", "Socrates Tries to Order at a Coffee Shop — The Line Is 40 People Deep", "Socrates vs Kanye West: The Debate That Breaks Philosophy", "Socrates Gets Banned from Every Social Media Platform", "Socrates in Therapy — The Therapist Needs Therapy After"] },
+  { legend: "Leonardo da Vinci", titles: ["Da Vinci Joins a Modern Tech Startup — He Redesigns Everything in a Week", "Da Vinci Overengineers the Egyptian Pyramids — They Can't Be Built", "Da Vinci Walks Into Ancient Babylon and Invents 40 Things in a Day", "Da Vinci vs Elon Musk: Who Actually Builds More?", "Da Vinci in the Roman Senate Trying to Explain Aviation", "Da Vinci Opens a Medieval Workshop — He Patents 200 Things", "Da Vinci in a Modern Art Museum — Hates Everything He Sees", "Da Vinci Designs Ancient Rome's Infrastructure — It Still Stands Today", "Da Vinci in Ancient China: He and Sun Tzu Build an Unstoppable Army", "Da Vinci Gets an iPhone — He Rebuilds It From Scratch in Better"] },
+  { legend: "Julius Caesar", titles: ["Caesar Walks Into a Modern Corporate Boardroom — Et Tu, CFO?", "Caesar vs Trump: Two Men Who Think They're Emperors", "Caesar in Silicon Valley: He Takes Over Three Companies in One Week", "Caesar Tries Democracy Again — It Goes Exactly the Same Way", "Caesar in a Modern Senate: \"I've Seen This Before\" (He Has)", "Caesar vs Elon Musk: Who Built the Greater Empire?", "Caesar Joins a Modern Political Campaign — Wins in a Landslide Then Gets Betrayed", "Caesar in a Medieval Kingdom: He Runs It Better in 48 Hours", "Caesar Gets on Twitter — Banned in 6 Hours", "Caesar Starts a Podcast About Leadership. Episode 1: \"Never Trust Your Friends\""] }
+];
 
-/* ════════════════════════════════════════════
-   LEGEND LIBRARY — 30 legends, high-viral titles
-════════════════════════════════════════════ */
 const LIBRARY = [
   {tier:1,name:"Elon Musk",emoji:"🚀",era:"Present",
    engine:"Innovation trapped in old worlds. Over-optimizing ancient systems.",
@@ -828,108 +867,78 @@ const LIBRARY = [
    titles:["MrBeast Funding the Colosseum Games","MrBeast Giving Away Gold During Pyramid Construction","MrBeast Hosting Trojan War Giveaways"]},
   {tier:1,name:"Taylor Swift",emoji:"🎸",era:"Present",
    engine:"Emotion + storytelling = timeless crossover.",
-   titles:["Taylor Swift at a Medieval Royal Court","Taylor Swift in a Greek Mythology Storytelling Circle","Taylor Swift at a Royal Alliance Ceremony"]},
-  {tier:1,name:"LeBron James",emoji:"🏀",era:"Present",
-   engine:"Leadership + dominance in any system. The ultimate ancient general.",
-   titles:["LeBron James in the Colosseum","LeBron James in a Spartan Training System","LeBron James Leading a Tribal Battlefield Formation"]},
-  {tier:1,name:"Cristiano Ronaldo",emoji:"⚽",era:"Present",
-   engine:"Perfection + competition across eras. Flawless execution.",
-   titles:["Ronaldo in the Ancient Olympic Stadium","Ronaldo in Roman Gladiator Arena Trials","Ronaldo in a Medieval Jousting Tournament"]},
-  {tier:1,name:"Albert Einstein",emoji:"🧠",era:"1879–1955",
-   engine:"Overthinking, relativity. Too smart for simple situations.",
-   titles:["Einstein as a Grade 10 Physics Teacher","Einstein on the Joe Rogan Experience","Einstein Trying to Assemble IKEA Furniture"]},
-  {tier:1,name:"Napoleon Bonaparte",emoji:"🎖",era:"1769–1821",
-   engine:"Control, dominance, strategy. Tries to command uncontrollable systems.",
-   titles:["Napoleon as a US Marine Drill Instructor","Napoleon Playing Risk at Family Game Night","Napoleon as an NFL Head Coach"]},
-  {tier:1,name:"Cleopatra",emoji:"👑",era:"69–30 BC",
-   engine:"Charisma, power, seduction. Effortlessly dominates modern influencers.",
-   titles:["Cleopatra on Real Housewives of Beverly Hills","Cleopatra on the Met Gala Red Carpet","Cleopatra Running an OnlyFans Empire"]},
-  {tier:1,name:"Socrates",emoji:"🏛",era:"470–399 BC",
-   engine:"Questioning everything. Derails everything.",
-   titles:["Socrates on a Flat Earth Podcast","Socrates as a Comcast Customer Service Rep","Socrates at the DMV"]},
-  {tier:1,name:"Julius Caesar",emoji:"🦅",era:"100–44 BC",
-   engine:"Leadership, betrayal sensitivity. Sees 'betrayal' everywhere.",
-   titles:["Julius Caesar on Survivor","Julius Caesar During a Wall Street Mutiny","Julius Caesar in a Middle School Group Project"]},
-  {tier:1,name:"William Shakespeare",emoji:"✍",era:"1564–1616",
-   engine:"Cannot communicate in under 40 words. Tragedy lurks in every misread text.",
-   titles:["Shakespeare Ghostwriting Drake's Diss Tracks","Shakespeare as a Twitter Community Notes Mod","Shakespeare Trying to Write a TikTok Hook"]},
-  {tier:1,name:"Leonardo da Vinci",emoji:"🎨",era:"1452–1519",
-   engine:"Over-engineering genius. Builds too much.",
-   titles:["Da Vinci Pitching on Shark Tank","Da Vinci at a Silicon Valley Hackathon","Da Vinci as a Minecraft Speedrunner"]},
-  {tier:1,name:"Abraham Lincoln",emoji:"🎩",era:"1809–1865",
-   engine:"Resolves everything through principled patience. Cannot be bullied.",
-   titles:["Lincoln on a Real Housewives Reunion","Lincoln as an MMA Referee","Lincoln Trying to Survive Black Friday"]},
-  {tier:1,name:"George Washington",emoji:"🇺🇸",era:"1732–1799",
-   engine:"Constitutionally incapable of lying. Treats every group as a fledgling democracy.",
-   titles:["Washington Taking a YouTube Lie Detector Test","Washington as a Startup Founder Forced to Pivot","Washington at a Modern HOA Meeting"]},
-  {tier:1,name:"Wolfgang Amadeus Mozart",emoji:"🎵",era:"1756–1791",
-   engine:"Musical obsession. Ignores everything except rhythm.",
-   titles:["Mozart at a Skrillex DJ Set","Mozart as a Broadway Musical Director","Mozart Judging America's Got Talent"]},
-  {tier:2,name:"Winston Churchill",emoji:"🎖",era:"1874–1965",
-   engine:"Every situation is historically significant. Always at his greatest hour.",
-   titles:["Churchill Giving a Super Bowl Halftime Speech","Churchill Dealing with an HR Complaint","Churchill on Hot Ones"]},
-  {tier:2,name:"Aristotle",emoji:"📚",era:"384–322 BC",
-   engine:"Cannot act until the situation is formally classified. Always three hours behind schedule.",
-   titles:["Aristotle Ranking Marvel Movies on Twitch","Aristotle as an NFL Color Commentator","Aristotle Trying to Organize a Frat Party"]},
-  {tier:2,name:"Nikola Tesla",emoji:"⚡",era:"1856–1943",
-   engine:"Obsessive, sleepless, 100 years ahead. Has already solved your problem.",
-   titles:["Tesla Reacting to Elon Musk's Cybertruck","Tesla on a Blind First Date","Tesla Trying to Fix Hotel Wi-Fi"]},
-  {tier:2,name:"Isaac Newton",emoji:"🍎",era:"1643–1727",
-   engine:"Everything is a law. Mildly irritated you didn't notice gravity.",
-   titles:["Newton at a WWE Wrestling Match","Newton Auditing a Vegas Casino","Newton Playing Kerbal Space Program"]},
-  {tier:2,name:"Galileo Galilei",emoji:"🔭",era:"1564–1642",
-   engine:"Correct about everything. Surrounded by people who disagree.",
-   titles:["Galileo Debating Flat Earthers on Reddit","Galileo Surviving Twitter Cancel Culture","Galileo at a SpaceX Launch"]},
-  {tier:2,name:"Marie Curie",emoji:"⚗",era:"1867–1934",
-   engine:"Works through everything alone. Casually handles dangerous situations.",
-   titles:["Marie Curie on a Celebrity Baking Show","Marie Curie as a Chernobyl Inspector","Marie Curie Trying to Pass Airport Security"]},
-  {tier:2,name:"Alexander the Great",emoji:"⚔",era:"356–323 BC",
-   engine:"Has never lost. Cannot conceive of 'no' as an outcome.",
-   titles:["Alexander the Great Playing Call of Duty Warzone","Alexander as an Aggressive Investment Banker","Alexander at an All-You-Can-Eat Buffet"]},
-  {tier:2,name:"Queen Elizabeth I",emoji:"👸",era:"1533–1603",
-   engine:"Absolute authority delivered with icy elegance. Refuses to break.",
-   titles:["Queen Elizabeth I on The Bachelor","Queen Elizabeth I as a Vogue Editor-in-Chief","Elizabeth I Managing a Kardashian PR Crisis"]},
-  {tier:2,name:"Genghis Khan",emoji:"🏹",era:"1162–1227",
-   engine:"Conquest mindset. Treats everything like war.",
-   titles:["Genghis Khan Playing Monopoly","Genghis Khan as a Corporate Acquisitions CEO","Genghis Khan at a Black Friday Sale"]},
-  {tier:2,name:"Martin Luther King Jr.",emoji:"✊",era:"1929–1968",
-   engine:"Cannot communicate without making it a movement. Everything gets the full speech.",
-   titles:["MLK in a Chaotic Twitter Space","MLK Mediating a Family Feud","MLK at an Award Show Chaos"]},
-  {tier:3,name:"Frida Kahlo",emoji:"🌺",era:"1907–1954",
-   engine:"Turns all suffering into unflinching art immediately.",
-   titles:["Frida Kahlo as an Instagram Baddie","Frida Kahlo Judging Project Runway","Frida Kahlo Getting a Tattoo"]},
-  {tier:3,name:"Vincent van Gogh",emoji:"🎨",era:"1853–1890",
-   engine:"Misunderstood in his time. Everyone around him has worse art and more success.",
-   titles:["Van Gogh Minting Bored Ape NFTs","Van Gogh on a Reality TV Art Competition","Van Gogh Getting Roast Critiqued by TikTokers"]},
-  {tier:3,name:"Charles Darwin",emoji:"🦎",era:"1809–1882",
-   engine:"Observes everything clinically. Notes which behaviours aid survival.",
-   titles:["Charles Darwin on Who Wants to Be a Millionaire","Darwin on Love Island","Darwin Reviewing Modern Bodybuilders"]},
-  {tier:3,name:"Plato",emoji:"🏺",era:"428–348 BC",
-   engine:"Everything visible is a shadow of a more perfect version. Cannot just enjoy things.",
-   titles:["Plato Trying to Explain the Matrix to Gen Z","Plato at a Virtual Reality Convention","Plato Reviewing an Escape Room"]},
-  {tier:3,name:"Confucius",emoji:"☯",era:"551–479 BC",
-   engine:"Responds to every question with a profound statement about a completely different topic.",
-   titles:["Confucius as a Life Coach for YouTubers","Confucius Giving Advice on a Discord Server","Confucius Trying to Write a Fortune Cookie"]},
-  {tier:3,name:"Joan of Arc",emoji:"⚜",era:"1412–1431",
-   engine:"Absolute conviction. Treats all modern bureaucracy as the English army.",
-   titles:["Joan of Arc Leading a Paintball Team","Joan of Arc at High School Debate Nationals","Joan of Arc Playing World of Warcraft"]},
-  {tier:3,name:"Sigmund Freud",emoji:"🛋",era:"1856–1939",
-   engine:"Diagnoses everyone within 90 seconds. Everything is about the unconscious.",
-   titles:["Freud Analyzing a Kardashian Family Dinner","Freud as a Tinder Profile Consultant","Freud on a True Crime Podcast"]},
-  {tier:3,name:"Karl Marx",emoji:"✊",era:"1818–1883",
-   engine:"Sees every modern system as capitalism in a new costume.",
-   titles:["Karl Marx Working at an Amazon Fulfillment Center","Karl Marx at a Billionaire Networking Event","Karl Marx Reviewing Hustle Culture TikToks"]},
-  {tier:3,name:"Pablo Picasso",emoji:"🖼",era:"1881–1973",
-   engine:"Sees reality differently from everyone and considers this everyone else's problem.",
-   titles:["Picasso Designing a Modern Corporate Logo","Picasso as a Graphic Designer on Fiverr","Picasso Reviewing AI Art"]},
-  {tier:3,name:"Ludwig van Beethoven",emoji:"🎻",era:"1770–1827",
-   engine:"Composed his greatest work while deaf. Treats all modern audio as an insult.",
-   titles:["Beethoven Testing Noise-Canceling Headphones","Beethoven Producing a Rap Beat","Beethoven at a Heavy Metal Concert"]}
+   titles:["Taylor Swift at a Medieval Royal Court","Taylor Swift in a Greek Mythology Storytelling Circle","Taylor Swift at a Royal Alliance Ceremony"]}
 ];
 
 let libCurrentTier = 'all';
 let libCurrentSearch = '';
 
+let S = {
+  legend: '',
+  topic: '',
+  libraryTitle: '',
+  pairing: null,
+  data: {},
+  history: [],
+  gToken: null,
+  drawerOpen: false,
+  toastTimer: null
+};
+
+/* ════════════════════════════════════════════
+   INIT & CLAUDE LEGENDS BUILDER
+════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  const k = sessionStorage.getItem('lp_key');
+  const g = sessionStorage.getItem('lp_gid');
+  const s = sessionStorage.getItem('lp_sid');
+  if (k) { $('claudeKey').value = k; syncStatus(); }
+  if (g) $('gClientId').value = g;
+  if (s) $('sheetId').value = s;
+
+  buildClaudeLegends();
+});
+
+// Built using standard DOM methods to completely bypass HTML injection/escaping issues.
+function buildClaudeLegends() {
+  const container = $('claudeList');
+  container.innerHTML = '';
+
+  CLAUDE_100_TITLES.forEach((group, index) => {
+    const el = document.createElement('div');
+    el.className = 'claude-group';
+    
+    const hdr = document.createElement('div');
+    hdr.className = 'claude-hdr';
+    hdr.textContent = group.legend + ' ▾';
+    hdr.onclick = () => toggleClaudeList(index);
+    el.appendChild(hdr);
+
+    const titlesDiv = document.createElement('div');
+    titlesDiv.className = 'claude-titles';
+    titlesDiv.id = `claude-t-${index}`;
+
+    group.titles.forEach(t => {
+      const btn = document.createElement('div');
+      btn.className = 'claude-title-btn';
+      btn.textContent = t;
+      btn.onclick = () => fireDirect(group.legend, t);
+      titlesDiv.appendChild(btn);
+    });
+
+    el.appendChild(titlesDiv);
+    container.appendChild(el);
+  });
+}
+
+function toggleClaudeList(index) {
+  const list = $(`claude-t-${index}`);
+  list.classList.toggle('open');
+}
+
+/* ════════════════════════════════════════════
+   LIBRARY TAB LOGIC
+════════════════════════════════════════════ */
 function buildLibrary() {
   const list = $('libList');
   const q = libCurrentSearch.toLowerCase();
@@ -965,27 +974,28 @@ function openLibModal(name) {
       <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-top:2px;">Tier ${l.tier} · ${l.era}</div>
     </div>
   `;
-  
   $('libModalEngine').innerHTML = `<strong style="color:var(--text)">Engine:</strong> ${l.engine}`;
   
-  $('libModalTitles').innerHTML = l.titles.map(t => 
-    `<button class="lib-title-btn" onclick="pickTitle('${l.name.replace(/'/g,"\\'")}','${t.replace(/'/g,"\\'")}')">${t}</button>`
-  ).join('');
+  const titlesContainer = $('libModalTitles');
+  titlesContainer.innerHTML = '';
+  l.titles.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'lib-title-btn';
+    btn.textContent = t;
+    btn.onclick = () => pickTitle(l.name, t);
+    titlesContainer.appendChild(btn);
+  });
   
   $('libModal').classList.add('open');
 }
 
-function closeLibModal() {
-  $('libModal').classList.remove('open');
-}
-
+function closeLibModal() { $('libModal').classList.remove('open'); }
 function filterTier(tier, btn) {
   document.querySelectorAll('.tier-tab').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   libCurrentTier = tier;
   buildLibrary();
 }
-
 function filterLib() {
   libCurrentSearch = $('libSearch').value;
   buildLibrary();
@@ -993,68 +1003,31 @@ function filterLib() {
 
 function pickTitle(legendName, titleText) {
   closeLibModal();
-  // Switch to custom panel, pre-fill fields, show ready state
-  sbMode('custom', document.querySelectorAll('.sbm')[0]);
-  $('sideInp').value = legendName;
-  $('sideTopic').value = titleText;
-  $('sideInp').focus();
-  // Flash the generate button
-  const btn = $('fireBtn');
-  btn.style.background = 'var(--green)';
-  btn.textContent = '✓ Ready — hit Generate!';
-  setTimeout(() => {
-    btn.style.background = '';
-    btn.textContent = '🔥 GENERATE';
-  }, 2200);
+  fireDirect(legendName, titleText);
 }
 
 function sbMode(mode, btn) {
   document.querySelectorAll('.sbm').forEach(b => b.classList.remove('on'));
   if (btn) btn.classList.add('on');
   else {
-    const modeMap = {custom:0, library:1, history:2};
+    const modeMap = {custom:0, library:1, claude:2, history:3};
     document.querySelectorAll('.sbm')[modeMap[mode]]?.classList.add('on');
   }
-  ['sbCustom','sbLibrary','sbHistory'].forEach(id => {
+  ['sbCustom','sbLibrary','sbClaude','sbHistory'].forEach(id => {
     const el = $(id);
     if (el) el.classList.toggle('on', id === 'sb' + mode.charAt(0).toUpperCase() + mode.slice(1));
   });
   if (mode === 'library') buildLibrary();
 }
 
-let S = {
-  legend: '',
-  topic: '',
-  libraryTitle: '',
-  pairing: null,
-  data: {},
-  history: [],
-  gToken: null,
-  drawerOpen: false,
-  toastTimer: null
-};
-
 /* ════════════════════════════════════════════
-   INIT — restore session keys
-════════════════════════════════════════════ */
-window.addEventListener('load', () => {
-  const k = sessionStorage.getItem('lp_key');
-  const g = sessionStorage.getItem('lp_gid');
-  const s = sessionStorage.getItem('lp_sid');
-  if (k) { $('claudeKey').value = k; syncStatus(); }
-  if (g) $('gClientId').value = g;
-  if (s) $('sheetId').value = s;
-});
-
-/* ════════════════════════════════════════════
-   API DRAWER
+   API DRAWER LOGIC
 ════════════════════════════════════════════ */
 function toggleDrawer() {
   S.drawerOpen = !S.drawerOpen;
   $('apiDrawer').classList.toggle('open', S.drawerOpen);
   $('apiToggle').textContent = S.drawerOpen ? '⚙ API Key ▴' : '⚙ API Key ▾';
 }
-
 function saveKey() {
   const k = $('claudeKey').value.trim();
   const g = $('gClientId').value.trim();
@@ -1062,18 +1035,13 @@ function saveKey() {
   if (k) sessionStorage.setItem('lp_key', k);
   if (g) sessionStorage.setItem('lp_gid', g);
   if (s) sessionStorage.setItem('lp_sid', s);
-  syncStatus();
-  toast('Settings saved', 'ok');
+  syncStatus(); toast('Settings saved', 'ok');
   setTimeout(toggleDrawer, 350);
 }
-
 function clearKey() {
-  $('claudeKey').value = '';
-  sessionStorage.removeItem('lp_key');
-  syncStatus();
-  toast('Key cleared', 'ok');
+  $('claudeKey').value = ''; sessionStorage.removeItem('lp_key');
+  syncStatus(); toast('Key cleared', 'ok');
 }
-
 function syncStatus() {
   const k = sessionStorage.getItem('lp_key') || '';
   const live = k.startsWith('sk-ant');
@@ -1081,12 +1049,10 @@ function syncStatus() {
   $('apiToggle').classList.toggle('live', live);
   $('callout').classList.toggle('show', !live);
 }
-
 function toggleEye(id) {
   const el = $(id);
   el.type = el.type === 'password' ? 'text' : 'password';
 }
-
 function openModal()  { $('gModal').classList.add('open'); }
 function closeModal() { $('gModal').classList.remove('open'); }
 
@@ -1124,9 +1090,7 @@ function googleAuth() {
 /* ════════════════════════════════════════════
    CLAUDE API CALL
 ════════════════════════════════════════════ */
-function getKey() {
-  return sessionStorage.getItem('lp_key') || $('claudeKey').value.trim();
-}
+function getKey() { return sessionStorage.getItem('lp_key') || $('claudeKey').value.trim(); }
 
 async function callClaude(userPrompt, systemPrompt = '', maxTokens = 4096) {
   const key = getKey();
@@ -1151,10 +1115,7 @@ async function callClaude(userPrompt, systemPrompt = '', maxTokens = 4096) {
 
   if (!res.ok) {
     let msg = `API error ${res.status}`;
-    try {
-      const e = await res.json();
-      msg = e.error?.message || msg;
-    } catch(_) {}
+    try { const e = await res.json(); msg = e.error?.message || msg; } catch(_) {}
     throw new Error(msg);
   }
 
@@ -1163,7 +1124,6 @@ async function callClaude(userPrompt, systemPrompt = '', maxTokens = 4096) {
 }
 
 function parseJSON(raw) {
-  // Strip markdown code fences if present
   return JSON.parse(
     raw.trim()
       .replace(/^```json\s*/i, '')
@@ -1174,7 +1134,7 @@ function parseJSON(raw) {
 }
 
 /* ════════════════════════════════════════════
-   STEP 1 — GENERATE PAIRINGS
+   STEP 1 — GENERATE PAIRINGS (CUSTOM TAB ONLY)
 ════════════════════════════════════════════ */
 async function fire() {
   clearErr();
@@ -1192,35 +1152,21 @@ async function fire() {
 
   S.legend = val;
   S.topic  = topicClean;
+  S.libraryTitle = '';
   hide('pairSec'); hide('outEl');
 
-  // Check if the topic looks like a pre-picked library title
-  const isLibraryTitle = topicClean.length > 8 && !topicClean.toLowerCase().startsWith('the ') && topicClean.split(' ').length >= 3;
-  S.libraryTitle = isLibraryTitle ? topicClean : '';
-
-  load(true, isLibraryTitle ? `Generating "${topicClean}"...` : `Scouting the high-viral wrong rooms for ${val}...`);
+  load(true, `Scouting the high-viral wrong rooms for ${val}...`);
   $('fireBtn').disabled = true;
 
-  const topicLine = S.libraryTitle
-    ? `EXACT VIDEO CONCEPT: "${S.libraryTitle}" — generate 5 pairing variations that fit this exact concept, all in second-person YOU format. The first pairing must match the title most directly.`
-    : topicClean
+  const topicLine = topicClean
     ? `The user has suggested this environment: "${topicClean}". Generate pairings around this theme and 4 additional high-viral ones.`
     : `Generate 5 wildly creative, high-pressure pairings across different high-viral categories.`;
 
   try {
     const raw = await callClaude(
-`You are an elite YouTube content strategist for the viral comedy series "Out of Context Legends / Legends Wrong Room."
-
-CRITICAL RULE — CHARACTER + ENVIRONMENT + PRESSURE = VIRAL CONTENT:
-Instead of boring settings, you MUST place the legend in HIGH-VIRAL ENVIRONMENTS (places with energy, money, pressure, or chaos).
-Examples: Wall Street trading floor, Las Vegas casino, Silicon Valley pitch room, VIP nightclub, Military bootcamp, Emergency room, Group project meltdown, HR meeting, TikTok live, NBA locker room, Award show chaos, etc.
-What would the legend misunderstand in this specific high-pressure environment based on their core traits?
-
-CRITICAL FORMAT RULE — SECOND-PERSON IMMERSION:
-All hooks and titles use "YOU" framing — the viewer IS the legend.
-CORRECT: "What if you were Cleopatra on the Bachelorette? You are not here to find love — love finds YOU."
-WRONG:   "What if Cleopatra was on the Bachelorette? She's not here to find love."
-The viewer is placed INSIDE the legend's body and perspective. Always.
+`You are an elite YouTube content strategist.
+CRITICAL RULE: Place the legend in HIGH-VIRAL ENVIRONMENTS (places with energy, money, pressure, or chaos).
+CRITICAL FORMAT RULE — SECOND-PERSON IMMERSION: All hooks and titles use "YOU" framing — the viewer IS the legend.
 
 Legend: ${val}
 ${topicLine}
@@ -1238,37 +1184,53 @@ Return ONLY valid JSON — no markdown, no preamble:
     }
   ]
 }
-
-Generate exactly 5 pairings. Use the character's REAL documented personality traits. Each needs: a YOU-framed title, a specific comedic engine (exact trait vs exact setting demand), and a second-person hook sentence.`,
-      '', 900
-    );
+Generate exactly 5 pairings.`, '', 900);
 
     const json = parseJSON(raw);
     renderPairings(json.pairings);
-  } catch(e) {
-    showErr(e.message);
-  } finally {
-    load(false);
-    $('fireBtn').disabled = false;
-  }
+  } catch(e) { showErr(e.message); } 
+  finally { load(false); $('fireBtn').disabled = false; }
 }
 
 function renderPairings(pairs) {
-  const g = $('pairGrid');
-  g.innerHTML = '';
+  const g = $('pairGrid'); g.innerHTML = '';
   pairs.forEach((p, i) => {
-    const c = document.createElement('div');
-    c.className = 'pair-card';
-    c.innerHTML = `
-      <div class="pc-n">${String(i+1).padStart(2,'0')}</div>
-      <div class="pc-t">${p.title}</div>
-      <div class="pc-e">${p.engine}</div>
-      <span class="pc-tag">${p.category}</span>`;
+    const c = document.createElement('div'); c.className = 'pair-card';
+    c.innerHTML = `<div class="pc-n">${String(i+1).padStart(2,'0')}</div>
+      <div class="pc-t">${p.title}</div><div class="pc-e">${p.engine}</div><span class="pc-tag">${p.category}</span>`;
     c.onclick = () => buildPackage(p);
     g.appendChild(c);
   });
-  show('pairSec');
-  $('pairSec').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  show('pairSec'); $('pairSec').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ════════════════════════════════════════════
+   DIRECT FIRE (BYPASS PAIRINGS FOR TITLES)
+════════════════════════════════════════════ */
+function fireDirect(legend, titleText) {
+  if (!getKey()) {
+    showErr('Add your Claude API key — click ⚙ API Key top-right.');
+    if (!S.drawerOpen) toggleDrawer(); return;
+  }
+  
+  S.legend = legend;
+  S.topic = titleText;
+  S.libraryTitle = titleText;
+  
+  // Force UI back to custom generation mode
+  sbMode('custom', document.querySelectorAll('.sbm')[0]);
+  $('sideInp').value = legend;
+  $('sideTopic').value = titleText;
+  
+  const synthPairing = {
+    title: titleText,
+    setting: "As described exactly in the title",
+    tension: "The pure conceptual clash of the title",
+    engine: "Driven strictly by the specific title scenario",
+    category: "Viral Concept"
+  };
+  
+  buildPackage(synthPairing);
 }
 
 /* ════════════════════════════════════════════
@@ -1276,25 +1238,20 @@ function renderPairings(pairs) {
 ════════════════════════════════════════════ */
 async function buildPackage(p) {
   S.pairing = p;
-  clearErr();
-  hide('outEl');
-  load(true, `Writing Day 1 through Day 10 for "${p.title}"...`);
+  clearErr(); hide('pairSec'); hide('outEl');
+  load(true, `Writing script package for "${p.title}"...`);
 
-  const system = `You are an elite YouTube scriptwriter and content strategist for "Out of Context Legends," a viral faceless comedy series. You specialise in second-person immersion narration — the "What if YOU were there" format. Your scripts match the pacing, sensory detail, deadpan understatement, and bite of the fastest-growing hypothetical YouTube Shorts. You write at MrBeast-team production level. Every word earns its place.`;
+  const system = `You are an elite YouTube scriptwriter and content strategist for "Out of Context Legends," a viral faceless comedy series. You specialise in second-person immersion narration — the "What if YOU were there" format.`;
 
-  const prompt =
-`Generate a COMPLETE production package. Return ONLY valid JSON — no markdown, no code fences, no preamble.
+  const prompt = `Generate a COMPLETE production package. Return ONLY valid JSON — no markdown, no code fences, no preamble.
 
 LEGEND: ${S.legend}
-VIDEO TITLE: ${S.libraryTitle || p.title}
-TOPIC/SETTING: ${S.topic || p.setting}
-PAIRING: ${p.title}
-SETTING: ${p.setting}
-ENGINE: ${p.engine}
-HOOK: ${p.hook}
-TENSION: ${p.tension}
+VIDEO TITLE: ${p.title}
 
-${S.libraryTitle ? `EXACT TITLE LOCK: The video is titled "${S.libraryTitle}". All scripts, SEO titles, and hooks must be built around this exact concept. The short_script hook line must begin: "What if you were ${S.legend}... [and directly set up the ${S.libraryTitle} scenario]"` : ''}
+CRITICAL SCENARIO LOCK — FOCUS ON THE TITLE EXACTLY:
+The entire script MUST be strictly about ${S.legend} in the exact scenario described in the title. 
+For example, if the title is 'Ronaldo vs Roman Gladiators in the Colosseum — He Wins With Skills', the entire script MUST be about Ronaldo, Roman Gladiators, in a Colosseum, and him using his skills to win there.
+DO NOT place them in modern social media, in New York, or trying to use TikTok unless explicitly stated in the title. Stay 100% focused on the specific setting, era, and action described in the title.
 
 CRITICAL — SECOND-PERSON IMMERSION THROUGHOUT:
 The viewer IS the legend. Every script line uses "you" and "your."
@@ -1305,64 +1262,34 @@ This applies to EVERY line of short_script and long_script. No exceptions.
 ══════════════════════════════════════════
 NARRATION FORMAT — MANDATORY — READ FIRST
 ══════════════════════════════════════════
-
-Both short_script and long_script MUST be naturally paced for 2-second visual cuts.
-Do NOT include timestamps. Do NOT include visual directions or brackets. Write ONLY the spoken script.
-To force a 2-second editing pace, you must use EXTREMELY SHORT SENTENCES (4-7 words max) separated by hard punctuation (periods).
-
-REFERENCE PACING (Read the rhythm):
-Day one. You wake up in snow. Glaciers tower in the distance. Mammoths move like tanks. The cold hits instantly. Frost locks your lashes. You hold a flamethrower. A mammoth approaches. He thinks you're approachable. You decide otherwise. Ten minutes later. You eat a mammoth steak. Not bad, actually.
+Both short_script and long_script MUST be naturally paced for 2-second visual cuts. Use EXTREMELY SHORT SENTENCES (4-7 words max) separated by hard punctuation (periods).
 
 10 MANDATORY RULES — APPLY TO EVERY SENTENCE:
-
-1. 2-SECOND PACING — Hard max 4-7 words per sentence. One quick idea. Full stop. Next idea.
-2. NO EXTRA TEXT — No timestamps, no visual cues, no bracketed directions. Just the raw spoken script.
-3. SECOND PERSON ALWAYS — "You" is the protagonist throughout. Never switch to third person.
-4. SENSORY ARRIVAL — Day 1 starts with a physical sensation. Cold. Smell. Weight.
-5. DEADPAN UNDERSTATEMENT — Huge events in tiny words. "You decide otherwise." Never oversell.
-6. NO DIALOGUE TAGS — No "he said" / "you said". If they speak, write it bare: He looks at you. "Name your enemies."
-7. REACTION MIRROR — Every few lines, one person from that world reacts to you. One gesture.
-8. DAY ENDING = IMAGE — End each day section on a visual outcome described in words, not a punchline.
+1. 2-SECOND PACING — Hard max 4-7 words per sentence.
+2. NO EXTRA TEXT — No timestamps, no bracketed directions. Just the raw spoken script.
+3. SECOND PERSON ALWAYS — "You" is the protagonist throughout.
+4. SENSORY ARRIVAL — Day 1 starts with a physical sensation.
+5. DEADPAN UNDERSTATEMENT — Huge events in tiny words. Never oversell.
+6. NO DIALOGUE TAGS — No "he said" / "you said".
+7. REACTION MIRROR — Every few lines, one person from that world reacts to you.
+8. DAY ENDING = IMAGE — End each day section on a visual outcome.
 9. FINAL VERDICT — Last line sounds like a historical record. Calm. Final.
 10. THE LEGEND IS NEVER CONFUSED — They are always right. The world is wrong.
 
-SHORT FORM STRUCTURE (Day 1, Day 3, Day 7):
-- Hook: "What if you were [legend] [scenario]?"
-- Day One: Sensory landing. First contact. One absurd action. Deadpan reaction.
-- Day Three: The world notices. Reaction mirror.
-- Day Seven: World shifted. Golden line. Final verdict as last line.
-
-LONG FORM STRUCTURE (Day 1, 3, 5, 7, 10):
-- Day One: Full sensory arrival, first contact, deadpan understatement.
-- Day Three: World reacts. Permanent change to setting.
-- Day Five: Escalation. Unintended consequence. You explain, they reframe.
-- Day Seven: You stop resisting. GOLDEN LINE lands here.
-- Day Ten: Final image. Legend unfazed. FINAL VERDICT as absolute last line.
-
-══════════════════════════════════════════
+SHORT FORM STRUCTURE (Day 1, Day 3, Day 7) & LONG FORM STRUCTURE (Day 1, 3, 5, 7, 10).
 
 {
   "short_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[Extremely short sentences. 4-7 words max. Full stops.]\\n\\nDay Three.\\n[Extremely short sentences. 4-7 words max. Full stops.]... etc",
-
   "golden_line": "The setup sentence(s) + the golden line itself. The golden line must work completely alone with zero context.",
-
   "hook_analysis": "3-4 sentences: what the opening hook plants in the viewer's brain in the first 2 seconds. Why the second-person 'you' prevents scrolling.",
-
   "long_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[Extremely short sentences. 4-7 words max. Full stops.]\\n\\nDay Three.\\n[Extremely short sentences. 4-7 words max. Full stops.]... etc",
-
-  "seo_titles": "TITLE A — What if format, keywords first, under 60 chars\\nTITLE B — Outcome first curiosity gap\\nTITLE C — Shorts emoji lead, under 40 chars\\nRECOMMENDATION: which to test first and why",
-
-  "seo_description": "Full 400-500 word YouTube description. First 2 lines visible before show-more — restate premise as question, tease Day Seven outcome without revealing it. Timestamps for long form. Series paragraph. Subscribe CTA. Hashtags at end.",
-
-  "tags": ["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10","tag11","tag12","tag13","tag14","tag15"],
-
-  "hashtags": ["#Tag1","#Tag2","#Tag3","#Tag4","#Tag5","#Tag6","#Tag7","#Tag8","#Tag9","#Tag10"],
-
-  "thumbnail_prompt": "HARD LIMIT — THIS FIELD MUST BE UNDER 1000 CHARACTERS TOTAL. COUNT BEFORE OUTPUTTING. Write a single MrBeast-style image generation prompt. Rules: (1) Subject takes 40%+ of frame, facing camera, extreme single emotion — wide-eyed shock OR open-mouth triumph OR jaw-dropped disbelief — never neutral. (2) One dominant bold background that SHOWS the premise visually with no words needed — clean, 1-2 colours max, high contrast. (3) One era-collision prop in hand or foreground. (4) Dramatic rim lighting named by colour and direction. (5) Slight low-angle shot. (6) NO TEXT in the image. (7) Hyperrealistic, 8K, 16:9. Format: photorealistic [legend name] dressed in [specific period costume], [extreme emotion with specific face details — e.g. eyes wide, brows raised, mouth open], [exact hand/body pose], holding [specific prop], set against [vivid 1-sentence background scene], [lighting: colour + direction], slight low camera angle, hyperrealistic skin detail, sharp focus, 8K, --ar 16:9",
-
-  "overlay_spec": "MAIN TEXT: '[2-5 words ALL CAPS — the curiosity gap]'\\nFont: Anton Bold\\nSize: 140pt\\nFill: #FFFFFF\\nStroke: 10px #000000\\nShadow: 4px 4px 0px rgba(0,0,0,0.9)\\nPosition: bottom 10% of frame, horizontally centred\\n\\nSECONDARY TEXT: '[3-6 words — the punchline or subtext]'\\nFont: Anton Bold\\nSize: 72pt\\nFill: #FFE033\\nStroke: 6px #000000\\nPosition: directly above main text, same centre alignment, 8px gap\\n\\nRULE: Never place text over the face. Top or bottom only.",
-
-  "ctr_analysis": "4-5 sentences. Name the exact CTR mechanism used (curiosity gap / identity incongruity / impossible scenario / high stakes). Walk through the 50ms visual hit sequence: colour first, then face emotion, then text. Explain why the background visual proves the premise without needing words. State how every element reads at 320×180px on a phone screen. Predict a specific CTR percentage range vs the 2-5% YouTube average and justify it for this exact legend-setting combination."
+  "seo_titles": "TITLE A — What if format\\nTITLE B — Outcome first\\nTITLE C — Shorts emoji lead",
+  "seo_description": "Full 400-500 word YouTube description with timestamps.",
+  "tags": ["tag1","tag2","tag3","tag4","tag5"],
+  "hashtags": ["#Tag1","#Tag2","#Tag3","#Tag4","#Tag5"],
+  "thumbnail_prompt": "HARD LIMIT — THIS FIELD MUST BE UNDER 1000 CHARACTERS TOTAL. Single MrBeast-style Midjourney prompt based strictly on the title.",
+  "overlay_spec": "MAIN TEXT: '[2-5 words]'\\nFont... etc",
+  "ctr_analysis": "4-5 sentences explaining the visual hit sequence."
 }`;
 
   try {
@@ -1370,19 +1297,16 @@ LONG FORM STRUCTURE (Day 1, 3, 5, 7, 10):
     S.data = parseJSON(raw);
     renderOutput(p, S.data);
     addHistory(p, S.data);
-  } catch(e) {
-    showErr('Generation error: ' + e.message);
-  } finally {
-    load(false);
-  }
+  } catch(e) { showErr('Generation error: ' + e.message); } 
+  finally { load(false); }
 }
 
 /* ════════════════════════════════════════════
-   RENDER OUTPUT
+   RENDER & OUTPUT LOGIC
 ════════════════════════════════════════════ */
 function renderOutput(p, d) {
   $('outTitle').textContent = p.title.toUpperCase();
-  $('outSub').textContent = `${S.legend} · ${p.setting} · ${p.tension}`;
+  $('outSub').textContent = `${S.legend} · Script Package`;
 
   setText('shortScr', d.short_script);
   setText('goldLine', d.golden_line);
@@ -1393,7 +1317,6 @@ function renderOutput(p, d) {
   setText('overlayS', d.overlay_spec);
   setText('ctrAna',   d.ctr_analysis);
 
-  // Thumbnail prompt — single field with char count
   const tp = d.thumbnail_prompt || d.image_gen_prompt || '';
   setText('thumbPrompt', tp);
   const countEl = $('thumbCharCount');
@@ -1406,86 +1329,51 @@ function renderOutput(p, d) {
   renderTags('seoTags', d.tags,     false);
   renderTags('seoHt',   d.hashtags, true);
 
-  show('outEl');
-  tab('short', document.querySelector('.tb'));
+  show('outEl'); tab('short', document.querySelector('.tb'));
   $('outEl').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function setText(id, v) { $(id).textContent = v || ''; }
-
 function renderTags(id, arr, isHt) {
-  const w = $(id);
-  w.innerHTML = '';
+  const w = $(id); w.innerHTML = '';
   if (!Array.isArray(arr)) { w.textContent = arr || ''; return; }
   arr.forEach(t => {
-    const s = document.createElement('span');
-    s.className = 'tag' + (isHt ? ' ht' : '');
-    s.textContent = t;
-    w.appendChild(s);
+    const s = document.createElement('span'); s.className = 'tag' + (isHt ? ' ht' : '');
+    s.textContent = t; w.appendChild(s);
   });
 }
 
-function hx(s) {
-  if (!s) return null;
-  const m = String(s).match(/#[0-9a-fA-F]{3,8}/);
-  return m ? m[0] : null;
-}
-
-function legendEmoji(n) {
-  const map = {
-    'musk':'🚀','trump':'🏢','kanye':'🎤','beast':'💸','taylor':'🎸','swift':'🎸','lebron':'🏀','ronaldo':'⚽',
-    'mozart':'🎵','einstein':'🧠','socrates':'🏛','aristotle':'📚',
-    'churchill':'🎖','cleopatra':'👑','newton':'🍎','darwin':'🦎',
-    'tesla':'⚡','curie':'⚗','napoleon':'🎖','shakespeare':'✍',
-    'beethoven':'🎻','da vinci':'🎨','galileo':'🔭','sun tzu':'⚔',
-    'genghis':'🏹','confucius':'☯','freud':'🛋','plato':'🏺',
-    'hannibal':'🐘','caesar':'🦅','alexander':'⚔','joan':'⚜'
-  };
-  const l = n.toLowerCase();
-  for (const [k, v] of Object.entries(map)) if (l.includes(k)) return v;
-  return '👤';
-}
-
-/* ════════════════════════════════════════════
-   HISTORY
-════════════════════════════════════════════ */
 function addHistory(p, d) {
   S.history.unshift({ legend: S.legend, libraryTitle: S.libraryTitle, topic: S.topic, p, d, ts: Date.now() });
   refreshHistSidebar();
 }
-
 function refreshHistSidebar() {
   const el = $('histList');
   if (!S.history.length) { el.innerHTML = '<p class="sb-empty">No generations yet</p>'; return; }
   el.innerHTML = '';
   S.history.slice(0, 10).forEach(h => {
-    const c = document.createElement('div');
-    c.className = 'hist-card';
+    const c = document.createElement('div'); c.className = 'hist-card';
     const dt = h.libraryTitle || h.p.title;
     c.innerHTML = `<div class="hist-t">${dt}</div><div class="hist-s">${h.legend} · ${new Date(h.ts).toLocaleTimeString()}</div>`;
     c.onclick = () => { S.legend=h.legend; S.libraryTitle=h.libraryTitle||''; S.topic=h.topic||''; S.pairing=h.p; S.data=h.d; renderOutput(h.p,h.d); page('gen'); };
     el.appendChild(c);
   });
 }
-
 function refreshHistPage() {
-  const el = $('histCards');
-  $('histCount').textContent = `${S.history.length} generation${S.history.length !== 1 ? 's' : ''}`;
+  const el = $('histCards'); $('histCount').textContent = `${S.history.length} generation${S.history.length !== 1 ? 's' : ''}`;
   if (!S.history.length) { el.innerHTML = '<p style="color:var(--t3);font-family:var(--mono);font-size:12px">No generations yet.</p>'; return; }
   el.innerHTML = '';
   S.history.forEach(h => {
-    const c = document.createElement('div');
-    c.className = 'card';
-    c.style.cursor = 'pointer';
+    const c = document.createElement('div'); c.className = 'card'; c.style.cursor = 'pointer';
     const ht = h.libraryTitle || h.p.title;
-    c.innerHTML = `<div class="ch"><span class="clbl">${h.legend}</span><span class="cbadge">${ht}</span><span class="cbadge">${new Date(h.ts).toLocaleTimeString()}</span></div><div class="cbody" style="font-size:11px;color:var(--t3);font-family:var(--mono)">${h.p.engine}</div>`;
+    c.innerHTML = `<div class="ch"><span class="clbl">${h.legend}</span><span class="cbadge">${ht}</span><span class="cbadge">${new Date(h.ts).toLocaleTimeString()}</span></div>`;
     c.onclick = () => { S.legend=h.legend; S.libraryTitle=h.libraryTitle||''; S.topic=h.topic||''; S.pairing=h.p; S.data=h.d; renderOutput(h.p,h.d); page('gen'); };
     el.appendChild(c);
   });
 }
 
 /* ════════════════════════════════════════════
-   EXPORT — GOOGLE SHEETS
+   EXPORTS
 ════════════════════════════════════════════ */
 async function exportSheets() {
   if (!S.gToken) { toast('Connect Google first in the API drawer', 'err'); return; }
@@ -1559,9 +1447,6 @@ async function exportSheets() {
   }
 }
 
-/* ════════════════════════════════════════════
-   EXPORT — GOOGLE DRIVE
-════════════════════════════════════════════ */
 async function exportDrive() {
   if (!S.gToken) { toast('Connect Google first', 'err'); return; }
   if (!S.data || !S.pairing) { toast('Generate content first', 'err'); return; }
@@ -1602,65 +1487,21 @@ async function gCall(url, opts = {}) {
   return r.json();
 }
 
-/* ════════════════════════════════════════════
-   DOWNLOAD .TXT
-════════════════════════════════════════════ */
 function dlTxt() {
   if (!S.data || !S.pairing) { toast('Generate content first', 'err'); return; }
   const b = new Blob([buildTxt()], { type: 'text/plain' });
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(b);
-  a.download = `${S.legend} — ${S.pairing.title}.txt`;
-  a.click();
-  toast('Downloaded', 'ok');
+  a.href = URL.createObjectURL(b); a.download = `${S.legend} — ${S.pairing.title}.txt`;
+  a.click(); toast('Downloaded', 'ok');
 }
 
 function buildTxt() {
-  const d = S.data, t = d.thumbnail || {};
-  const tags = Array.isArray(d.tags) ? d.tags.join(', ') : (d.tags || '');
-  const hts  = Array.isArray(d.hashtags) ? d.hashtags.join(' ') : (d.hashtags || '');
+  const d = S.data, tags = Array.isArray(d.tags) ? d.tags.join(', ') : (d.tags || ''), hts = Array.isArray(d.hashtags) ? d.hashtags.join(' ') : (d.hashtags || '');
   const line = (n) => '═'.repeat(n || 44);
   return [
-    `LEGENDS PIPELINE — PRODUCTION PACKAGE`,
-    `Generated: ${new Date().toLocaleString()}`,
-    `Format: Second-Person Immersion (What If YOU)`,
-    `${'='.repeat(44)}`,
-    ``,
-    `LEGEND:  ${S.legend}`,
-    `PAIRING: ${S.pairing.title}`,
-    `SETTING: ${S.pairing.setting}`,
-    `TENSION: ${S.pairing.tension}`,
-    ``,
-    line(), `SHORT FORM SCRIPT — Day 1 · Day 3 · Day 7`, line(),
-    d.short_script || '',
-    ``,
-    line(), `GOLDEN LINE`, line(),
-    d.golden_line || '',
-    ``,
-    line(), `HOOK ANALYSIS`, line(),
-    d.hook_analysis || '',
-    ``,
-    line(), `LONG FORM SCRIPT — Day 1 · 3 · 5 · 7 · 10`, line(),
-    d.long_script || '',
-    ``,
-    line(), `SEO TITLES (A / B / C)`, line(),
-    d.seo_titles || '',
-    ``,
-    line(), `YOUTUBE DESCRIPTION`, line(),
-    d.seo_description || '',
-    ``,
-    line(), `TAGS`, line(), tags,
-    ``,
-    line(), `HASHTAGS`, line(), hts,
-    ``,
-    line(), `THUMBNAIL PROMPT (MrBeast Style — ≤1000 chars)`, line(),
-    d.thumbnail_prompt || d.image_gen_prompt || '',
-    ``,
-    line(), `OVERLAY TEXT SPEC (Canva / Photoshop / CapCut)`, line(),
-    d.overlay_spec || '',
-    ``,
-    line(), `CTR PSYCHOLOGY`, line(),
-    d.ctr_analysis || '',
+    `LEGENDS PIPELINE — PRODUCTION PACKAGE`, `Generated: ${new Date().toLocaleString()}`, `${'='.repeat(44)}`,
+    `LEGEND:  ${S.legend}`, `PAIRING: ${S.pairing.title}`, ``, line(), `SHORT FORM SCRIPT`, line(), d.short_script || '', ``,
+    line(), `GOLDEN LINE`, line(), d.golden_line || '', ``, line(), `LONG FORM SCRIPT`, line(), d.long_script || ''
   ].join('\n');
 }
 
@@ -1668,75 +1509,47 @@ function buildTxt() {
    UI HELPERS
 ════════════════════════════════════════════ */
 function $(id) { return document.getElementById(id); }
-
 function tab(id, btn) {
   document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
   $('pane-' + id).classList.add('on');
-  // find the right button
-  const btns = document.querySelectorAll('.tb');
-  const map = { short:0, long:1, seo:2, thumb:3 };
-  if (map[id] !== undefined) btns[map[id]].classList.add('on');
-  else if (btn) btn.classList.add('on');
+  const btns = document.querySelectorAll('.tb'); const map = { short:0, long:1, seo:2, thumb:3 };
+  if (map[id] !== undefined) btns[map[id]].classList.add('on'); else if (btn) btn.classList.add('on');
 }
-
 function page(id, btn) {
   $('pageGen').style.display  = id === 'gen'  ? 'block' : 'none';
   $('pageHist').style.display = id === 'hist' ? 'block' : 'none';
-  document.querySelectorAll('.tnb').forEach((b, i) => {
-    b.classList.toggle('on', (i === 0 && id === 'gen') || (i === 1 && id === 'hist'));
-  });
+  document.querySelectorAll('.tnb').forEach((b, i) => { b.classList.toggle('on', (i === 0 && id === 'gen') || (i === 1 && id === 'hist')); });
   if (id === 'hist') refreshHistPage();
 }
-
 function show(id) { $(id).classList.add('show'); }
 function hide(id) { $(id).classList.remove('show'); }
-
-function load(on, msg = '') {
-  $('loadEl').classList.toggle('show', on);
-  $('loadMsg').textContent = msg;
-}
-
-function showErr(msg) {
-  const b = $('errBox');
-  b.textContent = '⚠ ' + msg;
-  b.classList.add('show');
-}
+function load(on, msg = '') { $('loadEl').classList.toggle('show', on); $('loadMsg').textContent = msg; }
+function showErr(msg) { const b = $('errBox'); b.textContent = '⚠ ' + msg; b.classList.add('show'); }
 function clearErr() { $('errBox').classList.remove('show'); }
-
 function copy(id, btn) {
   navigator.clipboard.writeText($(id).textContent || '').then(() => {
-    btn.textContent = '✓ Copied';
-    btn.classList.add('ok');
+    btn.textContent = '✓ Copied'; btn.classList.add('ok');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
   });
 }
-
 function copyTags(id, sep, btn) {
-  const text = Array.from($(id).querySelectorAll('.tag'))
-    .map(t => t.textContent).join(sep);
+  const text = Array.from($(id).querySelectorAll('.tag')).map(t => t.textContent).join(sep);
   navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '✓ Copied';
-    btn.classList.add('ok');
+    btn.textContent = '✓ Copied'; btn.classList.add('ok');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
   });
 }
-
 function toast(msg, type) {
-  const el = $('toast');
-  el.textContent = msg;
-  el.className = 'toast show' + (type ? ' ' + type : '');
-  clearTimeout(S.toastTimer);
-  S.toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+  const el = $('toast'); el.textContent = msg; el.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(S.toastTimer); S.toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
 }
-
 function reset() {
   S.legend = ''; S.topic = ''; S.libraryTitle = ''; S.pairing = null; S.data = {};
   $('sideInp').value = ''; $('mobInp').value = '';
   if ($('sideTopic')) $('sideTopic').value = '';
   if ($('mobTopic'))  $('mobTopic').value  = '';
-  hide('pairSec'); hide('outEl'); clearErr();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  hide('pairSec'); hide('outEl'); clearErr(); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
