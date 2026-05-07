@@ -1,0 +1,3099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrendForge AI — PDF Guide Empire Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-card: #16161f;
+  --bg-card-hover: #1c1c28;
+  --bg-elevated: #1e1e2a;
+  --surface: #22222e;
+  --border: #2a2a3a;
+  --border-hover: #3a3a50;
+  --text-primary: #f0eef5;
+  --text-secondary: #9895a8;
+  --text-muted: #6b6880;
+  --accent: #f97316;
+  --accent-glow: rgba(249, 115, 22, 0.25);
+  --accent-soft: rgba(249, 115, 22, 0.08);
+  --accent2: #3b82f6;
+  --accent2-glow: rgba(59, 130, 246, 0.2);
+  --success: #22c55e;
+  --success-soft: rgba(34, 197, 94, 0.1);
+  --warning: #eab308;
+  --danger: #ef4444;
+  --gradient-hero: linear-gradient(135deg, #f97316 0%, #ec4899 50%, #8b5cf6 100%);
+  --gradient-card: linear-gradient(145deg, rgba(249,115,22,0.06) 0%, rgba(139,92,246,0.04) 100%);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-lg: 20px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 40px rgba(249,115,22,0.15);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Noise overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── API Config Bar ── */
+.api-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: var(--transition);
+}
+
+.api-bar .logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+  letter-spacing: -0.5px;
+}
+
+.api-bar .logo span {
+  -webkit-text-fill-color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+  margin-left: 6px;
+}
+
+.api-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 600px;
+  margin-left: auto;
+}
+
+.api-input-group label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.api-input-group input {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: var(--transition);
+}
+
+.api-input-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.api-input-group input::placeholder { color: var(--text-muted); }
+
+.api-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--danger);
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.api-status.connected { background: var(--success); box-shadow: 0 0 8px rgba(34,197,94,0.5); }
+
+.api-save-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 7px 16px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.api-save-btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+/* ── Provider Toggle ── */
+.provider-toggle {
+  display: flex;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 2px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.provider-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.provider-btn:hover { color: var(--text-secondary); }
+
+.provider-btn.active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(249,115,22,0.3);
+}
+
+.provider-btn.active[data-provider="gemini"] {
+  background: #4285f4;
+  box-shadow: 0 2px 8px rgba(66,133,244,0.3);
+}
+
+.provider-icon { font-size: 0.85rem; }
+
+/* ── Model Selector ── */
+.model-select {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition);
+  flex-shrink: 0;
+  max-width: 180px;
+}
+
+.model-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.model-select option { background: var(--bg-secondary); color: var(--text-primary); }
+.model-select optgroup { color: var(--text-muted); font-style: normal; }
+
+/* ── Active Model Indicator ── */
+.active-model-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 3px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge-claude { background: rgba(139,92,246,0.15); color: #a78bfa; }
+.badge-gemini { background: rgba(66,133,244,0.15); color: #60a5fa; }
+
+/* ── Navigation ── */
+.nav-tabs {
+  position: fixed;
+  top: 52px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: rgba(17, 17, 24, 0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0;
+  padding: 0 24px;
+  overflow-x: auto;
+}
+
+.nav-tab {
+  padding: 14px 22px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-tab:hover { color: var(--text-secondary); }
+.nav-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.nav-tab .badge {
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+}
+
+/* ── Main Content ── */
+.main-content {
+  margin-top: 100px;
+  padding: 28px 24px 60px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tab-panel { display: none; animation: fadeSlide 0.35s ease; }
+.tab-panel.active { display: block; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section Headers ── */
+.section-header {
+  margin-bottom: 28px;
+}
+
+.section-header h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.section-header h1 .gradient-text {
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  max-width: 600px;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: var(--transition);
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+}
+
+/* ── Trend Finder ── */
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.search-input {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  outline: none;
+  transition: var(--transition);
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.search-input::placeholder { color: var(--text-muted); }
+
+.btn {
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(249,115,22,0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(249,115,22,0.4);
+  filter: brightness(1.1);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-elevated);
+}
+
+.btn-sm { padding: 8px 16px; font-size: 0.78rem; border-radius: var(--radius-sm); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+
+.btn-ghost:hover { background: var(--accent-soft); }
+
+/* ── Category Pills ── */
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.pill {
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+}
+
+.pill:hover, .pill.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Trend Results ── */
+.trend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.trend-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.trend-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-hero);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.trend-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-glow);
+}
+
+.trend-card:hover::before { opacity: 1; }
+
+.trend-card .trend-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.trend-card .trend-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.3;
+  flex: 1;
+  margin-right: 12px;
+}
+
+.trend-card .trend-score {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.score-hot { background: rgba(239,68,68,0.15); color: #f87171; }
+.score-warm { background: rgba(249,115,22,0.15); color: var(--accent); }
+.score-rising { background: rgba(59,130,246,0.15); color: #60a5fa; }
+
+.trend-card .trend-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.trend-card .trend-meta span { display: flex; align-items: center; gap: 4px; }
+
+.trend-card .trend-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.trend-card .trend-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── PDF Builder ── */
+.builder-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  min-height: 600px;
+}
+
+.builder-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.sidebar-section h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-group { margin-bottom: 12px; }
+
+.input-group label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: var(--transition);
+}
+
+.input-group input:focus,
+.input-group textarea:focus,
+.input-group select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.input-group textarea { resize: vertical; min-height: 80px; }
+
+.input-group select { cursor: pointer; }
+
+.builder-main {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  position: relative;
+}
+
+.builder-main .pdf-preview {
+  background: #fff;
+  border-radius: var(--radius);
+  min-height: 500px;
+  padding: 48px;
+  color: #1a1a2e;
+  font-family: 'DM Sans', Georgia, serif;
+  position: relative;
+  line-height: 1.78;
+  font-size: 15px;
+}
+
+/* Title Page */
+.pdf-preview .title-page { text-align: center; padding: 60px 20px 40px; margin-bottom: 32px; border-bottom: 3px solid var(--accent, #2563eb); }
+.pdf-preview .title-page h1 { font-size: 2.2rem; color: var(--accent, #2563eb); font-weight: 900; line-height: 1.2; }
+.pdf-preview h1 { font-family: var(--font-display); font-size: 1.8rem; color: var(--accent, #2563eb); margin-bottom: 10px; font-weight: 900; }
+.pdf-preview .subtitle { color: #6b7280; font-size: 1rem; margin-bottom: 12px; font-style: italic; }
+.pdf-preview .author { color: #9ca3af; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.pdf-preview h2 { font-family: var(--font-display); font-size: 1.3rem; margin: 28px 0 14px; color: #1a1a2e; border-bottom: 3px solid var(--accent, #2563eb); padding-bottom: 6px; font-weight: 700; }
+.pdf-preview h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 20px 0 8px; color: #333; font-weight: 700; }
+.pdf-preview p { font-size: 0.92rem; line-height: 1.78; color: #374151; margin-bottom: 14px; }
+.pdf-preview strong { font-weight: 700; color: #1a1a2e; }
+.pdf-preview ul, .pdf-preview ol { margin: 10px 0 16px 22px; font-size: 0.9rem; color: #374151; }
+.pdf-preview ul li, .pdf-preview ol li { margin-bottom: 6px; line-height: 1.6; }
+
+/* Images */
+.pdf-preview .guide-img, .pdf-preview img {
+  width: 100%; max-width: 100%; height: auto; border-radius: 10px;
+  margin: 18px 0; display: block; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  object-fit: cover; max-height: 400px;
+}
+
+/* Tables */
+.pdf-preview table, .pdf-preview .guide-table {
+  width: 100%; border-collapse: collapse; margin: 18px 0;
+  border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; font-size: 0.85rem;
+}
+.pdf-preview th {
+  background: var(--accent, #2563eb); color: #fff; font-weight: 700;
+  padding: 10px 14px; text-align: left; font-size: 0.8rem; letter-spacing: 0.02em;
+}
+.pdf-preview td { padding: 9px 14px; border-bottom: 1px solid #f0f0f5; vertical-align: top; }
+.pdf-preview tr:nth-child(even) td { background: #f9fafb; }
+.pdf-preview tr:last-child td { border-bottom: none; }
+
+/* Step-by-Step */
+.pdf-preview .step-grid { margin: 18px 0; }
+.pdf-preview .step-item {
+  display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start;
+  padding: 14px 16px; background: #fafbfc; border-radius: 10px; border: 1px solid #eee;
+}
+.pdf-preview .step-num {
+  background: var(--accent, #2563eb); color: #fff; width: 34px; height: 34px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.9rem; flex-shrink: 0; font-family: var(--font-display);
+}
+.pdf-preview .step-content { flex: 1; }
+.pdf-preview .step-content strong { display: block; margin-bottom: 3px; font-size: 0.92rem; }
+.pdf-preview .step-content p { margin-bottom: 3px; font-size: 0.85rem; color: #4b5563; }
+.pdf-preview .step-mistake { font-size: 0.78rem; color: #dc2626; margin-top: 4px; font-style: italic; }
+
+/* Pro Tip */
+.pdf-preview .pro-tip {
+  background: #f0fdf4; border-left: 4px solid #22c55e; border-radius: 8px;
+  padding: 14px 18px; margin: 18px 0; font-size: 0.88rem; color: #166534;
+}
+.pdf-preview .pro-tip::before { content: "💡 PRO TIP"; display: block; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.08em; color: #16a34a; margin-bottom: 6px; }
+
+/* Warning Box */
+.pdf-preview .warning-box {
+  background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 8px;
+  padding: 14px 18px; margin: 18px 0; font-size: 0.88rem; color: #991b1b;
+}
+.pdf-preview .warning-box::before { content: "⚠️ WATCH OUT"; display: block; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.08em; color: #dc2626; margin-bottom: 6px; }
+
+/* Quick Win */
+.pdf-preview .quick-win {
+  background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 8px;
+  padding: 14px 18px; margin: 18px 0; font-size: 0.88rem; color: #1e40af;
+}
+.pdf-preview .quick-win::before { content: "⚡ DO THIS NOW (2 min)"; display: block; font-weight: 800; font-size: 0.72rem; letter-spacing: 0.08em; color: #2563eb; margin-bottom: 6px; }
+
+/* Stat Highlight */
+.pdf-preview .stat-highlight {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border: 1px solid #e0e7ff; border-radius: 12px; padding: 22px; text-align: center; margin: 18px 0;
+}
+.pdf-preview .stat-highlight .big-num { font-family: var(--font-display); font-size: 2.4rem; font-weight: 900; color: var(--accent, #2563eb); line-height: 1.1; }
+.pdf-preview .stat-highlight .stat-context { font-size: 0.82rem; color: #6b7280; margin-top: 6px; }
+
+/* Human Story */
+.pdf-preview .human-story {
+  background: #fefce8; border-left: 4px solid #eab308; border-radius: 8px;
+  padding: 14px 18px; margin: 18px 0; font-style: italic; font-size: 0.88rem; color: #854d0e;
+}
+.pdf-preview .human-story::before { content: "📖 REAL STORY"; display: block; font-weight: 800; font-size: 0.68rem; letter-spacing: 0.08em; color: #a16207; margin-bottom: 6px; font-style: normal; }
+
+/* Blockquote */
+.pdf-preview blockquote {
+  border-left: 4px solid var(--accent, #2563eb); padding: 12px 18px; margin: 18px 0;
+  font-style: italic; color: #4b5563; background: #f9fafb; border-radius: 0 8px 8px 0; font-size: 0.9rem;
+}
+.pdf-preview blockquote cite { display: block; margin-top: 8px; font-size: 0.8rem; font-style: normal; color: #9ca3af; }
+
+/* Final Note */
+.pdf-preview .final-note {
+  background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);
+  border: 1px solid #e0e7ff; border-radius: 12px; padding: 24px;
+  text-align: center; margin-top: 28px; font-style: italic; color: #4b5563; font-size: 0.9rem;
+}
+
+/* Legacy compat */
+.pdf-preview .tip-box {
+  background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px;
+  padding: 14px 18px; margin: 18px 0; font-size: 0.88rem; color: #92400e;
+}
+
+/* ── Analytics Dashboard ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-card .stat-icon {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.stat-card .stat-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.8rem;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card .stat-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Niche Analyzer ── */
+.niche-results {
+  display: grid;
+  gap: 12px;
+}
+
+.niche-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: var(--transition);
+}
+
+.niche-card:hover { border-color: var(--border-hover); }
+
+.niche-rank {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--accent);
+  min-width: 36px;
+}
+
+.niche-info { flex: 1; }
+
+.niche-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.niche-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.niche-bar-container {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.niche-bar-bg {
+  height: 8px;
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.niche-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--gradient-hero);
+  transition: width 0.8s ease;
+}
+
+/* ── Saved Guides ── */
+.saved-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.saved-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: var(--transition);
+}
+
+.saved-card:hover { border-color: var(--border-hover); }
+
+.saved-card .saved-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.saved-card .saved-niche {
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  margin-bottom: 8px;
+}
+
+.saved-card .saved-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.saved-card .saved-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* ── Title Generator ── */
+.titles-list {
+  display: grid;
+  gap: 10px;
+}
+
+.title-option {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.title-option:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+}
+
+.title-option .title-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ── Loading / Empty States ── */
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.4; }
+
+.empty-state h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.empty-state p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  max-width: 360px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 14px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+}
+
+/* ── Toast Notifications ── */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 20px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  box-shadow: var(--shadow);
+  animation: toastIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 380px;
+}
+
+.toast.success { border-left: 3px solid var(--success); }
+.toast.error { border-left: 3px solid var(--danger); }
+.toast.info { border-left: 3px solid var(--accent2); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Competitors Table ── */
+.competitors-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.competitors-table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.competitors-table td {
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(42,42,58,0.4);
+  vertical-align: middle;
+}
+
+.competitors-table tr:hover td {
+  background: rgba(249,115,22,0.03);
+}
+
+.difficulty-badge {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.diff-easy { background: var(--success-soft); color: var(--success); }
+.diff-medium { background: rgba(234,179,8,0.12); color: var(--warning); }
+.diff-hard { background: rgba(239,68,68,0.12); color: var(--danger); }
+
+/* ── Outline Builder ── */
+.outline-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.outline-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.outline-header:hover { background: var(--bg-card-hover); }
+
+.outline-header .chapter-num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  margin-right: 10px;
+}
+
+.outline-header .chapter-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.outline-body {
+  padding: 0 18px 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .builder-layout { grid-template-columns: 1fr; }
+  .trend-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .api-bar { flex-wrap: wrap; gap: 8px; }
+  .api-input-group { max-width: none; margin-left: 0; }
+}
+
+@media (max-width: 600px) {
+  .section-header h1 { font-size: 1.5rem; }
+  .main-content { padding: 20px 14px 40px; }
+  .stats-row { grid-template-columns: 1fr; }
+  .search-box { flex-direction: column; }
+  .pdf-preview { padding: 24px; }
+  .builder-main { padding: 16px; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+/* ── Toolbar Flex ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.toolbar-spacer { flex: 1; }
+
+/* ── Progress Bar ── */
+.progress-container {
+  margin: 16px 0;
+}
+.progress-bar-bg {
+  height: 6px;
+  background: var(--surface);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--gradient-hero);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+.progress-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-top: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── API Config Bar ── -->
+<div class="api-bar">
+  <div class="logo">TrendForge<span>AI</span></div>
+
+  <!-- Provider Selector -->
+  <div class="provider-toggle" id="providerToggle">
+    <button class="provider-btn active" data-provider="claude" onclick="selectProvider('claude')">
+      <span class="provider-icon">🟣</span> Claude
+    </button>
+    <button class="provider-btn" data-provider="gemini" onclick="selectProvider('gemini')">
+      <span class="provider-icon">🔵</span> Gemini
+    </button>
+  </div>
+
+  <!-- Model Selector -->
+  <select id="modelSelect" class="model-select">
+    <optgroup label="Anthropic Claude" id="claudeModels">
+      <option value="claude-sonnet-4-20250514" selected>Claude Sonnet 4</option>
+      <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5</option>
+    </optgroup>
+    <optgroup label="Google Gemini" id="geminiModels">
+      <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+      <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+    </optgroup>
+  </select>
+
+  <!-- Claude API Key -->
+  <div class="api-input-group" id="claudeKeyGroup">
+    <label>Claude:</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-xxxx..." />
+    <div class="api-status" id="apiStatus"></div>
+    <button class="api-save-btn" onclick="saveApiKey('claude')">Save</button>
+  </div>
+
+  <!-- Gemini API Key -->
+  <div class="api-input-group" id="geminiKeyGroup" style="display:none;">
+    <label>Gemini:</label>
+    <input type="password" id="geminiKeyInput" placeholder="AIzaSy..." />
+    <div class="api-status" id="geminiStatus"></div>
+    <button class="api-save-btn" onclick="saveApiKey('gemini')">Save</button>
+  </div>
+</div>
+
+<!-- ── Navigation ── -->
+<div class="nav-tabs">
+  <div class="nav-tab active" data-tab="trends" onclick="switchTab('trends')">🔥 Trend Finder</div>
+  <div class="nav-tab" data-tab="niches" onclick="switchTab('niches')">🎯 Niche Analyzer</div>
+  <div class="nav-tab" data-tab="titles" onclick="switchTab('titles')">✨ Title Generator</div>
+  <div class="nav-tab" data-tab="outline" onclick="switchTab('outline')">📋 Outline Builder</div>
+  <div class="nav-tab" data-tab="builder" onclick="switchTab('builder')">📄 PDF Creator</div>
+  <div class="nav-tab" data-tab="competitors" onclick="switchTab('competitors')">🕵️ Competitor Spy</div>
+  <div class="nav-tab" data-tab="saved" onclick="switchTab('saved')">💾 My Guides<span class="badge" id="savedBadge">0</span></div>
+</div>
+
+<!-- ── Main ── -->
+<div class="main-content">
+
+  <!-- ═══════════ TAB 1: TREND FINDER ═══════════ -->
+  <div class="tab-panel active" id="tab-trends">
+    <div class="section-header">
+      <h1>Discover <span class="gradient-text">Trending Problems</span></h1>
+      <p>Find real-time questions and problems people are actively searching for. Turn them into profitable PDF guides.</p>
+    </div>
+
+    <div class="search-box">
+      <input type="text" class="search-input" id="trendSearchInput" placeholder="Enter a niche (e.g., home organization, dog training, meal prep)..." />
+      <button class="btn btn-primary" id="trendSearchBtn" onclick="searchTrends()">
+        🔍 Find Trends
+      </button>
+    </div>
+
+    <div class="category-pills">
+      <span class="pill active" onclick="selectCategory(this, 'all')">All</span>
+      <span class="pill" onclick="selectCategory(this, 'health')">🏥 Health</span>
+      <span class="pill" onclick="selectCategory(this, 'finance')">💰 Finance</span>
+      <span class="pill" onclick="selectCategory(this, 'productivity')">⚡ Productivity</span>
+      <span class="pill" onclick="selectCategory(this, 'relationships')">❤️ Relationships</span>
+      <span class="pill" onclick="selectCategory(this, 'parenting')">👶 Parenting</span>
+      <span class="pill" onclick="selectCategory(this, 'fitness')">💪 Fitness</span>
+      <span class="pill" onclick="selectCategory(this, 'cooking')">🍳 Cooking</span>
+      <span class="pill" onclick="selectCategory(this, 'tech')">💻 Tech</span>
+    </div>
+
+    <div id="trendResults">
+      <div class="empty-state">
+        <div class="empty-icon">🔮</div>
+        <h3>Ready to Discover Trends</h3>
+        <p>Enter a niche above or pick a category to find problems people are searching to solve right now.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TAB 2: NICHE ANALYZER ═══════════ -->
+  <div class="tab-panel" id="tab-niches">
+    <div class="section-header">
+      <h1>Niche <span class="gradient-text">Profitability Analyzer</span></h1>
+      <p>Discover which niches have the highest demand and lowest competition for PDF guides.</p>
+    </div>
+
+    <div class="search-box">
+      <input type="text" class="search-input" id="nicheInput" placeholder="Enter a broad topic (e.g., wellness, education, finance)..." />
+      <button class="btn btn-primary" onclick="analyzeNiche()">🎯 Analyze Niches</button>
+    </div>
+
+    <div id="nicheResults">
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <h3>Analyze Any Market</h3>
+        <p>Enter a topic to get AI-powered niche analysis with demand scores, competition levels, and profit potential.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TAB 3: TITLE GENERATOR ═══════════ -->
+  <div class="tab-panel" id="tab-titles">
+    <div class="section-header">
+      <h1>PDF Guide <span class="gradient-text">Title Generator</span></h1>
+      <p>Generate high-converting, click-worthy titles for your PDF guides that sell.</p>
+    </div>
+
+    <div class="search-box">
+      <input type="text" class="search-input" id="titleTopicInput" placeholder="What problem does your guide solve? (e.g., stop procrastinating, lose belly fat)..." />
+      <button class="btn btn-primary" onclick="generateTitles()">✨ Generate Titles</button>
+    </div>
+
+    <div id="titleResults">
+      <div class="empty-state">
+        <div class="empty-icon">💡</div>
+        <h3>Craft the Perfect Title</h3>
+        <p>Enter the core problem your guide solves and get 10 high-converting title options, each rated for sales potential.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TAB 4: OUTLINE BUILDER ═══════════ -->
+  <div class="tab-panel" id="tab-outline">
+    <div class="section-header">
+      <h1>Smart <span class="gradient-text">Outline Builder</span></h1>
+      <p>Generate a complete chapter-by-chapter outline for your PDF guide in seconds.</p>
+    </div>
+
+    <div class="search-box">
+      <input type="text" class="search-input" id="outlineTopicInput" placeholder="Guide topic (e.g., The Ultimate Guide to Meal Prepping for Busy Professionals)..." />
+      <button class="btn btn-primary" onclick="generateOutline()">📋 Build Outline</button>
+    </div>
+
+    <div class="toolbar">
+      <select id="outlineDepth" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:0.82rem;color:var(--text-primary);font-family:var(--font-body);">
+        <option value="beginner">Beginner (5-7 chapters)</option>
+        <option value="intermediate" selected>Intermediate (8-12 chapters)</option>
+        <option value="comprehensive">Comprehensive (13-20 chapters)</option>
+      </select>
+    </div>
+
+    <div id="outlineResults">
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <h3>Build Your Blueprint</h3>
+        <p>Enter your guide title and depth preference, then get a professional chapter outline with key points for each section.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TAB 5: PDF CREATOR ═══════════ -->
+  <div class="tab-panel" id="tab-builder">
+    <div class="section-header">
+      <h1>Kindle-Grade <span class="gradient-text">Guide Creator</span></h1>
+      <p>Generate publication-quality guides with photorealistic images, step-by-step visuals, practical tables, and proven frameworks. Export as PDF, DOCX, or EPUB.</p>
+    </div>
+
+    <div class="builder-layout">
+      <div class="builder-sidebar">
+        <div class="sidebar-section">
+          <h3>📝 Guide Settings</h3>
+          <div class="input-group">
+            <label>Guide Title</label>
+            <input type="text" id="pdfTitle" placeholder="e.g., 10 Hacks to Save $500/Month" />
+          </div>
+          <div class="input-group">
+            <label>Subtitle / Hook</label>
+            <input type="text" id="pdfSubtitle" placeholder="e.g., A Practical Blueprint for Busy Professionals" />
+          </div>
+          <div class="input-group">
+            <label>Author Name</label>
+            <input type="text" id="pdfAuthor" placeholder="Your name or brand" />
+          </div>
+          <div class="input-group">
+            <label>Target Audience</label>
+            <input type="text" id="pdfAudience" placeholder="e.g., young professionals, new parents..." />
+          </div>
+          <div class="input-group">
+            <label>Voice & Personality</label>
+            <select id="pdfTone">
+              <option value="warm-mentor">Warm Mentor (like a trusted friend who's been there)</option>
+              <option value="no-bs-coach">No-BS Coach (direct, punchy, zero fluff)</option>
+              <option value="storyteller">Storyteller (narrative-driven, relatable anecdotes)</option>
+              <option value="research-translator">Research Translator (data-backed but accessible)</option>
+              <option value="cheerleader">Encouraging Cheerleader (uplifting, you-can-do-this energy)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Guide Depth</label>
+            <select id="pdfSections">
+              <option value="5">5 Chapters (Quick-Start Guide ~15 pages)</option>
+              <option value="8" selected>8 Chapters (Standard Guide ~30 pages)</option>
+              <option value="12">12 Chapters (Deep-Dive ~50 pages)</option>
+              <option value="16">16 Chapters (Comprehensive ~75+ pages)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>📸 Visual Content</h3>
+          <div class="input-group">
+            <label>Image Style</label>
+            <select id="pdfImageStyle">
+              <option value="photo" selected>Photorealistic (Unsplash photos)</option>
+              <option value="minimal">Clean Minimal Icons</option>
+              <option value="none">Text Only (no images)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Include Visuals</label>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
+                <input type="checkbox" id="incTables" checked style="accent-color:var(--accent);"> Action Tables & Checklists
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
+                <input type="checkbox" id="incSteps" checked style="accent-color:var(--accent);"> Step-by-Step Visual Guides
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
+                <input type="checkbox" id="incCallouts" checked style="accent-color:var(--accent);"> Pro Tips & Warning Boxes
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
+                <input type="checkbox" id="incStats" checked style="accent-color:var(--accent);"> Stats & Data Callouts
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
+                <input type="checkbox" id="incQuotes" checked style="accent-color:var(--accent);"> Real-World Quotes & Stories
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>🎨 Design Theme</h3>
+          <div class="input-group">
+            <label>Accent Color</label>
+            <input type="color" id="pdfColor" value="#2563eb" style="height:36px;cursor:pointer;width:100%;" />
+          </div>
+          <div class="input-group">
+            <label>Page Style</label>
+            <select id="pdfPageStyle">
+              <option value="modern" selected>Modern Clean</option>
+              <option value="classic">Classic Book</option>
+              <option value="bold">Bold Magazine</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;" onclick="generatePDF()">
+          🚀 Generate Full Guide
+        </button>
+
+        <button class="btn btn-secondary" style="width:100%;margin-top:6px;border-color:var(--accent2);" onclick="generateCover()" id="coverBtn">
+          🎨 Generate Book Cover (Imagen 4.0)
+        </button>
+        <div id="coverPreviewThumb" style="display:none;margin-top:8px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);position:relative;cursor:pointer;" onclick="showCoverFullscreen()">
+          <img id="coverThumb" style="width:100%;display:block;" />
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:8px 10px;font-size:0.68rem;color:#fff;font-family:var(--font-mono);text-align:center;">Click to enlarge</div>
+        </div>
+
+        <div class="export-btns" id="exportBtns" style="display:none;">
+          <div style="font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;margin-top:4px;">Export As</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+            <button class="btn btn-secondary btn-sm" onclick="downloadAs('pdf')" style="justify-content:center;">📕 PDF</button>
+            <button class="btn btn-secondary btn-sm" onclick="downloadAs('docx')" style="justify-content:center;">📘 DOCX</button>
+            <button class="btn btn-secondary btn-sm" onclick="downloadAs('epub')" style="justify-content:center;">📗 EPUB</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:6px;" onclick="downloadAs('html')">🌐 HTML (web-ready)</button>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:4px;" onclick="downloadCover()">🖼️ Download Cover Image</button>
+        </div>
+      </div>
+
+      <div class="builder-main">
+        <div id="pdfPreviewArea">
+          <div class="empty-state">
+            <div class="empty-icon">📖</div>
+            <h3>Your Kindle-Quality Guide Preview</h3>
+            <p>Configure your settings and hit Generate. You'll get a publication-ready guide with photorealistic images, practical tables, step-by-step visuals, and proven frameworks — written in a natural human voice, never AI-sounding.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TAB 6: COMPETITOR SPY ═══════════ -->
+  <div class="tab-panel" id="tab-competitors">
+    <div class="section-header">
+      <h1>Competitor <span class="gradient-text">Intelligence</span></h1>
+      <p>Analyze what's already selling in your niche and find gaps you can exploit.</p>
+    </div>
+
+    <div class="search-box">
+      <input type="text" class="search-input" id="compInput" placeholder="Enter niche or topic (e.g., keto diet, budget travel, dog training)..." />
+      <button class="btn btn-primary" onclick="spyCompetitors()">🕵️ Analyze Market</button>
+    </div>
+
+    <div id="compResults">
+      <div class="empty-state">
+        <div class="empty-icon">🔎</div>
+        <h3>Spy on the Competition</h3>
+        <p>Discover what PDF guides are already selling, their pricing, and the gaps you can fill to stand out.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TAB 7: SAVED GUIDES ═══════════ -->
+  <div class="tab-panel" id="tab-saved">
+    <div class="section-header">
+      <h1>My <span class="gradient-text">Saved Guides</span></h1>
+      <p>All your generated guides, outlines, and research — saved locally in your browser.</p>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-secondary btn-sm" onclick="exportAllGuides()">📤 Export All</button>
+      <div class="toolbar-spacer"></div>
+      <button class="btn btn-ghost btn-sm" onclick="clearAllGuides()" style="color:var(--danger);">🗑️ Clear All</button>
+    </div>
+
+    <div id="savedList">
+      <div class="empty-state">
+        <div class="empty-icon">💾</div>
+        <h3>No Saved Guides Yet</h3>
+        <p>When you generate trends, outlines, or PDF guides, they'll appear here for easy access.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Toast Container ── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ════════════════════════════════════════════
+// CORE APP STATE — DUAL PROVIDER ENGINE
+// ════════════════════════════════════════════
+const KEYS = {
+  claude: localStorage.getItem('trendforge_key_claude') || '',
+  gemini: localStorage.getItem('trendforge_key_gemini') || ''
+};
+let activeProvider = localStorage.getItem('trendforge_provider') || 'claude';
+let savedGuides = JSON.parse(localStorage.getItem('trendforge_guides') || '[]');
+let currentCategory = 'all';
+
+const DEFAULT_SYSTEM = 'You are TrendForge AI, an expert at market research, trend analysis, and creating profitable PDF guide content. Always respond with valid JSON when asked for JSON. Be specific, actionable, and data-driven.';
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Restore keys
+  if (KEYS.claude) {
+    document.getElementById('apiKeyInput').value = KEYS.claude;
+    document.getElementById('apiStatus').classList.add('connected');
+  }
+  if (KEYS.gemini) {
+    document.getElementById('geminiKeyInput').value = KEYS.gemini;
+    document.getElementById('geminiStatus').classList.add('connected');
+  }
+  // Restore provider
+  selectProvider(activeProvider, true);
+  // Restore model
+  const savedModel = localStorage.getItem('trendforge_model');
+  if (savedModel) document.getElementById('modelSelect').value = savedModel;
+
+  updateSavedBadge();
+  renderSavedGuides();
+
+  // Model change listener
+  document.getElementById('modelSelect').addEventListener('change', function() {
+    const val = this.value;
+    localStorage.setItem('trendforge_model', val);
+    // Auto-switch provider based on model selection
+    if (val.startsWith('claude') || val.startsWith('claude')) {
+      selectProvider('claude');
+    } else if (val.startsWith('gemini')) {
+      selectProvider('gemini');
+    }
+    const label = this.options[this.selectedIndex].text;
+    showToast(`Switched to ${label}`, 'info');
+  });
+});
+
+// ════════════════════════════════════════════
+// PROVIDER & KEY MANAGEMENT
+// ════════════════════════════════════════════
+function selectProvider(provider, silent = false) {
+  activeProvider = provider;
+  localStorage.setItem('trendforge_provider', provider);
+
+  // Toggle UI
+  document.querySelectorAll('.provider-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.provider-btn[data-provider="${provider}"]`).classList.add('active');
+
+  // Show/hide key inputs
+  document.getElementById('claudeKeyGroup').style.display = provider === 'claude' ? 'flex' : 'none';
+  document.getElementById('geminiKeyGroup').style.display = provider === 'gemini' ? 'flex' : 'none';
+
+  // Auto-select first model of that provider
+  const sel = document.getElementById('modelSelect');
+  const currentVal = sel.value;
+  const isCurrent = (provider === 'claude' && currentVal.startsWith('claude')) ||
+                    (provider === 'gemini' && currentVal.startsWith('gemini'));
+  if (!isCurrent) {
+    if (provider === 'claude') sel.value = 'claude-sonnet-4-20250514';
+    else sel.value = 'gemini-2.5-pro';
+    localStorage.setItem('trendforge_model', sel.value);
+  }
+
+  if (!silent) {
+    const name = provider === 'claude' ? 'Claude' : 'Google Gemini';
+    showToast(`Switched to ${name}`, 'info');
+  }
+}
+
+function saveApiKey(provider) {
+  if (provider === 'claude') {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key) { showToast('Enter your Claude API key', 'error'); return; }
+    KEYS.claude = key;
+    localStorage.setItem('trendforge_key_claude', key);
+    document.getElementById('apiStatus').classList.add('connected');
+    showToast('Claude API key saved!', 'success');
+  } else {
+    const key = document.getElementById('geminiKeyInput').value.trim();
+    if (!key) { showToast('Enter your Gemini API key', 'error'); return; }
+    KEYS.gemini = key;
+    localStorage.setItem('trendforge_key_gemini', key);
+    document.getElementById('geminiStatus').classList.add('connected');
+    showToast('Gemini API key saved!', 'success');
+  }
+}
+
+function checkApiKey() {
+  const key = KEYS[activeProvider];
+  if (!key) {
+    const name = activeProvider === 'claude' ? 'Claude' : 'Gemini';
+    showToast(`Connect your ${name} API key first ↑`, 'error');
+    return false;
+  }
+  return true;
+}
+
+function getActiveModel() {
+  return document.getElementById('modelSelect').value;
+}
+
+function getProviderLabel() {
+  const sel = document.getElementById('modelSelect');
+  return sel.options[sel.selectedIndex].text;
+}
+
+// ════════════════════════════════════════════
+// UNIFIED AI CALL — ROUTES TO CLAUDE OR GEMINI
+// ════════════════════════════════════════════
+async function callAI(prompt, systemPrompt = '') {
+  const model = getActiveModel();
+  const sys = systemPrompt || DEFAULT_SYSTEM;
+
+  if (model.startsWith('gemini')) {
+    return await callGemini(prompt, sys, model);
+  } else {
+    return await callClaudeAPI(prompt, sys, model);
+  }
+}
+
+// ── Claude API ──
+async function callClaudeAPI(prompt, systemPrompt, model) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': KEYS.claude,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: model,
+      max_tokens: 4096,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Claude API error ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.content[0].text;
+}
+
+// ── Gemini API ──
+async function callGemini(prompt, systemPrompt, model) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${KEYS.gemini}`;
+
+  const body = {
+    contents: [{
+      parts: [{ text: prompt }]
+    }],
+    systemInstruction: {
+      parts: [{ text: systemPrompt }]
+    },
+    generationConfig: {
+      maxOutputTokens: 8192,
+      temperature: 0.8
+    }
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    const msg = err.error?.message || JSON.stringify(err.error || err);
+    throw new Error(`Gemini error: ${msg}`);
+  }
+
+  const data = await response.json();
+
+  // Handle Gemini response structure
+  if (data.candidates && data.candidates[0]) {
+    const parts = data.candidates[0].content?.parts;
+    if (parts && parts.length > 0) {
+      return parts.map(p => p.text || '').join('');
+    }
+  }
+
+  throw new Error('No content in Gemini response');
+}
+
+// ── Parse JSON from either provider ──
+async function callAIJson(prompt, systemPrompt = '') {
+  const raw = await callAI(prompt, systemPrompt);
+  let clean = raw.trim();
+  // Strip markdown fences
+  if (clean.startsWith('```')) {
+    clean = clean.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '');
+  }
+  try {
+    return JSON.parse(clean);
+  } catch (e) {
+    // Try to find JSON in the response
+    const jsonMatch = clean.match(/[\[{][\s\S]*[\]}]/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
+    throw new Error(`Failed to parse AI response as JSON: ${e.message}\n\nRaw: ${clean.substring(0, 200)}...`);
+  }
+}
+
+// ════════════════════════════════════════════
+// TAB 1: TREND FINDER
+// ════════════════════════════════════════════
+function selectCategory(el, cat) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  currentCategory = cat;
+  if (cat !== 'all') {
+    document.getElementById('trendSearchInput').value = cat;
+    searchTrends();
+  }
+}
+
+async function searchTrends() {
+  if (!checkApiKey()) return;
+  const query = document.getElementById('trendSearchInput').value.trim();
+  if (!query) { showToast('Enter a niche to search', 'error'); return; }
+
+  const resultsEl = document.getElementById('trendResults');
+  resultsEl.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Scanning trends via ${getProviderLabel()}...</div></div>`;
+
+  try {
+    const data = await callAIJson(`Find 6 trending problems, questions, or pain points people are currently searching about related to "${query}". For each trend, provide:
+- title: the problem/question (phrased as people search it)
+- score: "hot", "warm", or "rising"
+- searchVolume: estimated monthly searches (string like "12K" or "890")
+- growth: percentage growth like "+45%"
+- description: 1-2 sentences explaining why this is trending
+- guideIdea: a specific PDF guide idea to solve this problem
+- category: the sub-niche
+
+Return ONLY valid JSON array, no other text. Example:
+[{"title":"How to meal prep for the week in 2 hours","score":"hot","searchVolume":"33K","growth":"+62%","description":"...","guideIdea":"...","category":"meal prep"}]`);
+
+    renderTrends(data);
+  } catch (err) {
+    resultsEl.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>${err.message}</p></div>`;
+  }
+}
+
+function renderTrends(trends) {
+  const el = document.getElementById('trendResults');
+  el.innerHTML = `<div class="trend-grid">${trends.map(t => `
+    <div class="trend-card">
+      <div class="trend-top">
+        <div class="trend-title">${esc(t.title)}</div>
+        <span class="trend-score score-${t.score}">${t.score === 'hot' ? '🔥 HOT' : t.score === 'warm' ? '🌡️ WARM' : '📈 RISING'}</span>
+      </div>
+      <div class="trend-meta">
+        <span>📊 ${esc(t.searchVolume)}/mo</span>
+        <span>📈 ${esc(t.growth)}</span>
+        <span>🏷️ ${esc(t.category || '')}</span>
+      </div>
+      <div class="trend-desc">${esc(t.description)}</div>
+      <div style="background:var(--accent-soft);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px;font-size:0.82rem;">
+        <strong style="color:var(--accent);">💡 Guide Idea:</strong> ${esc(t.guideIdea)}
+      </div>
+      <div class="trend-actions">
+        <button class="btn btn-sm btn-primary" onclick="useTrendForGuide('${esc(t.guideIdea)}')">📄 Create Guide</button>
+        <button class="btn btn-sm btn-secondary" onclick="useTrendForTitle('${esc(t.title)}')">✨ Generate Titles</button>
+        <button class="btn btn-sm btn-ghost" onclick="saveTrend(${JSON.stringify(t).replace(/'/g, "\\'")})">💾 Save</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function useTrendForGuide(idea) {
+  document.getElementById('pdfTitle').value = idea;
+  switchTab('builder');
+}
+
+function useTrendForTitle(topic) {
+  document.getElementById('titleTopicInput').value = topic;
+  switchTab('titles');
+}
+
+// ════════════════════════════════════════════
+// TAB 2: NICHE ANALYZER
+// ════════════════════════════════════════════
+async function analyzeNiche() {
+  if (!checkApiKey()) return;
+  const query = document.getElementById('nicheInput').value.trim();
+  if (!query) { showToast('Enter a topic to analyze', 'error'); return; }
+
+  const el = document.getElementById('nicheResults');
+  el.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Analyzing via ${getProviderLabel()}...</div></div>`;
+
+  try {
+    const data = await callAIJson(`Analyze the top 8 most profitable sub-niches within "${query}" for selling PDF guides. For each niche, provide:
+- name: the sub-niche name
+- demandScore: 1-100 number
+- competitionLevel: "low", "medium", or "high"
+- estimatedRevenue: monthly revenue potential like "$2K-$5K"
+- trending: boolean if it's currently growing
+- topQuestion: the most searched question in this niche
+- guidePrice: suggested price point like "$9.99"
+
+Return ONLY a valid JSON array, no other text.`);
+
+    renderNiches(data);
+  } catch (err) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>${err.message}</p></div>`;
+  }
+}
+
+function renderNiches(niches) {
+  const el = document.getElementById('nicheResults');
+
+  // Stats row
+  const avgDemand = Math.round(niches.reduce((a, n) => a + (n.demandScore || 0), 0) / niches.length);
+  const lowComp = niches.filter(n => n.competitionLevel === 'low').length;
+
+  el.innerHTML = `
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-value">${niches.length}</div><div class="stat-label">Niches Found</div></div>
+      <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value">${avgDemand}</div><div class="stat-label">Avg Demand Score</div></div>
+      <div class="stat-card"><div class="stat-icon">🟢</div><div class="stat-value">${lowComp}</div><div class="stat-label">Low Competition</div></div>
+      <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-value">${niches.filter(n => n.trending).length}</div><div class="stat-label">Currently Trending</div></div>
+    </div>
+    <div class="niche-results">
+      ${niches.sort((a, b) => (b.demandScore || 0) - (a.demandScore || 0)).map((n, i) => `
+        <div class="niche-card">
+          <div class="niche-rank">#${i + 1}</div>
+          <div class="niche-info">
+            <div class="niche-name">${esc(n.name)} ${n.trending ? '🔥' : ''}</div>
+            <div class="niche-stats">
+              <span>💰 ${esc(n.estimatedRevenue || 'N/A')}</span>
+              <span>🏷️ ${esc(n.guidePrice || 'N/A')}</span>
+              <span class="difficulty-badge diff-${n.competitionLevel === 'low' ? 'easy' : n.competitionLevel === 'high' ? 'hard' : 'medium'}">${esc(n.competitionLevel || 'medium')} comp</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:6px;">❓ ${esc(n.topQuestion || '')}</div>
+          </div>
+          <div class="niche-bar-container">
+            <div class="niche-bar-bg"><div class="niche-bar-fill" style="width:${n.demandScore || 0}%"></div></div>
+            <div style="font-size:0.68rem;color:var(--text-muted);margin-top:3px;text-align:center;font-family:var(--font-mono);">${n.demandScore}/100</div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="document.getElementById('trendSearchInput').value='${esc(n.name)}';switchTab('trends');searchTrends();">Explore →</button>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+// ════════════════════════════════════════════
+// TAB 3: TITLE GENERATOR
+// ════════════════════════════════════════════
+async function generateTitles() {
+  if (!checkApiKey()) return;
+  const topic = document.getElementById('titleTopicInput').value.trim();
+  if (!topic) { showToast('Enter a topic for title ideas', 'error'); return; }
+
+  const el = document.getElementById('titleResults');
+  el.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Crafting titles via ${getProviderLabel()}...</div></div>`;
+
+  try {
+    const data = await callAIJson(`Generate 10 high-converting PDF guide titles about "${topic}". Each title should be designed to maximize sales and clicks. For each, provide:
+- title: the full title
+- hook: what psychological trigger it uses (curiosity, urgency, number, pain point, transformation, etc.)
+- salesRating: 1-10 score for sales potential
+
+Return ONLY a valid JSON array sorted by salesRating descending, no other text.`);
+
+    renderTitles(data);
+  } catch (err) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>${err.message}</p></div>`;
+  }
+}
+
+function renderTitles(titles) {
+  const el = document.getElementById('titleResults');
+  el.innerHTML = `<div class="titles-list">${titles.map((t, i) => `
+    <div class="title-option" onclick="selectTitle('${esc(t.title)}')">
+      <div>
+        <div class="title-text">${esc(t.title)}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono);">🎣 ${esc(t.hook || '')} · ⭐ ${t.salesRating}/10</div>
+      </div>
+      <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();selectTitle('${esc(t.title)}')">Use This →</button>
+    </div>
+  `).join('')}</div>`;
+}
+
+function selectTitle(title) {
+  document.getElementById('pdfTitle').value = title;
+  switchTab('builder');
+  showToast('Title loaded into PDF Creator!', 'success');
+}
+
+// ════════════════════════════════════════════
+// TAB 4: OUTLINE BUILDER
+// ════════════════════════════════════════════
+async function generateOutline() {
+  if (!checkApiKey()) return;
+  const topic = document.getElementById('outlineTopicInput').value.trim();
+  const depth = document.getElementById('outlineDepth').value;
+  if (!topic) { showToast('Enter a guide topic', 'error'); return; }
+
+  const el = document.getElementById('outlineResults');
+  el.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Building outline via ${getProviderLabel()}...</div></div>`;
+
+  const chapRange = depth === 'beginner' ? '5-7' : depth === 'intermediate' ? '8-12' : '13-20';
+
+  try {
+    const data = await callAIJson(`Create a detailed outline for a PDF guide titled "${topic}" with ${chapRange} chapters. For each chapter provide:
+- chapterNumber: the number
+- title: chapter title
+- summary: 2-3 sentence overview of what this chapter covers
+- keyPoints: array of 3-5 bullet points of specific topics covered
+- estimatedPages: how many pages this chapter would be
+
+Return ONLY a valid JSON array, no other text.`);
+
+    renderOutline(data, topic);
+  } catch (err) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>${err.message}</p></div>`;
+  }
+}
+
+function renderOutline(chapters, topic) {
+  const el = document.getElementById('outlineResults');
+  const totalPages = chapters.reduce((a, c) => a + (c.estimatedPages || 3), 0);
+
+  el.innerHTML = `
+    <div class="toolbar">
+      <div style="font-family:var(--font-display);font-weight:700;">${chapters.length} Chapters · ~${totalPages} Pages</div>
+      <div class="toolbar-spacer"></div>
+      <button class="btn btn-sm btn-primary" onclick="outlineToBuilder('${esc(topic)}')">📄 Generate Full PDF →</button>
+      <button class="btn btn-sm btn-secondary" onclick="saveGuide('outline','${esc(topic)}', document.getElementById('outlineResults').innerHTML)">💾 Save</button>
+    </div>
+    ${chapters.map(c => `
+      <div class="outline-section">
+        <div class="outline-header" onclick="this.parentElement.classList.toggle('open')">
+          <div style="display:flex;align-items:center;">
+            <span class="chapter-num">CH ${c.chapterNumber || ''}</span>
+            <span class="chapter-title">${esc(c.title)}</span>
+          </div>
+          <span style="font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);">~${c.estimatedPages || 3} pages</span>
+        </div>
+        <div class="outline-body" style="display:none;">
+          <p style="margin-bottom:10px;">${esc(c.summary || '')}</p>
+          <ul>${(c.keyPoints || []).map(p => `<li>${esc(p)}</li>`).join('')}</ul>
+        </div>
+      </div>
+    `).join('')}`;
+
+  // Toggle logic
+  document.querySelectorAll('.outline-header').forEach(h => {
+    h.addEventListener('click', () => {
+      const body = h.nextElementSibling;
+      body.style.display = body.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+}
+
+function outlineToBuilder(topic) {
+  document.getElementById('pdfTitle').value = topic;
+  switchTab('builder');
+}
+
+// ════════════════════════════════════════════
+// TAB 5: KINDLE-GRADE GUIDE CREATOR
+// ════════════════════════════════════════════
+let lastGeneratedGuide = null;
+
+const VOICE_PROMPTS = {
+  'warm-mentor': `Write like a trusted older sibling who's been through this exact situation. Use "I remember when..." and "Here's what nobody tells you..." and "The thing that finally clicked for me was...". Share specific personal-feeling anecdotes (invent realistic ones). Use contractions naturally. Occasionally address the reader as "you" mid-sentence. Vary sentence length — mix punchy 4-word sentences with flowing 25-word ones. NEVER use phrases like "In this chapter" or "Let's explore" or "In today's world" or "It's important to note" — those scream AI.`,
+
+  'no-bs-coach': `Write like a tough-love coach who respects the reader's time. Get straight to the point. Use short paragraphs (2-3 sentences max). Lead with the action, not the preamble. Say "Do this" not "You might consider doing this". Use occasional profanity-adjacent intensity like "Stop overthinking this" or "This is the part where most people quit — don't." Include specific numbers, timelines, and measurable outcomes. NEVER pad with filler phrases or vague encouragement.`,
+
+  'storyteller': `Write like a bestselling non-fiction author. Open each chapter with a vivid 3-sentence scene or anecdote that illustrates the chapter's core lesson. Use sensory details — what things looked like, felt like, sounded like. Weave the practical advice INTO the narrative rather than listing it separately. Use dialogue snippets. Reference specific (invented but realistic) people by first name: "When Sarah tried this approach, she..." End chapters with a callback to the opening story. NEVER use generic transitional phrases like "Now let's look at" or "Moving on to".`,
+
+  'research-translator': `Write like a science journalist who makes complex things click. Lead with a surprising statistic or research finding, then explain why it matters in plain English. Reference specific (realistic) studies: "A 2023 Stanford study found that..." Use analogies to make data tangible: "That's the equivalent of..." Include specific percentages, dollar amounts, and timeframes. Present opposing viewpoints briefly then land on the actionable takeaway. NEVER use academic jargon without immediately explaining it in one sentence.`,
+
+  'cheerleader': `Write like an encouraging best friend who genuinely believes in the reader. Use "You've got this" energy without being patronizing. Acknowledge that things are hard before offering solutions: "Look, I know this feels overwhelming. Here's the truth though..." Celebrate small wins throughout. Use inclusive language: "we" and "together". Include "Permission slip" moments: "You're allowed to start small." Share vulnerability: "I used to struggle with this too." NEVER be saccharine or use empty motivational clichés like "Believe in yourself" without a concrete next step attached.`
+};
+
+async function generatePDF() {
+  if (!checkApiKey()) return;
+  const title = document.getElementById('pdfTitle').value.trim();
+  const subtitle = document.getElementById('pdfSubtitle').value.trim();
+  const author = document.getElementById('pdfAuthor').value.trim() || 'TrendForge Publishing';
+  const audience = document.getElementById('pdfAudience').value.trim();
+  const tone = document.getElementById('pdfTone').value;
+  const sections = parseInt(document.getElementById('pdfSections').value);
+  const color = document.getElementById('pdfColor').value;
+  const imageStyle = document.getElementById('pdfImageStyle').value;
+  const pageStyle = document.getElementById('pdfPageStyle').value;
+  const incTables = document.getElementById('incTables').checked;
+  const incSteps = document.getElementById('incSteps').checked;
+  const incCallouts = document.getElementById('incCallouts').checked;
+  const incStats = document.getElementById('incStats').checked;
+  const incQuotes = document.getElementById('incQuotes').checked;
+
+  if (!title) { showToast('Enter a guide title first', 'error'); return; }
+
+  const el = document.getElementById('pdfPreviewArea');
+  el.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Crafting your guide via ${getProviderLabel()}...</div><div class="progress-container"><div class="progress-bar-bg"><div class="progress-bar-fill" id="pdfProgress"></div></div><div class="progress-label" id="pdfProgressLabel">Phase 1/2: Writing content...</div></div></div>`;
+
+  let prog = 0;
+  const progInterval = setInterval(() => {
+    prog = Math.min(prog + Math.random() * 5, 92);
+    const bar = document.getElementById('pdfProgress');
+    if (bar) bar.style.width = prog + '%';
+  }, 600);
+
+  const voiceDirective = VOICE_PROMPTS[tone] || VOICE_PROMPTS['warm-mentor'];
+
+  // Build the visual elements instruction
+  let visualInstructions = '';
+  if (incTables) visualInstructions += `
+— PRACTICAL TABLES: Include at least one HTML <table> per chapter. Use these formats:
+  • "Before vs After" comparison tables
+  • "Step | Action | Time | Expected Result" action plans
+  • "Common Mistake vs Better Approach" tables
+  • Checklists formatted as tables with ✅/❌ columns
+  • "Week 1, Week 2, Week 3..." progress trackers
+  Tables must have real, specific data — not placeholder text. Use class="guide-table" on each table.`;
+
+  if (incSteps) visualInstructions += `
+— STEP-BY-STEP VISUAL GUIDES: For each process or technique, create a numbered visual walkthrough using <div class="step-grid">. Each step gets: a step number circle, a bold action title, 1-2 sentences of specific instruction, and a "Common mistake" warning underneath. Use 3-7 steps per process. These should feel like IKEA instructions — so clear a child could follow them.`;
+
+  if (incCallouts) visualInstructions += `
+— PRO TIPS & WARNINGS: Use <div class="pro-tip"> for insider knowledge boxes with a lightbulb header. Use <div class="warning-box"> for "Don't do this" warnings with specific consequences. Use <div class="quick-win"> for "Do this right now in 2 minutes" instant action boxes. Each chapter should have at least 1-2 of these.`;
+
+  if (incStats) visualInstructions += `
+— DATA CALLOUTS: Use <div class="stat-highlight"> to showcase powerful statistics. Format: big number on top, context sentence below. Example: "73%" / "of people who track their spending save at least $200/month within 60 days (NerdWallet, 2024)". Use realistic, specific numbers. 1-2 per chapter.`;
+
+  if (incQuotes) visualInstructions += `
+— HUMAN STORIES & QUOTES: Include <div class="human-story"> blocks with short (3-4 sentence) anecdotes from realistic people. Give them first names, ages, cities. Example: "When Marcus, 34, from Denver started using this method..." Also include <blockquote> with attributed quotes from realistic experts or practitioners (invent believable ones). These make the guide feel lived-in and trustworthy.`;
+
+  // Image search terms instruction
+  let imageInstruction = '';
+  if (imageStyle === 'photo') {
+    imageInstruction = `
+— PHOTOREALISTIC IMAGES: For each chapter, include an <img> tag with a descriptive alt text AND a data-search attribute containing 2-4 word Unsplash search terms. Example: <img class="guide-img" alt="Woman organizing kitchen pantry with labeled containers" data-search="kitchen organization pantry"> I will replace these with real photos after generation. Include 1-2 images per chapter placed naturally within the content — not just at the top.`;
+  }
+
+  try {
+    const raw = await callAI(`You are a bestselling non-fiction author writing a premium guide that will be sold on Amazon Kindle and Etsy. This is NOT an AI-generated document — it must read, feel, and flow like it was written by a human expert who spent weeks crafting it.
+
+VOICE & PERSONALITY DIRECTIVE:
+${voiceDirective}
+
+CRITICAL ANTI-AI RULES (violating ANY of these ruins the guide):
+— NEVER start any sentence with "In today's", "In this chapter", "Let's dive", "Let's explore", "It's worth noting", "It's important to", "When it comes to", "In the world of"
+— NEVER use the word "crucial", "comprehensive", "landscape", "paradigm", "leverage" (as a verb), "utilize", "foster", "delve", "multifaceted", "streamline", or "holistic"
+— NEVER use empty transitions like "Furthermore", "Moreover", "Additionally", "In conclusion"
+— Start chapters with a hook: a story, a surprising fact, a bold statement, or a question — NEVER with a definition or overview
+— Vary paragraph lengths: some 1 sentence, some 4-5 sentences. Real writers do this. AI doesn't.
+— Use occasional sentence fragments for emphasis. Like this. Real authors do that.
+— Include specific numbers, brand names, dollar amounts, and timeframes throughout. Vague advice is useless advice.
+— Write at an 8th-grade reading level maximum. Short words beat long words. Always.
+
+GUIDE SPECIFICATIONS:
+Title: "${title}"
+${subtitle ? `Subtitle: "${subtitle}"` : ''}
+Author: "${author}"
+Target Reader: ${audience || 'someone actively looking to solve this problem today'}
+Total Chapters: ${sections}
+
+STRUCTURE FOR EACH CHAPTER:
+1. Chapter title (use <h2>)
+2. Opening hook (story, stat, or bold claim — 2-3 sentences)
+3. Core content with practical, specific advice (3-5 paragraphs)
+4. Visual elements embedded naturally within the flow
+5. Chapter closing with a single clear action item
+
+VISUAL ELEMENTS TO INCLUDE:
+${visualInstructions}
+${imageInstruction}
+
+REQUIRED SECTIONS:
+— Start with a <div class="title-page"> containing the title in <h1>, subtitle in <p class="subtitle">, and author in <p class="author">
+— Include a "How to Use This Guide" section right after the title page (brief, 3-4 sentences with a <div class="quick-win"> box)
+— End with a "Your Next 7 Days" action plan as the final chapter, formatted as a <table> with Day | Action | Time Needed | Why It Matters columns filled with specific, concrete actions
+— Add a <div class="final-note"> at the very end with a warm, personal sign-off from the author (2-3 sentences)
+
+FORMAT: Output as clean HTML fragments only. No <!DOCTYPE>, <html>, <head>, or <body> tags. Use semantic HTML: <h1>, <h2>, <h3>, <p>, <table>, <blockquote>, <ul>, <ol>, <strong>, <em>, and the custom div classes specified above.
+
+LENGTH: This should be substantial — aim for ${sections * 500}-${sections * 800} words total. Every word earns its place.`, 
+
+      'You are a bestselling author and subject matter expert. You write like a human — with personality, specificity, and warmth. You never sound like AI. Your guides have helped thousands of real people solve real problems. Write with the confidence of someone who has done this work, not someone describing it from the outside.'
+    );
+
+    // Phase 2: Inject real photos
+    const label = document.getElementById('pdfProgressLabel');
+    if (label) label.textContent = 'Phase 2/2: Loading images...';
+    
+    let processedHTML = raw;
+    
+    // Strip any markdown code fences the AI may have wrapped the output in
+    processedHTML = processedHTML.trim();
+    if (processedHTML.startsWith('```')) {
+      processedHTML = processedHTML.replace(/^```(?:html)?\s*/i, '').replace(/\s*```\s*$/, '');
+    }
+    
+    if (imageStyle === 'photo') {
+      // Find all data-search attributes and inject real photo URLs
+      const imgRegex = /data-search="([^"]+)"/g;
+      let match;
+      const searches = [];
+      while ((match = imgRegex.exec(processedHTML)) !== null) {
+        searches.push(match[1]);
+      }
+
+      // Also handle img tags that have no src yet
+      let imgIndex = 0;
+      for (const query of searches.slice(0, 14)) {
+        // Use picsum for reliable placeholder photos + Unsplash as fallback
+        const seed = encodeURIComponent(query.replace(/\s+/g, '-'));
+        const photoUrl = `https://picsum.photos/seed/${seed}/800/450`;
+        
+        // If the img tag already has src, skip; otherwise inject src before data-search
+        if (processedHTML.includes(`src=`) && processedHTML.includes(`data-search="${query}"`)) {
+          // src already present, skip
+        } else {
+          processedHTML = processedHTML.replace(
+            `data-search="${query}"`,
+            `src="${photoUrl}" loading="lazy" onerror="this.style.display='none'" data-search="${query}"`
+          );
+        }
+        imgIndex++;
+      }
+      
+      // Also catch any img tags that the AI wrote with src="" or no src
+      processedHTML = processedHTML.replace(/src=""\s*/g, '');
+    }
+
+    clearInterval(progInterval);
+
+    // Build the styled preview
+    const guideCSS = buildGuideCSS(color, pageStyle);
+
+    lastGeneratedGuide = {
+      title, subtitle, author, html: processedHTML, css: guideCSS, color, pageStyle
+    };
+
+    el.innerHTML = `
+      <div class="pdf-preview" style="${guideCSS}">
+        ${processedHTML}
+      </div>`;
+
+    document.getElementById('exportBtns').style.display = 'block';
+    showToast('Guide generated! Preview below, export buttons in sidebar.', 'success');
+
+  } catch (err) {
+    clearInterval(progInterval);
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Generation Error</h3><p>${err.message}</p></div>`;
+  }
+}
+
+function buildGuideCSS(color, style) {
+  const hsl = hexToHSL(color);
+  const lightBg = `hsl(${hsl.h}, ${Math.min(hsl.s + 20, 100)}%, 96%)`;
+  const lighterBg = `hsl(${hsl.h}, ${Math.min(hsl.s + 10, 100)}%, 98%)`;
+
+  return `
+    --accent: ${color};
+    --accent-light: ${lightBg};
+    --accent-lighter: ${lighterBg};
+    font-family: 'DM Sans', Georgia, 'Times New Roman', serif;
+    color: #1a1a2e;
+    background: #ffffff;
+    padding: 48px;
+    border-radius: 12px;
+    line-height: 1.78;
+    font-size: 15px;
+    max-width: 100%;
+  `;
+}
+
+function hexToHSL(hex) {
+  let r = parseInt(hex.slice(1,3),16)/255;
+  let g = parseInt(hex.slice(3,5),16)/255;
+  let b = parseInt(hex.slice(5,7),16)/255;
+  let max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h, s, l = (max+min)/2;
+  if (max === min) { h = s = 0; } else {
+    let d = max - min;
+    s = l > 0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max) {
+      case r: h = ((g-b)/d + (g<b?6:0))/6; break;
+      case g: h = ((b-r)/d + 2)/6; break;
+      case b: h = ((r-g)/d + 4)/6; break;
+    }
+  }
+  return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
+}
+
+// ════════════════════════════════════════════
+// MULTI-FORMAT EXPORT ENGINE
+// ════════════════════════════════════════════
+function downloadAs(format) {
+  if (!lastGeneratedGuide) { showToast('Generate a guide first', 'error'); return; }
+  const g = lastGeneratedGuide;
+
+  switch(format) {
+    case 'html': exportHTML(g); break;
+    case 'pdf':  exportPrintPDF(g); break;
+    case 'docx': exportDOCX(g); break;
+    case 'epub': exportEPUB(g); break;
+  }
+}
+
+function exportHTML(g) {
+  const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${esc(g.title)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+${getExportCSS(g.color, 'html')}
+</style>
+</head>
+<body>
+<div class="guide-container">
+${g.html}
+</div>
+</body>
+</html>`;
+
+  downloadBlob(fullHTML, `${slugify(g.title)}.html`, 'text/html');
+  showToast('HTML guide downloaded!', 'success');
+}
+
+function exportPrintPDF(g) {
+  // Create a print-optimized HTML and trigger browser print dialog
+  const printHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${esc(g.title)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+${getExportCSS(g.color, 'pdf')}
+@media print {
+  body { margin: 0; padding: 0; }
+  .guide-container { max-width: 100%; padding: 0.5in; }
+  .guide-img, img { max-height: 300px; page-break-inside: avoid; }
+  .title-page { page-break-after: always; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; }
+  h2 { page-break-before: always; }
+  .step-grid, .guide-table, table, .pro-tip, .warning-box, .quick-win, .stat-highlight, .human-story, blockquote {
+    page-break-inside: avoid;
+  }
+  .step-item { page-break-inside: avoid; }
+}
+@page {
+  size: letter;
+  margin: 0.75in;
+}
+</style>
+</head>
+<body>
+<div class="guide-container">
+${g.html}
+</div>
+<script>
+  // Wait for fonts and images to load, then print
+  window.addEventListener('load', function() {
+    setTimeout(function() { window.print(); }, 800);
+  });
+<\/script>
+</body>
+</html>`;
+
+  // Try popup first, fall back to download
+  const w = window.open('', '_blank');
+  if (w) {
+    w.document.write(printHTML);
+    w.document.close();
+    showToast('PDF print dialog opening — choose "Save as PDF" as your printer!', 'success');
+  } else {
+    // Popup blocked — download as HTML instead
+    downloadBlob(printHTML, `${slugify(g.title)}-print.html`, 'text/html');
+    showToast('Popup blocked — downloaded print-ready HTML. Open it and press Ctrl+P to save as PDF.', 'info');
+  }
+}
+
+function exportDOCX(g) {
+  // Generate a clean HTML that Word can import perfectly
+  const wordHTML = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<meta name="author" content="${esc(g.author)}">
+<meta name="description" content="${esc(g.subtitle || '')}">
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+<style>
+body { font-family: Calibri, sans-serif; font-size: 11pt; color: #1a1a2e; line-height: 1.7; margin: 1in; }
+h1 { font-family: Cambria, serif; font-size: 26pt; font-weight: bold; color: ${g.color}; margin-bottom: 6pt; page-break-before: auto; }
+h2 { font-family: Cambria, serif; font-size: 18pt; font-weight: bold; color: #1a1a2e; border-bottom: 2pt solid ${g.color}; padding-bottom: 4pt; margin-top: 24pt; margin-bottom: 12pt; page-break-before: always; }
+h3 { font-family: Cambria, serif; font-size: 14pt; font-weight: bold; color: #333; margin-top: 16pt; margin-bottom: 8pt; }
+p { margin-bottom: 10pt; }
+table { border-collapse: collapse; width: 100%; margin: 14pt 0; }
+th { background-color: ${g.color}; color: white; font-weight: bold; padding: 8pt 12pt; text-align: left; border: 1pt solid #ccc; font-size: 10pt; }
+td { padding: 7pt 12pt; border: 1pt solid #ddd; font-size: 10pt; vertical-align: top; }
+tr:nth-child(even) td { background-color: #f9f9fb; }
+blockquote { border-left: 3pt solid ${g.color}; padding: 8pt 16pt; margin: 14pt 0; font-style: italic; color: #555; background: #f8f8fc; }
+ul, ol { margin: 8pt 0 12pt 24pt; }
+li { margin-bottom: 4pt; }
+.title-page { text-align: center; margin-bottom: 48pt; }
+.subtitle { font-size: 14pt; color: #666; font-style: italic; }
+.author { font-size: 12pt; color: #888; margin-top: 12pt; }
+.pro-tip, .warning-box, .quick-win { border-radius: 6pt; padding: 12pt 16pt; margin: 14pt 0; }
+.pro-tip { background: #f0fdf4; border-left: 4pt solid #22c55e; }
+.warning-box { background: #fef2f2; border-left: 4pt solid #ef4444; }
+.quick-win { background: #eff6ff; border-left: 4pt solid #3b82f6; }
+.stat-highlight { background: #f8f8fc; border: 1pt solid #e5e5ea; border-radius: 8pt; padding: 16pt; text-align: center; margin: 16pt 0; }
+.human-story { background: #fefce8; border-left: 4pt solid #eab308; padding: 12pt 16pt; margin: 14pt 0; border-radius: 6pt; font-style: italic; }
+.final-note { background: #f0f4ff; padding: 16pt; border-radius: 8pt; margin-top: 24pt; text-align: center; }
+.guide-img { max-width: 100%; height: auto; border-radius: 6pt; margin: 12pt 0; }
+.step-grid { margin: 14pt 0; }
+.step-item { display: flex; gap: 12pt; margin-bottom: 12pt; align-items: flex-start; }
+.step-num { background: ${g.color}; color: white; width: 28pt; height: 28pt; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12pt; flex-shrink: 0; }
+</style>
+</head>
+<body>
+${g.html.replace(/<img[^>]*class="guide-img"[^>]*>/g, '<!-- image placeholder -->')}
+</body>
+</html>`;
+
+  downloadBlob(wordHTML, `${slugify(g.title)}.doc`, 'application/msword');
+  showToast('Word document downloaded! Open in Word or Google Docs.', 'success');
+}
+
+function exportEPUB(g) {
+  // Generate a standards-compliant EPUB (zip of XHTML + OPF + NCX)
+  const uuid = 'urn:uuid:' + crypto.randomUUID();
+  const now = new Date().toISOString().split('T')[0];
+
+  // Clean HTML for XHTML compatibility
+  let cleanHTML = g.html
+    .replace(/<img([^>]*?)>/g, '<img$1/>') // self-close img tags
+    .replace(/<br>/g, '<br/>') 
+    .replace(/<hr>/g, '<hr/>')
+    .replace(/&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[\da-fA-F]+;)/g, '&amp;')
+    .replace(/<img[^>]*class="guide-img"[^>]*\/?>/g, ''); // remove images for clean epub
+
+  const mimetype = 'application/epub+zip';
+  const container = `<?xml version="1.0" encoding="UTF-8"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+  <rootfiles>
+    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+  </rootfiles>
+</container>`;
+
+  const opf = `<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="bookid" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:identifier id="bookid">${uuid}</dc:identifier>
+    <dc:title>${esc(g.title)}</dc:title>
+    <dc:creator>${esc(g.author)}</dc:creator>
+    <dc:language>en</dc:language>
+    <dc:date>${now}</dc:date>
+    <meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}/, '')}</meta>
+    ${g.subtitle ? `<dc:description>${esc(g.subtitle)}</dc:description>` : ''}
+  </metadata>
+  <manifest>
+    <item id="chapter1" href="chapter1.xhtml" media-type="application/xhtml+xml"/>
+    <item id="style" href="style.css" media-type="text/css"/>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+  </manifest>
+  <spine>
+    <itemref idref="chapter1"/>
+  </spine>
+</package>`;
+
+  const chapter = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>${esc(g.title)}</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+${cleanHTML}
+</body>
+</html>`;
+
+  const nav = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="en">
+<head><meta charset="UTF-8"/><title>Navigation</title></head>
+<body>
+<nav epub:type="toc">
+  <h1>Table of Contents</h1>
+  <ol><li><a href="chapter1.xhtml">${esc(g.title)}</a></li></ol>
+</nav>
+</body>
+</html>`;
+
+  const css = getExportCSS(g.color, 'epub');
+
+  // Build EPUB as a downloadable HTML (since we can't create real ZIPs in browser without libs)
+  // Instead, provide a well-structured XHTML they can convert with Calibre
+  const epubReadyHTML = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>${esc(g.title)}</title>
+<meta name="author" content="${esc(g.author)}"/>
+<meta name="description" content="${esc(g.subtitle || '')}"/>
+<style>
+${css}
+</style>
+</head>
+<body>
+<div class="guide-container">
+${cleanHTML}
+</div>
+</body>
+</html>`;
+
+  downloadBlob(epubReadyHTML, `${slugify(g.title)}-epub-ready.html`, 'application/xhtml+xml');
+  showToast('EPUB-ready file downloaded! Open in Calibre → Convert to EPUB for final format.', 'success');
+}
+
+function getExportCSS(color, format) {
+  const baseFontSize = format === 'epub' ? '1em' : format === 'pdf' ? '11pt' : '16px';
+  const maxWidth = format === 'pdf' ? '100%' : '780px';
+
+  return `
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: 'Source Sans 3', 'Calibri', 'Helvetica Neue', sans-serif;
+  font-size: ${baseFontSize};
+  color: #1a1a2e;
+  line-height: 1.78;
+  background: #fff;
+  padding: ${format === 'epub' ? '0' : '40px'};
+}
+.guide-container { max-width: ${maxWidth}; margin: 0 auto; }
+h1 { 
+  font-family: 'Merriweather', 'Cambria', Georgia, serif;
+  font-size: 2.2em; font-weight: 900; color: ${color};
+  margin-bottom: 0.3em; line-height: 1.2; letter-spacing: -0.02em;
+}
+h2 { 
+  font-family: 'Merriweather', 'Cambria', Georgia, serif;
+  font-size: 1.5em; font-weight: 700; color: #1a1a2e;
+  border-bottom: 3px solid ${color}; padding-bottom: 0.3em;
+  margin: 2em 0 0.8em; line-height: 1.3;
+}
+h3 { 
+  font-family: 'Merriweather', 'Cambria', Georgia, serif;
+  font-size: 1.15em; font-weight: 700; color: #333;
+  margin: 1.5em 0 0.5em;
+}
+p { margin-bottom: 1em; }
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+/* Title Page */
+.title-page { text-align: center; padding: 80px 20px 60px; margin-bottom: 40px; border-bottom: 3px solid ${color}; }
+.title-page h1 { font-size: 2.6em; margin-bottom: 0.4em; }
+.subtitle { font-size: 1.15em; color: #6b7280; font-style: italic; margin-bottom: 0.8em; }
+.author { font-size: 1em; color: #9ca3af; letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* Tables */
+.guide-table, table { 
+  width: 100%; border-collapse: collapse; margin: 1.5em 0;
+  border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;
+}
+th { 
+  background: ${color}; color: #fff; font-weight: 700;
+  padding: 12px 16px; text-align: left; font-size: 0.88em;
+  letter-spacing: 0.02em;
+}
+td { 
+  padding: 10px 16px; border-bottom: 1px solid #f0f0f5;
+  font-size: 0.92em; vertical-align: top;
+}
+tr:nth-child(even) td { background: #f9fafb; }
+tr:last-child td { border-bottom: none; }
+
+/* Step-by-Step Grids */
+.step-grid { margin: 1.5em 0; }
+.step-item { 
+  display: flex; gap: 16px; margin-bottom: 18px;
+  align-items: flex-start; padding: 14px 16px;
+  background: #fafbfc; border-radius: 10px; border: 1px solid #eee;
+}
+.step-num { 
+  background: ${color}; color: #fff; width: 36px; height: 36px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.95em; flex-shrink: 0;
+  font-family: 'Merriweather', serif;
+}
+.step-content { flex: 1; }
+.step-content strong { display: block; margin-bottom: 4px; font-size: 1em; }
+.step-content p { margin-bottom: 4px; font-size: 0.9em; color: #4b5563; }
+.step-mistake { font-size: 0.82em; color: #dc2626; margin-top: 6px; font-style: italic; }
+
+/* Callout Boxes */
+.pro-tip { 
+  background: #f0fdf4; border-left: 4px solid #22c55e; border-radius: 8px;
+  padding: 16px 20px; margin: 1.5em 0; font-size: 0.92em;
+}
+.pro-tip::before { content: "💡 PRO TIP"; display: block; font-weight: 800; font-size: 0.78em; letter-spacing: 0.08em; color: #16a34a; margin-bottom: 6px; }
+.warning-box { 
+  background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 8px;
+  padding: 16px 20px; margin: 1.5em 0; font-size: 0.92em;
+}
+.warning-box::before { content: "⚠️ WATCH OUT"; display: block; font-weight: 800; font-size: 0.78em; letter-spacing: 0.08em; color: #dc2626; margin-bottom: 6px; }
+.quick-win { 
+  background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 8px;
+  padding: 16px 20px; margin: 1.5em 0; font-size: 0.92em;
+}
+.quick-win::before { content: "⚡ DO THIS NOW (2 min)"; display: block; font-weight: 800; font-size: 0.78em; letter-spacing: 0.08em; color: #2563eb; margin-bottom: 6px; }
+
+/* Stat Highlights */
+.stat-highlight { 
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border: 1px solid #e0e7ff; border-radius: 12px;
+  padding: 24px; text-align: center; margin: 1.5em 0;
+}
+.stat-highlight .big-num { font-family: 'Merriweather', serif; font-size: 2.8em; font-weight: 900; color: ${color}; line-height: 1.1; }
+.stat-highlight .stat-context { font-size: 0.88em; color: #6b7280; margin-top: 6px; }
+
+/* Human Stories */
+.human-story { 
+  background: #fefce8; border-left: 4px solid #eab308; border-radius: 8px;
+  padding: 16px 20px; margin: 1.5em 0; font-style: italic;
+  font-size: 0.92em; color: #854d0e;
+}
+.human-story::before { content: "📖 REAL STORY"; display: block; font-weight: 800; font-size: 0.72em; letter-spacing: 0.08em; color: #a16207; margin-bottom: 6px; font-style: normal; }
+
+/* Blockquotes */
+blockquote { 
+  border-left: 4px solid ${color}; padding: 14px 20px; margin: 1.5em 0;
+  font-style: italic; color: #4b5563; background: #f9fafb; border-radius: 0 8px 8px 0;
+}
+blockquote cite { display: block; margin-top: 8px; font-size: 0.85em; font-style: normal; color: #9ca3af; }
+
+/* Images */
+.guide-img { 
+  width: 100%; max-width: 100%; height: auto; border-radius: 10px;
+  margin: 1.5em 0; display: block;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+/* Lists */
+ul, ol { margin: 0.8em 0 1.2em 1.5em; }
+li { margin-bottom: 0.4em; line-height: 1.6; }
+
+/* Final Note */
+.final-note { 
+  background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);
+  border: 1px solid #e0e7ff; border-radius: 12px;
+  padding: 28px; text-align: center; margin-top: 2.5em;
+  font-style: italic; color: #4b5563;
+}
+
+/* Checklist styling */
+.checklist { list-style: none; padding: 0; margin: 1em 0; }
+.checklist li { padding: 6px 0 6px 28px; position: relative; }
+.checklist li::before { content: "☐"; position: absolute; left: 0; color: ${color}; font-size: 1.1em; }
+
+@media print {
+  body { padding: 0; font-size: 10pt; }
+  .guide-container { max-width: 100%; }
+  h2 { page-break-before: always; }
+  .step-grid, .guide-table, table, .pro-tip, .warning-box, .quick-win, .stat-highlight, .human-story, blockquote {
+    page-break-inside: avoid;
+  }
+  .title-page { page-break-after: always; }
+}
+`;
+}
+
+function slugify(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 60);
+}
+
+function downloadBlob(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+function copyPDFContent() {
+  const preview = document.querySelector('.pdf-preview');
+  if (!preview) return;
+  navigator.clipboard.writeText(preview.innerText).then(() => showToast('Content copied to clipboard!', 'success'));
+}
+
+// ════════════════════════════════════════════
+// BOOK COVER GENERATOR (Imagen 4.0)
+// ════════════════════════════════════════════
+let lastCoverDataUrl = null;
+
+async function generateCover() {
+  const title = document.getElementById('pdfTitle').value.trim();
+  const subtitle = document.getElementById('pdfSubtitle').value.trim();
+  const author = document.getElementById('pdfAuthor').value.trim() || 'TrendForge Publishing';
+  const audience = document.getElementById('pdfAudience').value.trim();
+  const color = document.getElementById('pdfColor').value;
+
+  if (!title) { showToast('Enter a guide title first', 'error'); return; }
+
+  // Check for Gemini key specifically
+  if (!KEYS.gemini) {
+    showToast('Cover generation requires a Gemini API key. Add it in the top bar under Gemini.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('coverBtn');
+  const origText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0 auto;"></div> Generating cover...';
+
+  // Step 1: Use Claude/Gemini text model to craft the perfect image prompt
+  let imagePrompt;
+  try {
+    const promptData = await callAI(`You are a bestselling book cover designer. Create ONE detailed image generation prompt for a premium ebook cover. The cover must look like a TOP 10 Amazon Kindle bestseller — the kind that makes someone stop scrolling and click BUY immediately.
+
+BOOK DETAILS:
+Title: "${title}"
+${subtitle ? `Subtitle: "${subtitle}"` : ''}
+Author: "${author}"
+Audience: ${audience || 'general'}
+
+COVER DESIGN REQUIREMENTS:
+- The image must be a BACKGROUND/HERO IMAGE only — do NOT render any text in the image itself (I will overlay text separately)
+- Photorealistic, high-end commercial photography or cinematic quality
+- The image should INSTANTLY communicate the book's subject through visual metaphor
+- Use dramatic lighting (golden hour, studio lighting, or moody atmospheric)
+- The composition must leave clear space at the TOP 40% for title text overlay (either sky, gradient, bokeh, or darker area)
+- Aspect ratio: portrait 2:3 (like a book cover)
+- The image should evoke aspiration, transformation, or the "after" state the reader wants
+- Style: Modern, premium, like a bestselling non-fiction book cover background
+- NO text, NO words, NO letters, NO watermarks in the image — ONLY the visual scene
+
+Return ONLY the image generation prompt text, nothing else. No quotes, no labels, no explanation. Just the raw prompt.`,
+      'You are an elite book cover art director. You create prompts that generate images worthy of New York Times bestseller covers.'
+    );
+    imagePrompt = promptData.trim().replace(/^["']|["']$/g, '');
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = origText;
+    showToast('Failed to craft cover prompt: ' + err.message, 'error');
+    return;
+  }
+
+  // Step 2: Generate the cover image with Imagen 4.0
+  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0 auto;"></div> Rendering with Imagen 4.0...';
+
+  try {
+    const imageUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${KEYS.gemini}`;
+
+    const imageResponse = await fetch(imageUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        instances: [{
+          prompt: imagePrompt + ' Photorealistic, portrait orientation, no text or letters in the image. Book cover background photo, cinematic lighting, high-end commercial quality.'
+        }],
+        parameters: {
+          sampleCount: 1,
+          aspectRatio: '3:4',
+          personGeneration: 'ALLOW_ADULT'
+        }
+      })
+    });
+
+    if (!imageResponse.ok) {
+      const errData = await imageResponse.json().catch(() => ({}));
+      throw new Error(errData.error?.message || `Imagen API error ${imageResponse.status}`);
+    }
+
+    const imageData = await imageResponse.json();
+
+    // Extract image from Imagen response format
+    let base64Image = null;
+    let mimeType = 'image/png';
+    
+    if (imageData.predictions && imageData.predictions.length > 0) {
+      base64Image = imageData.predictions[0].bytesBase64Encoded;
+      mimeType = imageData.predictions[0].mimeType || 'image/png';
+    }
+
+    if (!base64Image) {
+      throw new Error('No image was returned. Imagen may have filtered the prompt. Try simplifying the title or changing the topic.');
+    }
+
+    // Step 3: Composite the text overlay onto the image using Canvas
+    const coverDataUrl = await compositeBookCover(base64Image, mimeType, title, subtitle, author, color);
+    lastCoverDataUrl = coverDataUrl;
+
+    // Show thumbnail in sidebar
+    const thumb = document.getElementById('coverThumb');
+    thumb.src = coverDataUrl;
+    document.getElementById('coverPreviewThumb').style.display = 'block';
+
+    // Also show in main preview if no guide generated yet, or prepend
+    const previewArea = document.getElementById('pdfPreviewArea');
+    const existingCover = document.getElementById('coverFullPreview');
+    if (existingCover) existingCover.remove();
+    
+    const coverDiv = document.createElement('div');
+    coverDiv.id = 'coverFullPreview';
+    coverDiv.style.cssText = 'margin-bottom:24px;text-align:center;';
+    coverDiv.innerHTML = `
+      <img src="${coverDataUrl}" style="max-width:400px;width:100%;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.3);cursor:pointer;" onclick="showCoverFullscreen()" />
+      <div style="margin-top:10px;font-size:0.78rem;color:var(--text-muted);font-family:var(--font-mono);">📸 Generated with Imagen 4.0 · Click to enlarge</div>
+    `;
+    previewArea.insertBefore(coverDiv, previewArea.firstChild);
+
+    document.getElementById('exportBtns').style.display = 'block';
+    showToast('Book cover generated! Click to enlarge or download.', 'success');
+
+  } catch (err) {
+    showToast('Cover generation failed: ' + err.message, 'error');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = origText;
+}
+
+async function compositeBookCover(base64, mime, title, subtitle, author, accentColor) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      // Standard ebook cover ratio: 1600x2400 (2:3)
+      const W = 1600;
+      const H = 2400;
+      const canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext('2d');
+
+      // Draw the background image, covering the canvas
+      const scale = Math.max(W / img.width, H / img.height);
+      const sw = img.width * scale;
+      const sh = img.height * scale;
+      const sx = (W - sw) / 2;
+      const sy = (H - sh) / 2;
+      ctx.drawImage(img, sx, sy, sw, sh);
+
+      // Semi-transparent gradient overlay for text readability
+      // Top section: darker for title
+      const topGrad = ctx.createLinearGradient(0, 0, 0, H * 0.55);
+      topGrad.addColorStop(0, 'rgba(0,0,0,0.75)');
+      topGrad.addColorStop(0.6, 'rgba(0,0,0,0.45)');
+      topGrad.addColorStop(1, 'rgba(0,0,0,0.0)');
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(0, 0, W, H * 0.55);
+
+      // Bottom section: darker for author
+      const botGrad = ctx.createLinearGradient(0, H * 0.78, 0, H);
+      botGrad.addColorStop(0, 'rgba(0,0,0,0.0)');
+      botGrad.addColorStop(0.4, 'rgba(0,0,0,0.5)');
+      botGrad.addColorStop(1, 'rgba(0,0,0,0.8)');
+      ctx.fillStyle = botGrad;
+      ctx.fillRect(0, H * 0.78, W, H * 0.22);
+
+      // Accent bar at very top
+      ctx.fillStyle = accentColor;
+      ctx.fillRect(0, 0, W, 8);
+
+      // ── TITLE TEXT ──
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      
+      // Auto-size title
+      let titleSize = 120;
+      const maxTitleWidth = W - 160;
+      ctx.font = `900 ${titleSize}px 'Syne', 'Arial Black', sans-serif`;
+      
+      // Word-wrap the title
+      const titleLines = wrapText(ctx, title.toUpperCase(), maxTitleWidth, titleSize);
+      
+      // Reduce size if too many lines
+      while (titleLines.length > 4 && titleSize > 60) {
+        titleSize -= 8;
+        ctx.font = `900 ${titleSize}px 'Syne', 'Arial Black', sans-serif`;
+        titleLines.length = 0;
+        titleLines.push(...wrapText(ctx, title.toUpperCase(), maxTitleWidth, titleSize));
+      }
+      
+      const lineHeight = titleSize * 1.1;
+      const titleBlockHeight = titleLines.length * lineHeight;
+      let titleY = 140 + (H * 0.18) - (titleBlockHeight / 2);
+
+      // Draw title with subtle text shadow
+      for (const line of titleLines) {
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.fillText(line, W / 2 + 3, titleY + 3);
+        // Main
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(line, W / 2, titleY);
+        titleY += lineHeight;
+      }
+
+      // ── ACCENT DIVIDER ──
+      const divY = titleY + 20;
+      ctx.fillStyle = accentColor;
+      ctx.shadowColor = accentColor;
+      ctx.shadowBlur = 12;
+      const divW = Math.min(400, W * 0.3);
+      ctx.fillRect((W - divW) / 2, divY, divW, 5);
+      ctx.shadowBlur = 0;
+
+      // ── SUBTITLE ──
+      if (subtitle) {
+        ctx.font = `400 ${Math.round(titleSize * 0.36)}px 'DM Sans', 'Helvetica Neue', sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.88)';
+        const subLines = wrapText(ctx, subtitle, maxTitleWidth, Math.round(titleSize * 0.36));
+        let subY = divY + 50;
+        for (const line of subLines) {
+          ctx.fillText(line, W / 2, subY);
+          subY += Math.round(titleSize * 0.36) * 1.35;
+        }
+      }
+
+      // ── AUTHOR NAME ──
+      const authorSize = 38;
+      ctx.font = `600 ${authorSize}px 'DM Sans', 'Helvetica Neue', sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.letterSpacing = '4px';
+      ctx.fillText(author.toUpperCase(), W / 2, H - 100);
+      
+      // Small "by" text
+      ctx.font = `300 22px 'DM Sans', sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillText('by', W / 2, H - 140);
+
+      // ── BOTTOM ACCENT BAR ──
+      ctx.fillStyle = accentColor;
+      ctx.fillRect(0, H - 8, W, 8);
+
+      resolve(canvas.toDataURL('image/jpeg', 0.95));
+    };
+    img.onerror = () => reject(new Error('Failed to load generated image'));
+    img.src = `data:${mime};base64,${base64}`;
+  });
+}
+
+function wrapText(ctx, text, maxWidth, fontSize) {
+  const words = text.split(' ');
+  const lines = [];
+  let currentLine = '';
+
+  for (const word of words) {
+    const testLine = currentLine ? currentLine + ' ' + word : word;
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && currentLine) {
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  }
+  if (currentLine) lines.push(currentLine);
+  return lines;
+}
+
+function showCoverFullscreen() {
+  if (!lastCoverDataUrl) return;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:24px;';
+  overlay.onclick = () => overlay.remove();
+  overlay.innerHTML = `
+    <img src="${lastCoverDataUrl}" style="max-height:90vh;max-width:90vw;border-radius:12px;box-shadow:0 12px 60px rgba(0,0,0,0.5);" />
+    <div style="position:absolute;top:20px;right:24px;color:#fff;font-size:1.5rem;font-family:var(--font-display);cursor:pointer;">✕</div>
+    <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;">
+      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();downloadCover();">📥 Download Cover</button>
+      <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();document.querySelector('[onclick=\\'showCoverFullscreen()\\']')?.closest('div')?.remove();this.closest('div').parentElement.remove();">✕ Close</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function downloadCover() {
+  if (!lastCoverDataUrl) { showToast('Generate a cover first', 'error'); return; }
+  const title = document.getElementById('pdfTitle').value.trim() || 'book-cover';
+  const a = document.createElement('a');
+  a.href = lastCoverDataUrl;
+  a.download = slugify(title) + '-cover.jpg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('Cover image downloaded!', 'success');
+}
+
+// ════════════════════════════════════════════
+// TAB 6: COMPETITOR SPY
+// ════════════════════════════════════════════
+async function spyCompetitors() {
+  if (!checkApiKey()) return;
+  const query = document.getElementById('compInput').value.trim();
+  if (!query) { showToast('Enter a niche to analyze', 'error'); return; }
+
+  const el = document.getElementById('compResults');
+  el.innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Gathering intel via ${getProviderLabel()}...</div></div>`;
+
+  try {
+    const data = await callAIJson(`Analyze the competitive landscape for PDF guides in the "${query}" niche. Provide:
+
+1. "existingGuides": array of 6 hypothetical competing PDF guides with:
+   - title: guide title
+   - price: price point
+   - platform: where it's sold (Gumroad, Etsy, Shopify, etc.)
+   - estimatedSales: monthly sales estimate
+   - strengths: what they do well
+   - weaknesses: where they fall short
+   - difficulty: "easy", "medium", or "hard" to compete with
+
+2. "gaps": array of 4 market gaps/opportunities not being served
+
+3. "recommendation": your #1 recommended angle to enter this market
+
+Return ONLY valid JSON object, no other text.`);
+
+    renderCompetitors(data);
+  } catch (err) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>${err.message}</p></div>`;
+  }
+}
+
+function renderCompetitors(data) {
+  const el = document.getElementById('compResults');
+  const guides = data.existingGuides || [];
+  const gaps = data.gaps || [];
+
+  el.innerHTML = `
+    <div style="background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px;">
+      <div style="font-family:var(--font-display);font-weight:700;color:var(--accent);margin-bottom:6px;">🎯 Top Recommendation</div>
+      <div style="font-size:0.9rem;color:var(--text-primary);">${esc(data.recommendation || '')}</div>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-weight:700;margin-bottom:14px;font-size:1rem;">📚 Existing Competitors</h3>
+    <div class="card" style="overflow-x:auto;margin-bottom:24px;padding:0;">
+      <table class="competitors-table">
+        <thead><tr>
+          <th>Guide</th><th>Price</th><th>Platform</th><th>Est. Sales</th><th>Difficulty</th><th>Weakness</th>
+        </tr></thead>
+        <tbody>
+          ${guides.map(g => `<tr>
+            <td style="font-weight:600;max-width:240px;">${esc(g.title)}</td>
+            <td style="font-family:var(--font-mono);color:var(--success);">${esc(g.price)}</td>
+            <td>${esc(g.platform)}</td>
+            <td style="font-family:var(--font-mono);">${esc(g.estimatedSales)}</td>
+            <td><span class="difficulty-badge diff-${g.difficulty === 'easy' ? 'easy' : g.difficulty === 'hard' ? 'hard' : 'medium'}">${esc(g.difficulty)}</span></td>
+            <td style="font-size:0.8rem;color:var(--text-secondary);max-width:200px;">${esc(g.weaknesses)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-family:var(--font-display);font-weight:700;margin-bottom:14px;font-size:1rem;">💎 Market Gaps & Opportunities</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">
+      ${gaps.map((g, i) => `
+        <div class="card" style="border-left:3px solid var(--accent);">
+          <div style="font-family:var(--font-display);font-weight:700;color:var(--accent);margin-bottom:6px;">Gap #${i + 1}</div>
+          <div style="font-size:0.88rem;color:var(--text-secondary);">${esc(typeof g === 'string' ? g : g.description || g.gap || JSON.stringify(g))}</div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+// ════════════════════════════════════════════
+// TAB 7: SAVED GUIDES
+// ════════════════════════════════════════════
+function saveGuide(type, title, content) {
+  const guide = {
+    id: Date.now(),
+    type,
+    title,
+    content,
+    date: new Date().toISOString()
+  };
+  savedGuides.push(guide);
+  localStorage.setItem('trendforge_guides', JSON.stringify(savedGuides));
+  updateSavedBadge();
+  showToast(`"${title}" saved!`, 'success');
+}
+
+function saveTrend(trend) {
+  saveGuide('trend', trend.title || trend.guideIdea || 'Untitled Trend', JSON.stringify(trend));
+}
+
+function renderSavedGuides() {
+  const el = document.getElementById('savedList');
+  if (!savedGuides.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">💾</div><h3>No Saved Guides Yet</h3><p>Generate trends, outlines, or PDF guides and save them here.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = `<div class="saved-grid">${savedGuides.slice().reverse().map(g => `
+    <div class="saved-card">
+      <div class="saved-title">${esc(g.title)}</div>
+      <div class="saved-niche">${g.type === 'pdf' ? '📄 PDF Guide' : g.type === 'outline' ? '📋 Outline' : g.type === 'trend' ? '🔥 Trend' : '📝 Content'}</div>
+      <div class="saved-date">${new Date(g.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+      <div class="saved-actions">
+        <button class="btn btn-sm btn-secondary" onclick="viewSavedGuide(${g.id})">👁️ View</button>
+        <button class="btn btn-sm btn-ghost" style="color:var(--danger);" onclick="deleteGuide(${g.id})">🗑️</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function viewSavedGuide(id) {
+  const g = savedGuides.find(s => s.id === id);
+  if (!g) return;
+
+  if (g.type === 'pdf') {
+    document.getElementById('pdfPreviewArea').innerHTML = `<div class="pdf-preview">${g.content}</div>`;
+    switchTab('builder');
+  } else if (g.type === 'trend') {
+    try {
+      const t = JSON.parse(g.content);
+      showToast(`Trend: ${t.title || t.guideIdea}`, 'info');
+    } catch { showToast('Viewing saved trend', 'info'); }
+  } else {
+    showToast('Loaded saved content', 'info');
+  }
+}
+
+function deleteGuide(id) {
+  savedGuides = savedGuides.filter(g => g.id !== id);
+  localStorage.setItem('trendforge_guides', JSON.stringify(savedGuides));
+  updateSavedBadge();
+  renderSavedGuides();
+  showToast('Guide deleted', 'info');
+}
+
+function clearAllGuides() {
+  if (!confirm('Delete all saved guides? This cannot be undone.')) return;
+  savedGuides = [];
+  localStorage.setItem('trendforge_guides', '[]');
+  updateSavedBadge();
+  renderSavedGuides();
+  showToast('All guides cleared', 'info');
+}
+
+function exportAllGuides() {
+  if (!savedGuides.length) { showToast('No guides to export', 'error'); return; }
+  const blob = new Blob([JSON.stringify(savedGuides, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'trendforge-guides-export.json';
+  a.click();
+  showToast('Guides exported!', 'success');
+}
+
+function updateSavedBadge() {
+  document.getElementById('savedBadge').textContent = savedGuides.length;
+}
+
+// ════════════════════════════════════════════
+// UTILITIES
+// ════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.nav-tab[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  if (tab === 'saved') renderSavedGuides();
+}
+
+function esc(str) {
+  if (!str) return '';
+  const d = document.createElement('div');
+  d.textContent = String(str);
+  return d.innerHTML;
+}
+
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span> ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(40px)'; setTimeout(() => toast.remove(), 300); }, 4000);
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const active = document.querySelector('.tab-panel.active');
+    if (!active) return;
+    const id = active.id;
+    if (id === 'tab-trends' && document.activeElement.id === 'trendSearchInput') searchTrends();
+    if (id === 'tab-niches' && document.activeElement.id === 'nicheInput') analyzeNiche();
+    if (id === 'tab-titles' && document.activeElement.id === 'titleTopicInput') generateTitles();
+    if (id === 'tab-outline' && document.activeElement.id === 'outlineTopicInput') generateOutline();
+    if (id === 'tab-competitors' && document.activeElement.id === 'compInput') spyCompetitors();
+  }
+});
+</script>
+</body>
+</html>
