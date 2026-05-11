@@ -1,3 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legends Pipeline — Out of Context Content Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+/* ═══════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════ */
+:root {
+  --bg:       #0d0f14;
+  --bg2:      #13151c;
+  --bg3:      #1a1d27;
+  --panel:    #161923;
+  --b1:       rgba(255,255,255,0.06);
+  --b2:       rgba(255,255,255,0.11);
+  --b3:       rgba(255,255,255,0.20);
+  --gold:     #e8b84b;
+  --gold2:    #f5d070;
+  --golddim:  rgba(232,184,75,0.10);
+  --goldbrd:  rgba(232,184,75,0.22);
+  --red:      #e05252;
+  --green:    #3ecf8e;
+  --blue:     #5b9cf6;
+  --text:     #e8e6e1;
+  --t2:       #8b8982;
+  --t3:       #4a4845;
+  --mono:     'Space Mono', monospace;
+  --sans:     'Space Grotesk', sans-serif;
+  --disp:     'Bebas Neue', cursive;
+  --r:        8px;
+  --r2:       12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:14px;line-height:1.6;
+  min-height:100vh;overflow-x:hidden;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.z{position:relative;z-index:1}
+
+/* ─── TOPBAR ──────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;gap:12px;
+  height:56px;padding:0 24px;
+  background:var(--panel);border-bottom:1px solid var(--b2);
+}
+.logo{font-family:var(--disp);font-size:24px;letter-spacing:2px;white-space:nowrap}
+.logo span{color:var(--gold)}
+.topnav{display:flex;gap:2px;flex:1}
+.tnb{
+  background:none;border:none;cursor:pointer;
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  color:var(--t2);padding:6px 13px;border-radius:var(--r);
+  transition:all .15s;letter-spacing:.04em;
+}
+.tnb:hover{color:var(--text);background:var(--bg3)}
+.tnb.on{color:var(--gold);background:var(--golddim)}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.pip{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--t3);transition:all .3s;flex-shrink:0;
+}
+.pip.live{background:var(--green);box-shadow:0 0 7px var(--green)}
+.pip.warn{background:var(--gold);box-shadow:0 0 7px var(--gold)}
+.api-toggle{
+  display:flex;align-items:center;gap:6px;
+  background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 13px;font-family:var(--sans);font-size:12px;font-weight:600;
+  color:var(--t2);cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.api-toggle:hover{border-color:var(--b3);color:var(--text)}
+.api-toggle.live{color:var(--green);border-color:rgba(62,207,142,.3)}
+
+/* ─── API DRAWER ──────────────────────────── */
+.api-drawer{
+  position:sticky;top:56px;z-index:190;
+  background:var(--panel);border-bottom:1px solid var(--b2);
+  max-height:0;overflow:hidden;
+  transition:max-height .3s cubic-bezier(.4,0,.2,1);
+}
+.api-drawer.open{max-height:280px}
+.api-inner{
+  padding:24px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;
+}
+@media(max-width:860px){.api-inner{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.api-inner{grid-template-columns:1fr}}
+.api-group{display:flex;flex-direction:column;gap:7px}
+.api-lbl{
+  font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3);
+}
+.api-row{position:relative}
+.api-input{
+  width:100%;background:var(--bg2);border:1px solid var(--b2);
+  border-radius:var(--r);padding:9px 36px 9px 12px;
+  font-family:var(--mono);font-size:12px;color:var(--text);
+  outline:none;transition:border-color .2s;
+}
+.api-input:focus{border-color:var(--gold)}
+.api-input::placeholder{color:var(--t3)}
+.eye{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--t3);font-size:13px;
+  padding:0;line-height:1;
+}
+.api-hint{font-size:11px;color:var(--t3);line-height:1.55}
+.api-hint a{color:var(--gold);text-decoration:none}
+.api-hint a:hover{text-decoration:underline}
+.api-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:2px}
+.save-btn{
+  background:var(--gold);color:#000;border:none;border-radius:var(--r);
+  padding:8px 16px;font-family:var(--sans);font-size:12px;font-weight:700;
+  letter-spacing:.04em;cursor:pointer;transition:background .15s;
+}
+.save-btn:hover{background:var(--gold2)}
+.clear-btn{
+  font-size:11px;color:var(--t3);cursor:pointer;text-decoration:underline;
+  background:none;border:none;font-family:var(--sans);padding:0;
+}
+.clear-btn:hover{color:var(--red)}
+.g-connect{
+  display:flex;align-items:center;gap:7px;
+  background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);
+  padding:8px 12px;font-family:var(--sans);font-size:12px;font-weight:600;
+  color:var(--t2);cursor:pointer;transition:all .15s;width:100%;
+}
+.g-connect:hover{border-color:var(--b3);color:var(--text)}
+.g-connect.done{color:var(--green);border-color:rgba(62,207,142,.3)}
+.g-ico{width:15px;height:15px;flex-shrink:0}
+
+/* ─── MODAL ───────────────────────────────── */
+.modal-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.75);z-index:500;
+  align-items:center;justify-content:center;
+}
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--panel);border:1px solid var(--b2);
+  border-radius:var(--r2);padding:28px;
+  max-width:500px;width:90%;position:relative;max-height:90vh;overflow-y:auto;
+}
+.modal h2{font-family:var(--disp);font-size:26px;letter-spacing:1px;margin-bottom:12px}
+.modal ol{margin:10px 0 0 18px;font-size:13px;color:var(--t2);line-height:2}
+.modal ol a{color:var(--gold)}
+.modal-x{
+  position:absolute;top:14px;right:14px;
+  background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;
+}
+
+/* ─── LAYOUT ──────────────────────────────── */
+.layout{display:flex;flex:1}
+
+/* ─── SIDEBAR ─────────────────────────────── */
+.sidebar{
+  width:320px;flex-shrink:0;background:var(--panel);
+  border-right:1px solid var(--b2);
+  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;
+  padding:20px 0;
+}
+@media(max-width:780px){.sidebar{display:none}}
+.sb-sec{padding:0 16px;margin-bottom:24px}
+.sb-lbl{
+  font-size:10px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--t3);
+  margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--b1);
+}
+.legend-inp{
+  background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);
+  padding:10px 13px;font-family:var(--sans);font-size:14px;font-weight:600;
+  color:var(--text);outline:none;width:100%;margin-bottom:8px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.legend-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,184,75,.08)}
+.legend-inp::placeholder{color:var(--t3);font-weight:400;font-size:13px}
+.fire-btn{
+  background:var(--gold);color:#000;border:none;border-radius:var(--r);
+  padding:11px;width:100%;font-family:var(--disp);font-size:19px;letter-spacing:1px;
+  cursor:pointer;transition:all .15s;
+}
+.fire-btn:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 6px 18px rgba(232,184,75,.2)}
+.fire-btn:active{transform:translateY(0)}
+.fire-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.hist-list{display:flex;flex-direction:column;gap:5px}
+.hist-card{
+  padding:9px 11px;background:var(--bg2);border:1px solid var(--b1);
+  border-radius:var(--r);cursor:pointer;transition:border-color .15s;
+}
+.hist-card:hover{border-color:var(--b3)}
+.hist-t{font-size:12px;font-weight:600;color:var(--text)}
+.hist-s{font-size:10px;color:var(--t3);margin-top:2px;font-family:var(--mono)}
+.sb-empty{font-size:12px;color:var(--t3);font-family:var(--mono)}
+
+/* ─── GEMINI LEGENDS STYLING ─────────────── */
+.gemini-group { margin-bottom: 12px; }
+.gemini-hdr {
+  font-family: var(--disp); font-size: 20px; letter-spacing: 1px; color: var(--gold);
+  padding: 8px 12px; background: var(--bg2); border: 1px solid var(--b2);
+  border-radius: var(--r); cursor: pointer; display: flex; justify-content: space-between;
+  align-items: center; transition: all .2s;
+}
+.gemini-hdr:hover { background: var(--panel); border-color: var(--goldbrd); }
+.gemini-titles { display: none; padding: 6px 0; gap: 4px; flex-direction: column; }
+.gemini-titles.open { display: flex; }
+.gemini-title-btn {
+  text-align: left; padding: 10px 12px; background: var(--bg); border: 1px solid var(--b1);
+  border-radius: var(--r); font-family: var(--sans); font-size: 12px; color: var(--text);
+  cursor: pointer; transition: all .15s; line-height: 1.4;
+}
+.gemini-title-btn:hover {
+  background: var(--bg2); border-color: var(--blue); color: #fff;
+  transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* ─── CONTENT ─────────────────────────────── */
+.content{flex:1;padding:24px;min-width:0}
+
+/* ─── CALLOUT ─────────────────────────────── */
+.callout{
+  background:var(--panel);border:1px solid var(--goldbrd);
+  border-radius:var(--r2);padding:16px 20px;margin-bottom:20px;
+  display:none;
+}
+.callout.show{display:block}
+.callout h3{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.callout p{font-size:12px;color:var(--t3);line-height:1.6}
+
+/* ─── HERO ────────────────────────────────── */
+.hero{text-align:center;padding:40px 16px 32px}
+.hero-eye{
+  font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:12px;
+}
+.hero-h{
+  font-family:var(--disp);font-size:clamp(44px,7vw,72px);
+  letter-spacing:3px;line-height:1;color:var(--text);margin-bottom:14px;
+}
+.hero-h span{color:var(--gold)}
+.hero-p{
+  font-size:14px;color:var(--t2);max-width:540px;
+  margin:0 auto 24px;line-height:1.7;
+}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:28px}
+.hs{text-align:center}
+.hs-n{font-family:var(--disp);font-size:30px;color:var(--gold);letter-spacing:1px}
+.hs-l{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em}
+.hero-mob{display:none;gap:8px;max-width:440px;margin:0 auto}
+@media(max-width:780px){.hero-mob{display:flex}}
+
+/* ─── ERROR ───────────────────────────────── */
+.err-box{
+  background:rgba(224,82,82,.08);border:1px solid rgba(224,82,82,.25);
+  border-radius:var(--r);padding:10px 14px;
+  font-family:var(--mono);font-size:12px;color:var(--red);
+  margin-bottom:16px;display:none;
+}
+.err-box.show{display:block}
+
+/* ─── PAIRINGS ────────────────────────────── */
+.pair-section{display:none;margin-bottom:24px}
+.pair-section.show{display:block}
+.sec-hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.sec-hd h2{font-family:var(--disp);font-size:26px;letter-spacing:1px;color:var(--text)}
+.sec-hd p{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.pair-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(188px,1fr));gap:9px}
+.pair-card{
+  background:var(--panel);border:1px solid var(--b2);border-radius:var(--r2);
+  padding:16px 14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.pair-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--gold) 0%,transparent 50%);
+  opacity:0;transition:opacity .2s;
+}
+.pair-card:hover{border-color:var(--goldbrd);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.pair-card:hover::before{opacity:.04}
+.pc-n{font-family:var(--disp);font-size:30px;color:var(--b2);line-height:1;margin-bottom:7px;position:relative}
+.pc-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.3;position:relative}
+.pc-e{font-size:11px;color:var(--t3);font-family:var(--mono);line-height:1.5;position:relative}
+.pc-tag{
+  display:inline-block;margin-top:9px;position:relative;
+  font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  padding:2px 8px;border-radius:99px;
+  background:var(--golddim);color:var(--gold);border:1px solid var(--goldbrd);
+}
+
+/* ─── LOADING ─────────────────────────────── */
+.loading{display:none;padding:40px 0;text-align:center}
+.loading.show{display:block}
+.load-msg{font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:14px}
+.load-track{width:180px;height:2px;background:var(--b2);border-radius:99px;overflow:hidden;margin:0 auto}
+.load-fill{height:100%;background:var(--gold);border-radius:99px;animation:ls 1.3s ease-in-out infinite}
+@keyframes ls{0%{width:0;margin-left:0}50%{width:55%}100%{width:0;margin-left:100%}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.load-msg{animation:pulse 1.5s infinite}
+
+/* ─── OUTPUT ──────────────────────────────── */
+.output{display:none}
+.output.show{display:block}
+.out-head{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--b1)}
+.out-head h1{
+  font-family:var(--disp);font-size:clamp(28px,5vw,48px);
+  letter-spacing:2px;color:var(--text);line-height:1;margin-bottom:4px;
+}
+.out-head p{font-size:11px;color:var(--t3);font-family:var(--mono)}
+
+/* export toolbar */
+.exp-bar{display:flex;align-items:center;gap:7px;margin-bottom:16px;flex-wrap:wrap}
+.eb{
+  display:flex;align-items:center;gap:5px;
+  background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 13px;font-family:var(--sans);font-size:12px;font-weight:600;
+  color:var(--t2);cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.eb:hover{border-color:var(--b3);color:var(--text)}
+.eb.sheets{color:var(--green);border-color:rgba(62,207,142,.25)}
+.eb.sheets:hover{background:rgba(62,207,142,.06)}
+.eb.drive{color:var(--blue);border-color:rgba(91,156,246,.25)}
+.eb.drive:hover{background:rgba(91,156,246,.06)}
+.eb:disabled{opacity:.35;cursor:not-allowed}
+.new-btn{
+  margin-left:auto;background:none;border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 13px;font-family:var(--mono);font-size:11px;color:var(--t3);
+  cursor:pointer;transition:all .15s;
+}
+.new-btn:hover{color:var(--t2);border-color:var(--b3)}
+
+/* tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--b2);margin-bottom:20px;overflow-x:auto}
+.tb{
+  background:none;border:none;border-bottom:2px solid transparent;
+  padding:9px 15px;margin-bottom:-1px;
+  font-family:var(--sans);font-size:11px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;
+  color:var(--t3);cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.tb:hover{color:var(--t2)}
+.tb.on{color:var(--gold);border-bottom-color:var(--gold)}
+.pane{display:none}
+.pane.on{display:block}
+
+/* cards */
+.card{
+  background:var(--panel);border:1px solid var(--b2);
+  border-radius:var(--r2);margin-bottom:11px;overflow:hidden;
+}
+.ch{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;border-bottom:1px solid var(--b1);gap:9px;flex-wrap:wrap;
+}
+.clbl{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--t3)}
+.cbadge{
+  font-size:10px;font-family:var(--mono);padding:2px 8px;
+  border-radius:99px;border:1px solid var(--b2);color:var(--t2);
+}
+.cbtn{
+  background:none;border:1px solid var(--b2);border-radius:6px;
+  padding:4px 11px;font-family:var(--mono);font-size:11px;
+  color:var(--t3);cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.cbtn:hover{border-color:var(--gold);color:var(--gold)}
+.cbtn.ok{border-color:var(--green);color:var(--green)}
+.cbody{padding:16px}
+.mono{font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.85;white-space:pre-wrap}
+.prose{font-family:var(--sans);font-size:14px;color:var(--text);line-height:1.9;white-space:pre-wrap}
+
+/* golden line */
+.gold-block{
+  background:var(--golddim);border:1px solid var(--goldbrd);
+  border-left:3px solid var(--gold);
+  border-radius:0 var(--r) var(--r) 0;padding:13px 15px;
+}
+.gold-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.gold-txt{font-size:14px;color:var(--text);line-height:1.7;font-style:italic}
+
+/* tags */
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:11px;font-family:var(--mono);padding:3px 9px;border-radius:99px;border:1px solid var(--b2);color:var(--t2)}
+.tag.ht{border-color:rgba(91,156,246,.3);color:var(--blue)}
+
+/* toast */
+.toast{
+  position:fixed;bottom:22px;right:22px;z-index:999;
+  background:var(--panel);border:1px solid var(--b2);border-radius:var(--r);
+  padding:11px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);
+  box-shadow:0 8px 28px rgba(0,0,0,.5);
+  transform:translateY(10px);opacity:0;transition:all .22s;pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:rgba(62,207,142,.3);color:var(--green)}
+.toast.err{border-color:rgba(224,82,82,.3);color:var(--red)}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
+
+/* ─── LIBRARY ─────────────────────────────── */
+.lib-search{
+  background:var(--bg2);border:1px solid var(--b2);border-radius:var(--r);
+  padding:9px 12px;font-family:var(--sans);font-size:13px;
+  color:var(--text);outline:none;width:100%;margin-bottom:10px;
+  transition:border-color .2s;
+}
+.lib-search:focus{border-color:var(--gold)}
+.lib-search::placeholder{color:var(--t3)}
+.tier-tabs{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap}
+.tier-tab{
+  background:none;border:1px solid var(--b2);border-radius:var(--r);
+  padding:4px 11px;font-size:11px;font-weight:600;letter-spacing:.04em;
+  color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--sans);
+}
+.tier-tab:hover{border-color:var(--b3);color:var(--text)}
+.tier-tab.on{color:#000;border-color:transparent}
+.tier-tab.t1.on{background:var(--gold)}
+.tier-tab.t2.on{background:var(--blue)}
+.tier-tab.t3.on{background:var(--green)}
+.lib-list{display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 260px);overflow-y:auto;padding-right:2px}
+.lib-leg{
+  background:var(--bg2);border:1px solid var(--b1);
+  border-radius:var(--r);overflow:hidden;
+}
+.lib-leg-head{
+  display:flex;align-items:center;gap:8px;padding:9px 11px;
+  cursor:pointer;transition:background .15s;
+}
+.lib-leg-head:hover{background:var(--bg3)}
+.lib-leg-emoji{font-size:16px;flex-shrink:0;line-height:1}
+.lib-leg-info{flex:1;min-width:0}
+.lib-leg-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lib-leg-tier{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.lib-chev{font-size:11px;color:var(--t3);transition:transform .18s}
+.lib-chev.open{transform:rotate(180deg)}
+
+/* sidebar mode tabs */
+.sb-mode{display:flex;gap:2px;margin-bottom:14px}
+.sbm{
+  flex:1;background:none;border:1px solid var(--b2);border-radius:var(--r);
+  padding:6px 0;font-size:11px;font-weight:600;letter-spacing:.04em;
+  color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--sans);
+}
+.sbm:hover{color:var(--text);border-color:var(--b3)}
+.sbm.on{background:var(--golddim);border-color:var(--goldbrd);color:var(--gold)}
+.sb-panel{display:none}
+.sb-panel.on{display:block}
+
+/* Fix library titles button inside openLibModal */
+.lib-titles{
+  display:none; background:var(--bg); padding:8px; gap:6px;
+  border-top:1px solid var(--b1); box-shadow:inset 0 4px 6px rgba(0,0,0,0.15);
+}
+.lib-titles.open{display:flex;flex-direction:column}
+.lib-title-btn{
+  display:flex; align-items:flex-start; width:100%; text-align:left;
+  padding:14px 16px; font-family:var(--sans); font-size:13px; font-weight:600;
+  color:var(--text); background:var(--bg2); border:1px solid var(--b2);
+  border-radius:var(--r); cursor:pointer; line-height:1.4; transition:all .2s;
+}
+.lib-title-btn:hover{
+  background:var(--panel); border-color:var(--goldbrd); color:var(--gold2);
+  box-shadow:0 6px 16px rgba(0,0,0,0.4); transform:translateY(-2px);
+}
+.lib-title-btn::before{
+  content:"🔥"; font-size:14px; margin-right:10px; margin-top:1px; flex-shrink:0; opacity:0.9;
+}
+</style>
+</head>
+<body>
+<div class="z" style="display:flex;flex-direction:column;min-height:100vh">
+
+<header class="topbar">
+  <div class="logo">LEGENDS <span>PIPELINE</span></div>
+  <nav class="topnav">
+    <button class="tnb on" onclick="page('gen',this)">Generator</button>
+    <button class="tnb" onclick="page('hist',this)">History</button>
+  </nav>
+  <div class="topbar-right">
+    <div class="pip" id="pip"></div>
+    <button class="api-toggle" id="apiToggle" onclick="toggleDrawer()">⚙ API Key ▾</button>
+  </div>
+</header>
+
+<div class="api-drawer" id="apiDrawer">
+  <div class="api-inner">
+
+    <div class="api-group">
+      <div class="api-lbl">Google Gemini API Key</div>
+      <div class="api-row">
+        <input type="password" class="api-input" id="geminiKey"
+          placeholder="AIza..." autocomplete="off">
+        <button class="eye" onclick="toggleEye('geminiKey')" title="Show/hide">👁</button>
+      </div>
+      <p class="api-hint">
+        Key stored in browser memory only — never saved to disk.<br>
+        Get yours at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>
+      </p>
+      <div class="api-actions">
+        <button class="save-btn" onclick="saveKey()">Save</button>
+        <button class="clear-btn" onclick="clearKey()">· Clear key</button>
+      </div>
+    </div>
+
+    <div class="api-group">
+      <div class="api-lbl">Google OAuth Client ID <span style="color:var(--t3);font-weight:400">(for export)</span></div>
+      <input type="text" class="api-input" id="gClientId"
+        placeholder="123456789.apps.googleusercontent.com">
+      <p class="api-hint">
+        Enables export to Sheets &amp; Drive.<br>
+        <a href="#" onclick="openModal();return false">How to get your Client ID →</a>
+      </p>
+      <button class="g-connect" id="gBtn" onclick="googleAuth()">
+        <svg class="g-ico" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Connect Google Account
+      </button>
+    </div>
+
+    <div class="api-group">
+      <div class="api-lbl">Google Sheet ID <span style="color:var(--t3);font-weight:400">(optional)</span></div>
+      <input type="text" class="api-input" id="sheetId"
+        placeholder="Leave blank — auto-creates on first export">
+      <p class="api-hint">
+        Paste the ID from your Sheet URL.<br>
+        Blank = new sheet created automatically.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-bg" id="gModal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <h2>GOOGLE SETUP</h2>
+    <p style="font-size:13px;color:var(--t2);line-height:1.7">Takes about 5 minutes — free Google Cloud project:</p>
+    <ol>
+      <li>Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> — create a project</li>
+      <li>Enable <strong style="color:var(--text)">Google Sheets API</strong></li>
+      <li>Enable <strong style="color:var(--text)">Google Drive API</strong></li>
+      <li>Go to <strong style="color:var(--text)">APIs &amp; Services → Credentials</strong></li>
+      <li>Create Credentials → <strong style="color:var(--text)">OAuth 2.0 Client ID</strong></li>
+      <li>Choose <strong style="color:var(--text)">Web application</strong></li>
+      <li>Add your domain to <em>Authorised JavaScript origins</em></li>
+      <li>Copy the <strong style="color:var(--text)">Client ID</strong> → paste in the drawer above</li>
+    </ol>
+    <p style="font-size:11px;color:var(--t3);margin-top:14px">All calls go browser → Google directly. No server involved.</p>
+  </div>
+</div>
+
+<div class="modal-bg" id="libModal">
+  <div class="modal" style="max-width:540px;">
+    <button class="modal-x" onclick="closeLibModal()">✕</button>
+    <div id="libModalHead" style="display:flex;align-items:center;gap:14px;margin-bottom:12px;"></div>
+    <p id="libModalEngine" style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--b1);"></p>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:12px;">Select a Viral Concept</div>
+    <div id="libModalTitles" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+</div>
+
+<div class="layout z" style="flex:1">
+
+  <aside class="sidebar">
+    <div class="sb-sec">
+      <div class="sb-mode">
+        <button class="sbm on" onclick="sbMode('custom',this)">Custom</button>
+        <button class="sbm" onclick="sbMode('library',this)">Library</button>
+        <button class="sbm" onclick="sbMode('gemini',this)">Gemini</button>
+        <button class="sbm" onclick="sbMode('history',this)">History</button>
+      </div>
+
+      <div class="sb-panel on" id="sbCustom">
+        <div class="sb-lbl">Historical Figure</div>
+        <input type="text" class="legend-inp" id="sideInp"
+          placeholder="e.g. Cleopatra, Napoleon..." onkeydown="if(event.key==='Enter')fire()">
+        <div class="sb-lbl" style="margin-top:10px;margin-bottom:6px">Environment / Topic <span style="color:var(--t3);font-weight:400">(optional)</span></div>
+        <input type="text" class="legend-inp" id="sideTopic"
+          placeholder="e.g. Wall Street, TikTok Live..." onkeydown="if(event.key==='Enter')fire()" style="font-size:12px;font-weight:500">
+        <button class="fire-btn" id="fireBtn" onclick="fire()">🔥 GENERATE</button>
+      </div>
+
+      <div class="sb-panel" id="sbLibrary">
+        <input type="text" class="lib-search" id="libSearch" placeholder="Search legends..." oninput="filterLib()">
+        <div class="tier-tabs">
+          <button class="tier-tab t1 on" onclick="filterTier('all',this)">All</button>
+          <button class="tier-tab t1" onclick="filterTier('1',this)">🥇 Tier 1</button>
+          <button class="tier-tab t2" onclick="filterTier('2',this)">🥈 Tier 2</button>
+          <button class="tier-tab t3" onclick="filterTier('3',this)">🥉 Tier 3</button>
+        </div>
+        <div class="lib-list" id="libList"></div>
+      </div>
+
+      <div class="sb-panel" id="sbGemini">
+        <div class="sb-lbl" style="margin-bottom: 12px;">Top 100 Viral Concepts</div>
+        <div id="geminiList" style="max-height:calc(100vh - 200px);overflow-y:auto;padding-right:4px;"></div>
+      </div>
+
+      <div class="sb-panel" id="sbHistory">
+        <div class="hist-list" id="histList">
+          <p class="sb-empty">No generations yet</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="content" id="pageGen">
+
+    <div class="callout show" id="callout">
+      <h3>⚙ Quick Start</h3>
+      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Gemini API key → Save. Then pick a legend from the Library/Gemini tabs to instantly generate a package, or use Custom to scout ideas.</p>
+    </div>
+
+    <div class="hero">
+      <p class="hero-eye">Second-Person Immersion · High-Viral Chaos Engine</p>
+      <h1 class="hero-h">LEGENDS<br><span>WRONG ROOM</span></h1>
+      <p class="hero-p">Pick a legend + high-viral environment + pressure. AI builds the full second-person Day 1→10 scripts, SEO, and MrBeast-grade thumbnail brief.</p>
+      <div class="hero-stats">
+        <div class="hs"><div class="hs-n">100</div><div class="hs-l">Curated Titles</div></div>
+        <div class="hs"><div class="hs-n">10</div><div class="hs-l">Eras</div></div>
+        <div class="hs"><div class="hs-n">∞</div><div class="hs-l">Legends</div></div>
+        <div class="hs"><div class="hs-n">1K%</div><div class="hs-l">CTR Target</div></div>
+      </div>
+      <div class="hero-mob">
+        <input type="text" class="legend-inp" id="mobInp"
+          placeholder="Historical figure..." style="flex:1;margin-bottom:0"
+          onkeydown="if(event.key==='Enter')fire()">
+        <input type="text" class="legend-inp" id="mobTopic"
+          placeholder="Environment (Vegas, Wall St)..." style="flex:1;margin-bottom:0;font-size:12px"
+          onkeydown="if(event.key==='Enter')fire()">
+        <button class="fire-btn" style="width:auto;padding:11px 16px;white-space:nowrap" onclick="fire()">🔥 Go</button>
+      </div>
+    </div>
+
+    <div class="err-box" id="errBox"></div>
+
+    <div class="pair-section" id="pairSec">
+      <div class="sec-hd">
+        <h2>WRONG ERA PAIRINGS</h2>
+        <p>Select one to build the full production package</p>
+      </div>
+      <div class="pair-grid" id="pairGrid"></div>
+    </div>
+
+    <div class="loading" id="loadEl">
+      <div class="load-track"><div class="load-fill"></div></div>
+      <p class="load-msg" id="loadMsg">Generating...</p>
+    </div>
+
+    <div class="output" id="outEl">
+
+      <div class="out-head">
+        <h1 id="outTitle"></h1>
+        <p id="outSub"></p>
+      </div>
+
+      <div class="exp-bar">
+        <button class="eb sheets" id="btnSheets" onclick="exportSheets()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3h2v2h-2V6zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM7 6h2v2H7V6zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V6h4v2z"/>
+          </svg>
+          Export to Sheets
+        </button>
+        <button class="eb drive" id="btnDrive" onclick="exportDrive()" disabled>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.71 3.5L1.15 15l3.43 5.5h15.85L23.86 15 17.3 3.5H7.71zm.57 1.5h8.43l5.7 9.5H8.57L2.87 5h5.41zM5.5 20L3.07 16h17.86L18.5 20H5.5z"/>
+          </svg>
+          Save to Drive
+        </button>
+        <button class="eb" onclick="dlTxt()">↓ Download .txt</button>
+        <button class="new-btn" onclick="reset()">← New Legend</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tb on" onclick="tab('short',this)">📱 Short Form</button>
+        <button class="tb" onclick="tab('long',this)">🎬 Long Form</button>
+        <button class="tb" onclick="tab('seo',this)">🔍 SEO Package</button>
+        <button class="tb" onclick="tab('thumb',this)">🖼 Thumbnail</button>
+      </div>
+
+      <div class="pane on" id="pane-short">
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">Short Form Script</span>
+            <span class="cbadge">Day 1 · Day 3 · Day 7 · Second-person</span>
+            <button class="cbtn" onclick="copy('shortScr',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="prose" id="shortScr"></div></div>
+        </div>
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">Golden Line</span>
+            <span class="cbadge">The shareable moment</span>
+            <button class="cbtn" onclick="copy('goldLine',this)">Copy</button>
+          </div>
+          <div class="cbody">
+            <div class="gold-block">
+              <div class="gold-lbl">⭐ Clip this separately — your viral moment</div>
+              <div class="gold-txt" id="goldLine"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><span class="clbl">Hook Analysis</span></div>
+          <div class="cbody"><div class="mono" id="hookAna"></div></div>
+        </div>
+      </div>
+
+      <div class="pane" id="pane-long">
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">Long Form Script</span>
+            <span class="cbadge">Day 1 · 3 · 5 · 7 · 10 · Second-person</span>
+            <button class="cbtn" onclick="copy('longScr',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="prose" id="longScr"></div></div>
+        </div>
+      </div>
+
+      <div class="pane" id="pane-seo">
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">YouTube Titles</span>
+            <span class="cbadge">A / B / C variants</span>
+            <button class="cbtn" onclick="copy('seoTit',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="mono" id="seoTit"></div></div>
+        </div>
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">Full Description</span>
+            <span class="cbadge">With timestamps</span>
+            <button class="cbtn" onclick="copy('seoDesc',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="mono" id="seoDesc"></div></div>
+        </div>
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">Tags</span>
+            <button class="cbtn" onclick="copyTags('seoTags',',',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="tags" id="seoTags"></div></div>
+        </div>
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">Hashtags</span>
+            <button class="cbtn" onclick="copyTags('seoHt',' ',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="tags" id="seoHt"></div></div>
+        </div>
+      </div>
+
+      <div class="pane" id="pane-thumb">
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">Thumbnail Prompt</span>
+            <span class="cbadge">MrBeast style · Midjourney / Flux / KIE · ≤1000 chars</span>
+            <button class="cbtn" onclick="copy('thumbPrompt',this)">Copy</button>
+          </div>
+          <div class="cbody">
+            <div class="mono" id="thumbPrompt" style="font-size:13px;line-height:1.75;color:var(--text);word-break:break-word"></div>
+            <div id="thumbCharCount" style="margin-top:10px;font-size:10px;font-family:var(--mono);color:var(--t3);text-align:right"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch">
+            <span class="clbl">Overlay Text Spec</span>
+            <span class="cbadge">Canva / Photoshop / CapCut</span>
+            <button class="cbtn" onclick="copy('overlayS',this)">Copy</button>
+          </div>
+          <div class="cbody"><div class="mono" id="overlayS"></div></div>
+        </div>
+        <div class="card">
+          <div class="ch"><span class="clbl">CTR Psychology</span></div>
+          <div class="cbody"><div class="mono" id="ctrAna"></div></div>
+        </div>
+      </div>
+
+    </div></div><div class="content" id="pageHist" style="display:none">
+    <div class="sec-hd" style="margin-bottom:20px">
+      <h2>SESSION HISTORY</h2>
+      <p id="histCount">0 generations</p>
+    </div>
+    <div id="histCards"></div>
+  </div>
+
+</div></div><div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════
+   STATE & DATA
+════════════════════════════════════════════ */
+const GEMINI_100_TITLES = [
+  { legend: "Elon Musk", titles: ["Elon Musk Tries to Build a Rocket in Ancient Egypt (They Worship Him)", "Elon Musk Crashes the Roman Senate and Gets Immediately Exiled", "Elon Musk Pitches the Internet to Ancient Babylon — It Does Not Go Well", "Elon Musk in the Library of Alexandria: \"I Need Wi-Fi\"", "Elon Musk Walks Into a Medieval Alchemy Lab and Takes Over", "Elon Musk Buys the Roman Colosseum and Turns It Into a Tesla Showroom", "Elon Musk in Ancient Greece Trying to Explain Twitter to Socrates", "Elon Musk as an Egyptian Pharaoh Designing Pyramids With AI", "Elon Musk vs Julius Caesar: Who Actually Built More?", "Elon Musk in Ancient China Pitching the First Electric Chariot"] },
+  { legend: "Donald Trump", titles: ["Trump Gives a Speech in the Roman Senate — The Senators Walk Out", "Trump Tries to Build a Wall Around Ancient Rome (Rome Says No)", "Trump Negotiates With the Pharaoh Over Pyramid Construction Costs", "Trump at the French Revolution Tribunal: \"This Is a Witch Hunt\"", "Trump Interrupts the Spartan King Mid-Battle to Declare Victory", "Trump in Medieval Court: \"I Have the Best Knights, Maybe Ever\"", "Trump Tries to Buy Ancient Athens. Athens Is Not for Sale.", "Trump at the Ancient Olympics: Claims He Would Have Won Every Event", "Trump vs Caesar: Who Has the Better Betrayal Story?", "Trump in the Viking Age: \"The Greatest Longships in History — Mine\""] },
+  { legend: "Kanye West", titles: ["Kanye West Interrupts a Greek Philosophy Debate to Drop an Album", "Kanye West Gets Kicked Out of the Roman Senate in 4 Minutes", "Kanye West Walks Into a Medieval Coronation and Says \"I Should Be King\"", "Kanye West at the Temple of Zeus: \"I Am a God\" — Zeus Responds", "Kanye West Tries to Redesign Ancient Egypt's Aesthetic", "Kanye West in Ancient Sparta: Eliminated Day 1", "Kanye West vs Socrates: Philosophy Battle That Breaks Reality", "Kanye West Releases an Album in Ancient Rome — Critics Destroy It", "Kanye West Interrupts the Trojan War to Talk About His Shoes", "Kanye West Tries to Become Pharaoh. It Lasts 3 Days."] },
+  { legend: "MrBeast", titles: ["MrBeast Funds the Colosseum Games — Last Gladiator Wins $1 Million", "MrBeast Gives Away Gold to Every Worker at the Pyramids", "MrBeast Sponsors the Trojan War and It Immediately Gets Out of Hand", "MrBeast Rebuilds the Library of Alexandria in 24 Hours", "MrBeast vs Ancient Olympics: Can He Win Every Event?", "MrBeast Opens a Medieval Food Bank — The Kingdom Loses Its Mind", "MrBeast Challenges 100 Roman Soldiers — Loser Buys the Empire", "MrBeast Tries to Buy Ancient Egypt. The Pharaoh Doesn't Know What Money Is.", "MrBeast Hires Every Unemployed Person in Ancient Rome", "MrBeast Last to Leave Ancient Greece Gets 1 Million Gold Coins"] },
+  { legend: "Taylor Swift", titles: ["Taylor Swift Performs at a Medieval Royal Court — The King Cries", "Taylor Swift Writes a Breakup Song About Julius Caesar", "Taylor Swift at the Ancient Olympic Festival — First Woman on Stage", "Taylor Swift in the Greek Gods' Court: Aphrodite Is Threatened", "Taylor Swift vs Cleopatra: The Ultimate Feminine Power Battle", "Taylor Swift Crashes a Viking Feast and Somehow Takes Over", "Taylor Swift Writing Songs About the Trojan War — Achilles Is Upset", "Taylor Swift as a Roman Senator's Daughter Who Runs the Senate", "Taylor Swift's Ancient Egypt Era Is Her Most Powerful Yet", "Taylor Swift at the Court of King Arthur — Merlin Takes Notes"] },
+  { legend: "LeBron James", titles: ["LeBron James Enters the Roman Colosseum — Every Gladiator Quits", "LeBron James in Spartan Training — He Finishes First by Two Days", "LeBron James as Ancient War General — He Actually Wins", "LeBron James at the Ancient Olympics: Every Record Shattered", "LeBron vs Achilles: Who Actually Is the Greatest Warrior?", "LeBron James Leads a Viking Raid. It Ends Very Differently.", "LeBron James in the Roman Senate: \"I'm Taking My Talents to Carthage\"", "LeBron James Builds a Basketball Court in Ancient Egypt", "LeBron James vs the Egyptian Army in a Leadership Challenge", "LeBron James Opens a Training Academy in Ancient Greece. Greece Wins the Next War."] },
+  { legend: "Cristiano Ronaldo", titles: ["Ronaldo at the Ancient Olympics — Judges Don't Know What to Do", "Ronaldo vs Roman Gladiators in the Colosseum — He Wins With Skills", "Ronaldo in Spartan Endurance Training — The Spartans Ask for Tips", "Ronaldo on the Trojan War Battlefield: Fastest Man in Any Era", "Ronaldo vs Achilles: A Sprint That Changes Ancient History", "Ronaldo Introduces Football to Ancient Rome — It Collapses Society", "Ronaldo in Medieval Tournament — Knights Retire on the Spot", "Ronaldo Scores a Freekick at the Colosseum — The Crowd Goes Insane", "Ronaldo vs Messi: But Make It Ancient Greece", "Ronaldo Trains the Spartan Army. Sparta Conquers Everything."] },
+  { legend: "Socrates", titles: ["Socrates Gets on a Podcast and the Host Has a Breakdown", "Socrates in a Corporate Boardroom: He Questions Everything, Gets Fired", "Socrates in a Job Interview — Never Answers a Single Question", "Socrates on TikTok: Every Comment Is Another Question", "Socrates in a Group Chat at 2am — Nobody Sleeps", "Socrates vs a Modern Lawyer: The Judge Quits", "Socrates Tries to Order at a Coffee Shop — The Line Is 40 People Deep", "Socrates vs Kanye West: The Debate That Breaks Philosophy", "Socrates Gets Banned from Every Social Media Platform", "Socrates in Therapy — The Therapist Needs Therapy After"] },
+  { legend: "Leonardo da Vinci", titles: ["Da Vinci Joins a Modern Tech Startup — He Redesigns Everything in a Week", "Da Vinci Overengineers the Egyptian Pyramids — They Can't Be Built", "Da Vinci Walks Into Ancient Babylon and Invents 40 Things in a Day", "Da Vinci vs Elon Musk: Who Actually Builds More?", "Da Vinci in the Roman Senate Trying to Explain Aviation", "Da Vinci Opens a Medieval Workshop — He Patents 200 Things", "Da Vinci in a Modern Art Museum — Hates Everything He Sees", "Da Vinci Designs Ancient Rome's Infrastructure — It Still Stands Today", "Da Vinci in Ancient China: He and Sun Tzu Build an Unstoppable Army", "Da Vinci Gets an iPhone — He Rebuilds It From Scratch in Better"] },
+  { legend: "Julius Caesar", titles: ["Caesar Walks Into a Modern Corporate Boardroom — Et Tu, CFO?", "Caesar vs Trump: Two Men Who Think They're Emperors", "Caesar in Silicon Valley: He Takes Over Three Companies in One Week", "Caesar Tries Democracy Again — It Goes Exactly the Same Way", "Caesar in a Modern Senate: \"I've Seen This Before\" (He Has)", "Caesar vs Elon Musk: Who Built the Greater Empire?", "Caesar Joins a Modern Political Campaign — Wins in a Landslide Then Gets Betrayed", "Caesar in a Medieval Kingdom: He Runs It Better in 48 Hours", "Caesar Gets on Twitter — Banned in 6 Hours", "Caesar Starts a Podcast About Leadership. Episode 1: \"Never Trust Your Friends\""] }
+];
+
+const LIBRARY = [
+  {tier:1,name:"Elon Musk",emoji:"🚀",era:"Present",
+   engine:"Innovation trapped in old worlds. Over-optimizing ancient systems.",
+   titles:["Elon Musk Building Pyramids in Ancient Egypt","Elon Musk Redesigning the Roman Senate","Elon Musk Digitizing the Library of Alexandria"]},
+  {tier:1,name:"Donald Trump",emoji:"🏢",era:"Present",
+   engine:"Ego + authority systems = chaos. Treating history like a real estate deal.",
+   titles:["Donald Trump Interrupting the Roman Senate","Donald Trump at a Medieval Royal Court","Donald Trump at a French Revolution Tribunal"]},
+  {tier:1,name:"Kanye West",emoji:"🎤",era:"Present",
+   engine:"Disruption in structured civilizations. Unfiltered god complex.",
+   titles:["Kanye West Interrupting a Royal Coronation","Kanye West in a Greek Philosophy Debate","Kanye West in the Roman Senate"]},
+  {tier:1,name:"MrBeast",emoji:"💸",era:"Present",
+   engine:"Modern spectacle injected into ancient survival worlds.",
+   titles:["MrBeast Funding the Colosseum Games","MrBeast Giving Away Gold During Pyramid Construction","MrBeast Hosting Trojan War Giveaways"]},
+  {tier:1,name:"Taylor Swift",emoji:"🎸",era:"Present",
+   engine:"Emotion + storytelling = timeless crossover.",
+   titles:["Taylor Swift at a Medieval Royal Court","Taylor Swift in a Greek Mythology Storytelling Circle","Taylor Swift at a Royal Alliance Ceremony"]}
+];
+
+let libCurrentTier = 'all';
+let libCurrentSearch = '';
+
+let S = {
+  legend: '',
+  topic: '',
+  libraryTitle: '',
+  pairing: null,
+  data: {},
+  history: [],
+  gToken: null,
+  drawerOpen: false,
+  toastTimer: null
+};
+
+/* ════════════════════════════════════════════
+   INIT & GEMINI LEGENDS BUILDER
+════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  const k = sessionStorage.getItem('lp_key');
+  const g = sessionStorage.getItem('lp_gid');
+  const s = sessionStorage.getItem('lp_sid');
+  if (k) { $('geminiKey').value = k; syncStatus(); }
+  if (g) $('gClientId').value = g;
+  if (s) $('sheetId').value = s;
+
+  buildGeminiLegends();
+});
+
+// Built using standard DOM methods to completely bypass HTML injection/escaping issues.
+function buildGeminiLegends() {
+  const container = $('geminiList');
+  container.innerHTML = '';
+
+  GEMINI_100_TITLES.forEach((group, index) => {
+    const el = document.createElement('div');
+    el.className = 'gemini-group';
+    
+    const hdr = document.createElement('div');
+    hdr.className = 'gemini-hdr';
+    hdr.textContent = group.legend + ' ▾';
+    hdr.onclick = () => toggleGeminiList(index);
+    el.appendChild(hdr);
+
+    const titlesDiv = document.createElement('div');
+    titlesDiv.className = 'gemini-titles';
+    titlesDiv.id = `gemini-t-${index}`;
+
+    group.titles.forEach(t => {
+      const btn = document.createElement('div');
+      btn.className = 'gemini-title-btn';
+      btn.textContent = t;
+      btn.onclick = () => fireDirect(group.legend, t);
+      titlesDiv.appendChild(btn);
+    });
+
+    el.appendChild(titlesDiv);
+    container.appendChild(el);
+  });
+}
+
+function toggleGeminiList(index) {
+  const list = $(`gemini-t-${index}`);
+  list.classList.toggle('open');
+}
+
+/* ════════════════════════════════════════════
+   LIBRARY TAB LOGIC
+════════════════════════════════════════════ */
+function buildLibrary() {
+  const list = $('libList');
+  const q = libCurrentSearch.toLowerCase();
+  const filtered = LIBRARY.filter(l => {
+    const matchTier = libCurrentTier === 'all' || String(l.tier) === libCurrentTier;
+    const matchQ = !q || l.name.toLowerCase().includes(q);
+    return matchTier && matchQ;
+  });
+  list.innerHTML = filtered.length ? '' : '<p class="sb-empty">No matches</p>';
+  filtered.forEach((l,i) => {
+    const div = document.createElement('div');
+    div.className = 'lib-leg';
+    div.innerHTML = `
+      <div class="lib-leg-head" onclick="openLibModal('${l.name.replace(/'/g,"\\'")}')">
+        <span class="lib-leg-emoji">${l.emoji}</span>
+        <div class="lib-leg-info">
+          <div class="lib-leg-name">${l.name}</div>
+          <div class="lib-leg-tier">Tier ${l.tier} · ${l.era}</div>
+        </div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function openLibModal(name) {
+  const l = LIBRARY.find(x => x.name === name);
+  if (!l) return;
+  
+  $('libModalHead').innerHTML = `
+    <div style="font-size:36px;line-height:1">${l.emoji}</div>
+    <div>
+      <h2 style="margin:0;font-size:24px;letter-spacing:1px;font-family:var(--disp);color:var(--text);">${l.name}</h2>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-top:2px;">Tier ${l.tier} · ${l.era}</div>
+    </div>
+  `;
+  $('libModalEngine').innerHTML = `<strong style="color:var(--text)">Engine:</strong> ${l.engine}`;
+  
+  const titlesContainer = $('libModalTitles');
+  titlesContainer.innerHTML = '';
+  l.titles.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'lib-title-btn';
+    btn.textContent = t;
+    btn.onclick = () => pickTitle(l.name, t);
+    titlesContainer.appendChild(btn);
+  });
+  
+  $('libModal').classList.add('open');
+}
+
+function closeLibModal() { $('libModal').classList.remove('open'); }
+function filterTier(tier, btn) {
+  document.querySelectorAll('.tier-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  libCurrentTier = tier;
+  buildLibrary();
+}
+function filterLib() {
+  libCurrentSearch = $('libSearch').value;
+  buildLibrary();
+}
+
+function pickTitle(legendName, titleText) {
+  closeLibModal();
+  fireDirect(legendName, titleText);
+}
+
+function sbMode(mode, btn) {
+  document.querySelectorAll('.sbm').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  else {
+    const modeMap = {custom:0, library:1, gemini:2, history:3};
+    document.querySelectorAll('.sbm')[modeMap[mode]]?.classList.add('on');
+  }
+  ['sbCustom','sbLibrary','sbGemini','sbHistory'].forEach(id => {
+    const el = $(id);
+    if (el) el.classList.toggle('on', id === 'sb' + mode.charAt(0).toUpperCase() + mode.slice(1));
+  });
+  if (mode === 'library') buildLibrary();
+}
+
+/* ════════════════════════════════════════════
+   API DRAWER LOGIC
+════════════════════════════════════════════ */
+function toggleDrawer() {
+  S.drawerOpen = !S.drawerOpen;
+  $('apiDrawer').classList.toggle('open', S.drawerOpen);
+  $('apiToggle').textContent = S.drawerOpen ? '⚙ API Key ▴' : '⚙ API Key ▾';
+}
+function saveKey() {
+  const k = $('geminiKey').value.trim();
+  const g = $('gClientId').value.trim();
+  const s = $('sheetId').value.trim();
+  if (k) sessionStorage.setItem('lp_key', k);
+  if (g) sessionStorage.setItem('lp_gid', g);
+  if (s) sessionStorage.setItem('lp_sid', s);
+  syncStatus(); toast('Settings saved', 'ok');
+  setTimeout(toggleDrawer, 350);
+}
+function clearKey() {
+  $('geminiKey').value = ''; sessionStorage.removeItem('lp_key');
+  syncStatus(); toast('Key cleared', 'ok');
+}
+function syncStatus() {
+  const k = sessionStorage.getItem('lp_key') || '';
+  const live = k.startsWith('AIza');
+  $('pip').className = 'pip' + (live ? ' live' : '');
+  $('apiToggle').classList.toggle('live', live);
+  $('callout').classList.toggle('show', !live);
+}
+function toggleEye(id) {
+  const el = $(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+function openModal()  { $('gModal').classList.add('open'); }
+function closeModal() { $('gModal').classList.remove('open'); }
+
+/* ════════════════════════════════════════════
+   GOOGLE AUTH
+════════════════════════════════════════════ */
+function googleAuth() {
+  const cid = $('gClientId').value.trim() || sessionStorage.getItem('lp_gid');
+  if (!cid) {
+    toast('Enter your Google Client ID in the drawer first', 'err');
+    if (!S.drawerOpen) toggleDrawer();
+    return;
+  }
+  sessionStorage.setItem('lp_gid', cid);
+  try {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: cid,
+      scope: 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file',
+      callback: (res) => {
+        if (res.error) { toast('Google auth failed: ' + res.error, 'err'); return; }
+        S.gToken = res.access_token;
+        $('gBtn').classList.add('done');
+        $('gBtn').textContent = '✓ Google Connected';
+        $('btnSheets').disabled = false;
+        $('btnDrive').disabled = false;
+        toast('Google connected', 'ok');
+      }
+    });
+    client.requestAccessToken();
+  } catch(e) {
+    toast('Google GIS not loaded yet — try again in a moment', 'err');
+  }
+}
+
+/* ════════════════════════════════════════════
+   GEMINI API CALL
+════════════════════════════════════════════ */
+function getKey() { return sessionStorage.getItem('lp_key') || $('geminiKey').value.trim(); }
+
+async function callGemini(userPrompt, systemPrompt = '', maxTokens = 4096) {
+  const key = getKey();
+  if (!key) throw new Error('No API key — open ⚙ API Key and save yours first.');
+  if (!key.startsWith('AIza')) throw new Error('Invalid key format. Should start with AIza');
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${key}`;
+
+  const payload = {
+    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+    generationConfig: {
+      maxOutputTokens: maxTokens,
+      responseMimeType: "application/json"
+    }
+  };
+
+  if (systemPrompt) {
+    payload.systemInstruction = {
+      parts: [{ text: systemPrompt }]
+    };
+  }
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    let msg = `API error ${res.status}`;
+    try { const e = await res.json(); msg = e.error?.message || msg; } catch(_) {}
+    throw new Error(msg);
+  }
+
+  const json = await res.json();
+  if (!json.candidates || json.candidates.length === 0) {
+    throw new Error("No response generated.");
+  }
+  return json.candidates[0].content.parts[0].text;
+}
+
+function parseJSON(raw) {
+  return JSON.parse(
+    raw.trim()
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```\s*$/i, '')
+      .trim()
+  );
+}
+
+/* ════════════════════════════════════════════
+   STEP 1 — GENERATE PAIRINGS (CUSTOM TAB ONLY)
+════════════════════════════════════════════ */
+async function fire() {
+  clearErr();
+  const val   = ($('sideInp').value  || $('mobInp').value).trim();
+  const topic = ($('sideTopic') ? $('sideTopic').value : '') ||
+                ($('mobTopic')  ? $('mobTopic').value  : '');
+  const topicClean = topic.trim();
+
+  if (!val) { showErr('Enter a historical figure first.'); return; }
+  if (!getKey()) {
+    showErr('Add your Gemini API key — click ⚙ API Key top-right.');
+    if (!S.drawerOpen) toggleDrawer();
+    return;
+  }
+
+  S.legend = val;
+  S.topic  = topicClean;
+  S.libraryTitle = '';
+  hide('pairSec'); hide('outEl');
+
+  load(true, `Scouting the high-viral wrong rooms for ${val}...`);
+  $('fireBtn').disabled = true;
+
+  const topicLine = topicClean
+    ? `The user has suggested this environment: "${topicClean}". Generate pairings around this theme and 4 additional high-viral ones.`
+    : `Generate 5 wildly creative, high-pressure pairings across different high-viral categories.`;
+
+  try {
+    const raw = await callGemini(
+`You are an elite YouTube content strategist.
+CRITICAL RULE: Place the legend in HIGH-VIRAL ENVIRONMENTS (places with energy, money, pressure, or chaos).
+CRITICAL FORMAT RULE — SECOND-PERSON IMMERSION: All hooks and titles use "YOU" framing — the viewer IS the legend.
+
+Legend: ${val}
+${topicLine}
+
+Return ONLY valid JSON — no markdown, no preamble:
+{
+  "pairings": [
+    {
+      "title": "You Are Mozart. The NBA Has a Shot Clock.",
+      "setting": "Professional basketball arena, playoffs",
+      "tension": "Your rhythm instincts vs a 24-second mechanical deadline",
+      "engine": "You won't shoot until the musical tension resolves. Every violation is artistic integrity, not a foul.",
+      "hook": "What if you were Mozart drafted into the NBA? The shot clock means nothing to you.",
+      "category": "Sport"
+    }
+  ]
+}
+Generate exactly 5 pairings.`, '', 900);
+
+    const json = parseJSON(raw);
+    renderPairings(json.pairings);
+  } catch(e) { showErr(e.message); } 
+  finally { load(false); $('fireBtn').disabled = false; }
+}
+
+function renderPairings(pairs) {
+  const g = $('pairGrid'); g.innerHTML = '';
+  pairs.forEach((p, i) => {
+    const c = document.createElement('div'); c.className = 'pair-card';
+    c.innerHTML = `<div class="pc-n">${String(i+1).padStart(2,'0')}</div>
+      <div class="pc-t">${p.title}</div><div class="pc-e">${p.engine}</div><span class="pc-tag">${p.category}</span>`;
+    c.onclick = () => buildPackage(p);
+    g.appendChild(c);
+  });
+  show('pairSec'); $('pairSec').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ════════════════════════════════════════════
+   DIRECT FIRE (BYPASS PAIRINGS FOR TITLES)
+════════════════════════════════════════════ */
+function fireDirect(legend, titleText) {
+  if (!getKey()) {
+    showErr('Add your Gemini API key — click ⚙ API Key top-right.');
+    if (!S.drawerOpen) toggleDrawer(); return;
+  }
+  
+  S.legend = legend;
+  S.topic = titleText;
+  S.libraryTitle = titleText;
+  
+  // Force UI back to custom generation mode
+  sbMode('custom', document.querySelectorAll('.sbm')[0]);
+  $('sideInp').value = legend;
+  $('sideTopic').value = titleText;
+  
+  const synthPairing = {
+    title: titleText,
+    setting: "As described exactly in the title",
+    tension: "The pure conceptual clash of the title",
+    engine: "Driven strictly by the specific title scenario",
+    category: "Viral Concept"
+  };
+  
+  buildPackage(synthPairing);
+}
+
 /* ════════════════════════════════════════════
    STEP 2 — BUILD FULL PRODUCTION PACKAGE
 ════════════════════════════════════════════ */
@@ -13,7 +1225,6 @@ async function buildPackage(p) {
 LEGEND: ${S.legend}
 VIDEO TITLE: ${p.title}
 
-
 CRITICAL SCENARIO LOCK — FOCUS ON THE TITLE EXACTLY:
 The entire script MUST be strictly about ${S.legend} in the exact scenario described in the title. 
 For example, if the title is 'Ronaldo vs Roman Gladiators in the Colosseum — He Wins With Skills', the entire script MUST be about Ronaldo, Roman Gladiators, in a Colosseum, and him using his skills to win there.
@@ -26,29 +1237,29 @@ WRONG hook:   "What if Cleopatra was on the Bachelorette? She's not here to find
 This applies to EVERY line of short_script and long_script. No exceptions.
 
 ══════════════════════════════════════════
-NARRATION FORMAT — ULTRA-VIRAL STACCATO (READ FIRST)
+NARRATION FORMAT — MANDATORY — READ FIRST
 ══════════════════════════════════════════
-Both short_script and long_script MUST be paced for breathless, rapid-fire cuts. You are writing beats, not prose. 
+Both short_script and long_script MUST be naturally paced for 2-second visual cuts. Use EXTREMELY SHORT SENTENCES (4-7 words max) separated by hard punctuation (periods).
 
 10 MANDATORY RULES — APPLY TO EVERY SENTENCE:
-1. STACCATO PACING — 1 to 5 words MAXIMUM per sentence. Absolute hard limit.
-2. EVERY LINE IS A CUT — Each sentence must trigger a new visual scene or camera angle.
-3. KILL CONJUNCTIONS — Zero use of "and," "but," "because," or "so." Use hard stops.
-4. SECOND PERSON ALWAYS — "You" is the protagonist throughout.
-5. SENSORY ARRIVAL — Day 1 starts with a physical sensation.
-6. DEADPAN UNDERSTATEMENT — Huge events in tiny words. Never oversell.
-7. NO DIALOGUE TAGS — No "he said" / "you said".
-8. DAY ENDING = IMAGE — End each day section on a sharp, abrupt visual outcome.
+1. 2-SECOND PACING — Hard max 4-7 words per sentence.
+2. NO EXTRA TEXT — No timestamps, no bracketed directions. Just the raw spoken script.
+3. SECOND PERSON ALWAYS — "You" is the protagonist throughout.
+4. SENSORY ARRIVAL — Day 1 starts with a physical sensation.
+5. DEADPAN UNDERSTATEMENT — Huge events in tiny words. Never oversell.
+6. NO DIALOGUE TAGS — No "he said" / "you said".
+7. REACTION MIRROR — Every few lines, one person from that world reacts to you.
+8. DAY ENDING = IMAGE — End each day section on a visual outcome.
 9. FINAL VERDICT — Last line sounds like a historical record. Calm. Final.
 10. THE LEGEND IS NEVER CONFUSED — They are always right. The world is wrong.
 
 SHORT FORM STRUCTURE (Day 1, Day 3, Day 7) & LONG FORM STRUCTURE (Day 1, 3, 5, 7, 10).
 
 {
-  "short_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[1-5 word sentences. Hard stops. Rapid cuts.]\\n\\nDay Three.\\n[1-5 word sentences. Hard stops. Rapid cuts.]... etc",
+  "short_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[Extremely short sentences. 4-7 words max. Full stops.]\\n\\nDay Three.\\n[Extremely short sentences. 4-7 words max. Full stops.]... etc",
   "golden_line": "The setup sentence(s) + the golden line itself. The golden line must work completely alone with zero context.",
   "hook_analysis": "3-4 sentences: what the opening hook plants in the viewer's brain in the first 2 seconds. Why the second-person 'you' prevents scrolling.",
-  "long_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[1-5 word sentences. Hard stops. Rapid cuts.]\\n\\nDay Three.\\n[1-5 word sentences. Hard stops. Rapid cuts.]... etc",
+  "long_script": "What if [legend] [scenario hook]?\\n\\nDay One.\\n[Extremely short sentences. 4-7 words max. Full stops.]\\n\\nDay Three.\\n[Extremely short sentences. 4-7 words max. Full stops.]... etc",
   "seo_titles": "TITLE A — What if format\\nTITLE B — Outcome first\\nTITLE C — Shorts emoji lead",
   "seo_description": "Full 400-500 word YouTube description with timestamps.",
   "tags": ["tag1","tag2","tag3","tag4","tag5"],
@@ -66,3 +1277,257 @@ SHORT FORM STRUCTURE (Day 1, Day 3, Day 7) & LONG FORM STRUCTURE (Day 1, 3, 5, 7
   } catch(e) { showErr('Generation error: ' + e.message); } 
   finally { load(false); }
 }
+
+/* ════════════════════════════════════════════
+   RENDER & OUTPUT LOGIC
+════════════════════════════════════════════ */
+function renderOutput(p, d) {
+  $('outTitle').textContent = p.title.toUpperCase();
+  $('outSub').textContent = `${S.legend} · Script Package`;
+
+  setText('shortScr', d.short_script);
+  setText('goldLine', d.golden_line);
+  setText('hookAna',  d.hook_analysis);
+  setText('longScr',  d.long_script);
+  setText('seoTit',   d.seo_titles);
+  setText('seoDesc',  d.seo_description);
+  setText('overlayS', d.overlay_spec);
+  setText('ctrAna',   d.ctr_analysis);
+
+  const tp = d.thumbnail_prompt || d.image_gen_prompt || '';
+  setText('thumbPrompt', tp);
+  const countEl = $('thumbCharCount');
+  if (countEl) {
+    const len = tp.length;
+    countEl.textContent = `${len} / 1000 characters${len > 1000 ? ' ⚠ OVER LIMIT' : ' ✓'}`;
+    countEl.style.color = len > 1000 ? 'var(--red)' : 'var(--green)';
+  }
+
+  renderTags('seoTags', d.tags,     false);
+  renderTags('seoHt',   d.hashtags, true);
+
+  show('outEl'); tab('short', document.querySelector('.tb'));
+  $('outEl').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setText(id, v) { $(id).textContent = v || ''; }
+function renderTags(id, arr, isHt) {
+  const w = $(id); w.innerHTML = '';
+  if (!Array.isArray(arr)) { w.textContent = arr || ''; return; }
+  arr.forEach(t => {
+    const s = document.createElement('span'); s.className = 'tag' + (isHt ? ' ht' : '');
+    s.textContent = t; w.appendChild(s);
+  });
+}
+
+function addHistory(p, d) {
+  S.history.unshift({ legend: S.legend, libraryTitle: S.libraryTitle, topic: S.topic, p, d, ts: Date.now() });
+  refreshHistSidebar();
+}
+function refreshHistSidebar() {
+  const el = $('histList');
+  if (!S.history.length) { el.innerHTML = '<p class="sb-empty">No generations yet</p>'; return; }
+  el.innerHTML = '';
+  S.history.slice(0, 10).forEach(h => {
+    const c = document.createElement('div'); c.className = 'hist-card';
+    const dt = h.libraryTitle || h.p.title;
+    c.innerHTML = `<div class="hist-t">${dt}</div><div class="hist-s">${h.legend} · ${new Date(h.ts).toLocaleTimeString()}</div>`;
+    c.onclick = () => { S.legend=h.legend; S.libraryTitle=h.libraryTitle||''; S.topic=h.topic||''; S.pairing=h.p; S.data=h.d; renderOutput(h.p,h.d); page('gen'); };
+    el.appendChild(c);
+  });
+}
+function refreshHistPage() {
+  const el = $('histCards'); $('histCount').textContent = `${S.history.length} generation${S.history.length !== 1 ? 's' : ''}`;
+  if (!S.history.length) { el.innerHTML = '<p style="color:var(--t3);font-family:var(--mono);font-size:12px">No generations yet.</p>'; return; }
+  el.innerHTML = '';
+  S.history.forEach(h => {
+    const c = document.createElement('div'); c.className = 'card'; c.style.cursor = 'pointer';
+    const ht = h.libraryTitle || h.p.title;
+    c.innerHTML = `<div class="ch"><span class="clbl">${h.legend}</span><span class="cbadge">${ht}</span><span class="cbadge">${new Date(h.ts).toLocaleTimeString()}</span></div>`;
+    c.onclick = () => { S.legend=h.legend; S.libraryTitle=h.libraryTitle||''; S.topic=h.topic||''; S.pairing=h.p; S.data=h.d; renderOutput(h.p,h.d); page('gen'); };
+    el.appendChild(c);
+  });
+}
+
+/* ════════════════════════════════════════════
+   EXPORTS
+════════════════════════════════════════════ */
+async function exportSheets() {
+  if (!S.gToken) { toast('Connect Google first in the API drawer', 'err'); return; }
+  if (!S.data || !S.pairing) { toast('Generate content first', 'err'); return; }
+  toast('Exporting to Sheets...', '');
+
+  try {
+    const d = S.data, t = d.thumbnail || {};
+    const tags = Array.isArray(d.tags) ? d.tags.join(', ') : (d.tags || '');
+    const hts  = Array.isArray(d.hashtags) ? d.hashtags.join(' ') : (d.hashtags || '');
+    let sid = sessionStorage.getItem('lp_sid') || $('sheetId').value.trim();
+
+    if (!sid) {
+      const cr = await gCall('[https://sheets.googleapis.com/v4/spreadsheets](https://sheets.googleapis.com/v4/spreadsheets)', {
+        method: 'POST',
+        body: JSON.stringify({
+          properties: { title: `Legends Pipeline — ${S.legend}` },
+          sheets: [
+            { properties: { title: 'Scripts' } },
+            { properties: { title: 'SEO' } },
+            { properties: { title: 'Thumbnail' } }
+          ]
+        })
+      });
+      sid = cr.spreadsheetId;
+      sessionStorage.setItem('lp_sid', sid);
+      $('sheetId').value = sid;
+    }
+
+    const ts = new Date().toLocaleString();
+    const ti = S.pairing.title;
+
+    await gCall(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Scripts!A1:append?valueInputOption=RAW`, {
+      method: 'POST',
+      body: JSON.stringify({ values: [
+        [`=== ${ti} ===`, ts],
+        ['LEGEND', S.legend], ['SETTING', S.pairing.setting], ['', ''],
+        ['SHORT FORM (Day 1·3·7)', d.short_script || ''], ['', ''],
+        ['GOLDEN LINE', d.golden_line || ''], ['', ''],
+        ['HOOK ANALYSIS', d.hook_analysis || ''], ['', ''],
+        ['LONG FORM (Day 1·3·5·7·10)', d.long_script || ''],
+        ['---', '---']
+      ]})
+    });
+
+    await gCall(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/SEO!A1:append?valueInputOption=RAW`, {
+      method: 'POST',
+      body: JSON.stringify({ values: [
+        [`=== ${ti} ===`, ts],
+        ['TITLES', d.seo_titles || ''],
+        ['DESCRIPTION', d.seo_description || ''],
+        ['TAGS', tags], ['HASHTAGS', hts],
+        ['---', '---']
+      ]})
+    });
+
+    await gCall(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Thumbnail!A1:append?valueInputOption=RAW`, {
+      method: 'POST',
+      body: JSON.stringify({ values: [
+        [`=== ${ti} ===`, ts],
+        ['THUMBNAIL PROMPT (≤1000 chars)', d.thumbnail_prompt || d.image_gen_prompt || ''],
+        ['OVERLAY SPEC', d.overlay_spec || ''],
+        ['CTR ANALYSIS', d.ctr_analysis || ''],
+        ['---', '---']
+      ]})
+    });
+
+    toast(`✓ Exported to Sheets`, 'ok');
+  } catch(e) {
+    toast('Sheets error: ' + e.message, 'err');
+  }
+}
+
+async function exportDrive() {
+  if (!S.gToken) { toast('Connect Google first', 'err'); return; }
+  if (!S.data || !S.pairing) { toast('Generate content first', 'err'); return; }
+  toast('Uploading to Drive...', '');
+
+  try {
+    const txt = buildTxt();
+    const fname = `${S.legend} — ${S.pairing.title}.txt`;
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify({ name: fname, mimeType: 'text/plain' })], { type: 'application/json' }));
+    form.append('file', new Blob([txt], { type: 'text/plain' }));
+
+    const r = await fetch('[https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart](https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart)', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + S.gToken },
+      body: form
+    });
+    if (!r.ok) throw new Error('Drive upload failed: ' + r.status);
+    toast(`✓ Saved to Drive: "${fname}"`, 'ok');
+  } catch(e) {
+    toast('Drive error: ' + e.message, 'err');
+  }
+}
+
+async function gCall(url, opts = {}) {
+  const r = await fetch(url, {
+    ...opts,
+    headers: {
+      Authorization: 'Bearer ' + S.gToken,
+      'Content-Type': 'application/json',
+      ...(opts.headers || {})
+    }
+  });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    throw new Error(e.error?.message || `HTTP ${r.status}`);
+  }
+  return r.json();
+}
+
+function dlTxt() {
+  if (!S.data || !S.pairing) { toast('Generate content first', 'err'); return; }
+  const b = new Blob([buildTxt()], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = `${S.legend} — ${S.pairing.title}.txt`;
+  a.click(); toast('Downloaded', 'ok');
+}
+
+function buildTxt() {
+  const d = S.data, tags = Array.isArray(d.tags) ? d.tags.join(', ') : (d.tags || ''), hts = Array.isArray(d.hashtags) ? d.hashtags.join(' ') : (d.hashtags || '');
+  const line = (n) => '═'.repeat(n || 44);
+  return [
+    `LEGENDS PIPELINE — PRODUCTION PACKAGE`, `Generated: ${new Date().toLocaleString()}`, `${'='.repeat(44)}`,
+    `LEGEND:  ${S.legend}`, `PAIRING: ${S.pairing.title}`, ``, line(), `SHORT FORM SCRIPT`, line(), d.short_script || '', ``,
+    line(), `GOLDEN LINE`, line(), d.golden_line || '', ``, line(), `LONG FORM SCRIPT`, line(), d.long_script || ''
+  ].join('\n');
+}
+
+/* ════════════════════════════════════════════
+   UI HELPERS
+════════════════════════════════════════════ */
+function $(id) { return document.getElementById(id); }
+function tab(id, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
+  $('pane-' + id).classList.add('on');
+  const btns = document.querySelectorAll('.tb'); const map = { short:0, long:1, seo:2, thumb:3 };
+  if (map[id] !== undefined) btns[map[id]].classList.add('on'); else if (btn) btn.classList.add('on');
+}
+function page(id, btn) {
+  $('pageGen').style.display  = id === 'gen'  ? 'block' : 'none';
+  $('pageHist').style.display = id === 'hist' ? 'block' : 'none';
+  document.querySelectorAll('.tnb').forEach((b, i) => { b.classList.toggle('on', (i === 0 && id === 'gen') || (i === 1 && id === 'hist')); });
+  if (id === 'hist') refreshHistPage();
+}
+function show(id) { $(id).classList.add('show'); }
+function hide(id) { $(id).classList.remove('show'); }
+function load(on, msg = '') { $('loadEl').classList.toggle('show', on); $('loadMsg').textContent = msg; }
+function showErr(msg) { const b = $('errBox'); b.textContent = '⚠ ' + msg; b.classList.add('show'); }
+function clearErr() { $('errBox').classList.remove('show'); }
+function copy(id, btn) {
+  navigator.clipboard.writeText($(id).textContent || '').then(() => {
+    btn.textContent = '✓ Copied'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+function copyTags(id, sep, btn) {
+  const text = Array.from($(id).querySelectorAll('.tag')).map(t => t.textContent).join(sep);
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+function toast(msg, type) {
+  const el = $('toast'); el.textContent = msg; el.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(S.toastTimer); S.toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+function reset() {
+  S.legend = ''; S.topic = ''; S.libraryTitle = ''; S.pairing = null; S.data = {};
+  $('sideInp').value = ''; $('mobInp').value = '';
+  if ($('sideTopic')) $('sideTopic').value = '';
+  if ($('mobTopic'))  $('mobTopic').value  = '';
+  hide('pairSec'); hide('outEl'); clearErr(); window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
