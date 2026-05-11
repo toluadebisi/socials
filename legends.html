@@ -9,7 +9,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 /* ═══════════════════════════════════════
-   DESIGN TOKENS
+   DESIGN TOKENS
 ═══════════════════════════════════════ */
 :root {
   --bg:       #0d0f14;
@@ -206,23 +206,23 @@ body::after{
 .hist-s{font-size:10px;color:var(--t3);margin-top:2px;font-family:var(--mono)}
 .sb-empty{font-size:12px;color:var(--t3);font-family:var(--mono)}
 
-/* ─── CLAUDE LEGENDS STYLING ─────────────── */
-.claude-group { margin-bottom: 12px; }
-.claude-hdr {
+/* ─── GEMINI LEGENDS STYLING ─────────────── */
+.gemini-group { margin-bottom: 12px; }
+.gemini-hdr {
   font-family: var(--disp); font-size: 20px; letter-spacing: 1px; color: var(--gold);
   padding: 8px 12px; background: var(--bg2); border: 1px solid var(--b2);
   border-radius: var(--r); cursor: pointer; display: flex; justify-content: space-between;
   align-items: center; transition: all .2s;
 }
-.claude-hdr:hover { background: var(--panel); border-color: var(--goldbrd); }
-.claude-titles { display: none; padding: 6px 0; gap: 4px; flex-direction: column; }
-.claude-titles.open { display: flex; }
-.claude-title-btn {
+.gemini-hdr:hover { background: var(--panel); border-color: var(--goldbrd); }
+.gemini-titles { display: none; padding: 6px 0; gap: 4px; flex-direction: column; }
+.gemini-titles.open { display: flex; }
+.gemini-title-btn {
   text-align: left; padding: 10px 12px; background: var(--bg); border: 1px solid var(--b1);
   border-radius: var(--r); font-family: var(--sans); font-size: 12px; color: var(--text);
   cursor: pointer; transition: all .15s; line-height: 1.4;
 }
-.claude-title-btn:hover {
+.gemini-title-btn:hover {
   background: var(--bg2); border-color: var(--blue); color: #fff;
   transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
@@ -483,7 +483,6 @@ body::after{
 <body>
 <div class="z" style="display:flex;flex-direction:column;min-height:100vh">
 
-<!-- ══ TOPBAR ══════════════════════════════════════════ -->
 <header class="topbar">
   <div class="logo">LEGENDS <span>PIPELINE</span></div>
   <nav class="topnav">
@@ -496,21 +495,19 @@ body::after{
   </div>
 </header>
 
-<!-- ══ API KEY DRAWER ═══════════════════════════════════ -->
 <div class="api-drawer" id="apiDrawer">
   <div class="api-inner">
 
-    <!-- Claude key -->
     <div class="api-group">
-      <div class="api-lbl">Anthropic API Key</div>
+      <div class="api-lbl">Google Gemini API Key</div>
       <div class="api-row">
-        <input type="password" class="api-input" id="claudeKey"
-          placeholder="sk-ant-api03-..." autocomplete="off">
-        <button class="eye" onclick="toggleEye('claudeKey')" title="Show/hide">👁</button>
+        <input type="password" class="api-input" id="geminiKey"
+          placeholder="AIza..." autocomplete="off">
+        <button class="eye" onclick="toggleEye('geminiKey')" title="Show/hide">👁</button>
       </div>
       <p class="api-hint">
         Key stored in browser memory only — never saved to disk.<br>
-        Get yours at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
+        Get yours at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>
       </p>
       <div class="api-actions">
         <button class="save-btn" onclick="saveKey()">Save</button>
@@ -518,7 +515,6 @@ body::after{
       </div>
     </div>
 
-    <!-- Google OAuth -->
     <div class="api-group">
       <div class="api-lbl">Google OAuth Client ID <span style="color:var(--t3);font-weight:400">(for export)</span></div>
       <input type="text" class="api-input" id="gClientId"
@@ -538,7 +534,6 @@ body::after{
       </button>
     </div>
 
-    <!-- Sheet ID -->
     <div class="api-group">
       <div class="api-lbl">Google Sheet ID <span style="color:var(--t3);font-weight:400">(optional)</span></div>
       <input type="text" class="api-input" id="sheetId"
@@ -552,7 +547,6 @@ body::after{
   </div>
 </div>
 
-<!-- ══ GOOGLE SETUP MODAL ════════════════════════════════ -->
 <div class="modal-bg" id="gModal">
   <div class="modal">
     <button class="modal-x" onclick="closeModal()">✕</button>
@@ -572,7 +566,6 @@ body::after{
   </div>
 </div>
 
-<!-- ══ LIBRARY SELECTION MODAL ═══════════════════════════ -->
 <div class="modal-bg" id="libModal">
   <div class="modal" style="max-width:540px;">
     <button class="modal-x" onclick="closeLibModal()">✕</button>
@@ -583,21 +576,17 @@ body::after{
   </div>
 </div>
 
-<!-- ══ MAIN LAYOUT ════════════════════════════════════════ -->
 <div class="layout z" style="flex:1">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sb-sec">
-      <!-- mode switch -->
       <div class="sb-mode">
         <button class="sbm on" onclick="sbMode('custom',this)">Custom</button>
         <button class="sbm" onclick="sbMode('library',this)">Library</button>
-        <button class="sbm" onclick="sbMode('claude',this)">Claude</button>
+        <button class="sbm" onclick="sbMode('gemini',this)">Gemini</button>
         <button class="sbm" onclick="sbMode('history',this)">History</button>
       </div>
 
-      <!-- CUSTOM INPUT PANEL -->
       <div class="sb-panel on" id="sbCustom">
         <div class="sb-lbl">Historical Figure</div>
         <input type="text" class="legend-inp" id="sideInp"
@@ -608,7 +597,6 @@ body::after{
         <button class="fire-btn" id="fireBtn" onclick="fire()">🔥 GENERATE</button>
       </div>
 
-      <!-- LIBRARY PANEL -->
       <div class="sb-panel" id="sbLibrary">
         <input type="text" class="lib-search" id="libSearch" placeholder="Search legends..." oninput="filterLib()">
         <div class="tier-tabs">
@@ -620,13 +608,11 @@ body::after{
         <div class="lib-list" id="libList"></div>
       </div>
 
-      <!-- CLAUDE LEGENDS PANEL -->
-      <div class="sb-panel" id="sbClaude">
+      <div class="sb-panel" id="sbGemini">
         <div class="sb-lbl" style="margin-bottom: 12px;">Top 100 Viral Concepts</div>
-        <div id="claudeList" style="max-height:calc(100vh - 200px);overflow-y:auto;padding-right:4px;"></div>
+        <div id="geminiList" style="max-height:calc(100vh - 200px);overflow-y:auto;padding-right:4px;"></div>
       </div>
 
-      <!-- HISTORY PANEL -->
       <div class="sb-panel" id="sbHistory">
         <div class="hist-list" id="histList">
           <p class="sb-empty">No generations yet</p>
@@ -635,12 +621,11 @@ body::after{
     </div>
   </aside>
 
-  <!-- ── GENERATOR PAGE ────────────────────── -->
   <div class="content" id="pageGen">
 
     <div class="callout show" id="callout">
       <h3>⚙ Quick Start</h3>
-      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Claude API key → Save. Then pick a legend from the Library/Claude tabs to instantly generate a package, or use Custom to scout ideas.</p>
+      <p>Click <strong>⚙ API Key ▾</strong> top-right → paste your Gemini API key → Save. Then pick a legend from the Library/Gemini tabs to instantly generate a package, or use Custom to scout ideas.</p>
     </div>
 
     <div class="hero">
@@ -653,7 +638,6 @@ body::after{
         <div class="hs"><div class="hs-n">∞</div><div class="hs-l">Legends</div></div>
         <div class="hs"><div class="hs-n">1K%</div><div class="hs-l">CTR Target</div></div>
       </div>
-      <!-- mobile input -->
       <div class="hero-mob">
         <input type="text" class="legend-inp" id="mobInp"
           placeholder="Historical figure..." style="flex:1;margin-bottom:0"
@@ -667,7 +651,6 @@ body::after{
 
     <div class="err-box" id="errBox"></div>
 
-    <!-- PAIRINGS -->
     <div class="pair-section" id="pairSec">
       <div class="sec-hd">
         <h2>WRONG ERA PAIRINGS</h2>
@@ -676,13 +659,11 @@ body::after{
       <div class="pair-grid" id="pairGrid"></div>
     </div>
 
-    <!-- LOADING -->
     <div class="loading" id="loadEl">
       <div class="load-track"><div class="load-fill"></div></div>
       <p class="load-msg" id="loadMsg">Generating...</p>
     </div>
 
-    <!-- OUTPUT -->
     <div class="output" id="outEl">
 
       <div class="out-head">
@@ -690,11 +671,10 @@ body::after{
         <p id="outSub"></p>
       </div>
 
-      <!-- export bar -->
       <div class="exp-bar">
         <button class="eb sheets" id="btnSheets" onclick="exportSheets()" disabled>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3h2v2h-2V6zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM7 6h2v2H7V6zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V6h4v2z"/>
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3h2v2h-2V6zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM7 6h2v2H7V6zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm10 2h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V6h4v2z"/>
           </svg>
           Export to Sheets
         </button>
@@ -708,7 +688,6 @@ body::after{
         <button class="new-btn" onclick="reset()">← New Legend</button>
       </div>
 
-      <!-- TABS -->
       <div class="tabs">
         <button class="tb on" onclick="tab('short',this)">📱 Short Form</button>
         <button class="tb" onclick="tab('long',this)">🎬 Long Form</button>
@@ -716,7 +695,6 @@ body::after{
         <button class="tb" onclick="tab('thumb',this)">🖼 Thumbnail</button>
       </div>
 
-      <!-- SHORT FORM -->
       <div class="pane on" id="pane-short">
         <div class="card">
           <div class="ch">
@@ -745,7 +723,6 @@ body::after{
         </div>
       </div>
 
-      <!-- LONG FORM -->
       <div class="pane" id="pane-long">
         <div class="card">
           <div class="ch">
@@ -757,7 +734,6 @@ body::after{
         </div>
       </div>
 
-      <!-- SEO -->
       <div class="pane" id="pane-seo">
         <div class="card">
           <div class="ch">
@@ -791,7 +767,6 @@ body::after{
         </div>
       </div>
 
-      <!-- THUMBNAIL -->
       <div class="pane" id="pane-thumb">
         <div class="card">
           <div class="ch">
@@ -818,11 +793,7 @@ body::after{
         </div>
       </div>
 
-    </div><!-- /output -->
-  </div><!-- /pageGen -->
-
-  <!-- ── HISTORY PAGE ───────────────────────── -->
-  <div class="content" id="pageHist" style="display:none">
+    </div></div><div class="content" id="pageHist" style="display:none">
     <div class="sec-hd" style="margin-bottom:20px">
       <h2>SESSION HISTORY</h2>
       <p id="histCount">0 generations</p>
@@ -830,16 +801,13 @@ body::after{
     <div id="histCards"></div>
   </div>
 
-</div><!-- /layout -->
-</div><!-- /app -->
-
-<div class="toast" id="toast"></div>
+</div></div><div class="toast" id="toast"></div>
 
 <script>
 /* ════════════════════════════════════════════
    STATE & DATA
 ════════════════════════════════════════════ */
-const CLAUDE_100_TITLES = [
+const GEMINI_100_TITLES = [
   { legend: "Elon Musk", titles: ["Elon Musk Tries to Build a Rocket in Ancient Egypt (They Worship Him)", "Elon Musk Crashes the Roman Senate and Gets Immediately Exiled", "Elon Musk Pitches the Internet to Ancient Babylon — It Does Not Go Well", "Elon Musk in the Library of Alexandria: \"I Need Wi-Fi\"", "Elon Musk Walks Into a Medieval Alchemy Lab and Takes Over", "Elon Musk Buys the Roman Colosseum and Turns It Into a Tesla Showroom", "Elon Musk in Ancient Greece Trying to Explain Twitter to Socrates", "Elon Musk as an Egyptian Pharaoh Designing Pyramids With AI", "Elon Musk vs Julius Caesar: Who Actually Built More?", "Elon Musk in Ancient China Pitching the First Electric Chariot"] },
   { legend: "Donald Trump", titles: ["Trump Gives a Speech in the Roman Senate — The Senators Walk Out", "Trump Tries to Build a Wall Around Ancient Rome (Rome Says No)", "Trump Negotiates With the Pharaoh Over Pyramid Construction Costs", "Trump at the French Revolution Tribunal: \"This Is a Witch Hunt\"", "Trump Interrupts the Spartan King Mid-Battle to Declare Victory", "Trump in Medieval Court: \"I Have the Best Knights, Maybe Ever\"", "Trump Tries to Buy Ancient Athens. Athens Is Not for Sale.", "Trump at the Ancient Olympics: Claims He Would Have Won Every Event", "Trump vs Caesar: Who Has the Better Betrayal Story?", "Trump in the Viking Age: \"The Greatest Longships in History — Mine\""] },
   { legend: "Kanye West", titles: ["Kanye West Interrupts a Greek Philosophy Debate to Drop an Album", "Kanye West Gets Kicked Out of the Roman Senate in 4 Minutes", "Kanye West Walks Into a Medieval Coronation and Says \"I Should Be King\"", "Kanye West at the Temple of Zeus: \"I Am a God\" — Zeus Responds", "Kanye West Tries to Redesign Ancient Egypt's Aesthetic", "Kanye West in Ancient Sparta: Eliminated Day 1", "Kanye West vs Socrates: Philosophy Battle That Breaks Reality", "Kanye West Releases an Album in Ancient Rome — Critics Destroy It", "Kanye West Interrupts the Trojan War to Talk About His Shoes", "Kanye West Tries to Become Pharaoh. It Lasts 3 Days."] },
@@ -886,41 +854,41 @@ let S = {
 };
 
 /* ════════════════════════════════════════════
-   INIT & CLAUDE LEGENDS BUILDER
+   INIT & GEMINI LEGENDS BUILDER
 ════════════════════════════════════════════ */
 window.addEventListener('load', () => {
   const k = sessionStorage.getItem('lp_key');
   const g = sessionStorage.getItem('lp_gid');
   const s = sessionStorage.getItem('lp_sid');
-  if (k) { $('claudeKey').value = k; syncStatus(); }
+  if (k) { $('geminiKey').value = k; syncStatus(); }
   if (g) $('gClientId').value = g;
   if (s) $('sheetId').value = s;
 
-  buildClaudeLegends();
+  buildGeminiLegends();
 });
 
 // Built using standard DOM methods to completely bypass HTML injection/escaping issues.
-function buildClaudeLegends() {
-  const container = $('claudeList');
+function buildGeminiLegends() {
+  const container = $('geminiList');
   container.innerHTML = '';
 
-  CLAUDE_100_TITLES.forEach((group, index) => {
+  GEMINI_100_TITLES.forEach((group, index) => {
     const el = document.createElement('div');
-    el.className = 'claude-group';
+    el.className = 'gemini-group';
     
     const hdr = document.createElement('div');
-    hdr.className = 'claude-hdr';
+    hdr.className = 'gemini-hdr';
     hdr.textContent = group.legend + ' ▾';
-    hdr.onclick = () => toggleClaudeList(index);
+    hdr.onclick = () => toggleGeminiList(index);
     el.appendChild(hdr);
 
     const titlesDiv = document.createElement('div');
-    titlesDiv.className = 'claude-titles';
-    titlesDiv.id = `claude-t-${index}`;
+    titlesDiv.className = 'gemini-titles';
+    titlesDiv.id = `gemini-t-${index}`;
 
     group.titles.forEach(t => {
       const btn = document.createElement('div');
-      btn.className = 'claude-title-btn';
+      btn.className = 'gemini-title-btn';
       btn.textContent = t;
       btn.onclick = () => fireDirect(group.legend, t);
       titlesDiv.appendChild(btn);
@@ -931,8 +899,8 @@ function buildClaudeLegends() {
   });
 }
 
-function toggleClaudeList(index) {
-  const list = $(`claude-t-${index}`);
+function toggleGeminiList(index) {
+  const list = $(`gemini-t-${index}`);
   list.classList.toggle('open');
 }
 
@@ -1010,10 +978,10 @@ function sbMode(mode, btn) {
   document.querySelectorAll('.sbm').forEach(b => b.classList.remove('on'));
   if (btn) btn.classList.add('on');
   else {
-    const modeMap = {custom:0, library:1, claude:2, history:3};
+    const modeMap = {custom:0, library:1, gemini:2, history:3};
     document.querySelectorAll('.sbm')[modeMap[mode]]?.classList.add('on');
   }
-  ['sbCustom','sbLibrary','sbClaude','sbHistory'].forEach(id => {
+  ['sbCustom','sbLibrary','sbGemini','sbHistory'].forEach(id => {
     const el = $(id);
     if (el) el.classList.toggle('on', id === 'sb' + mode.charAt(0).toUpperCase() + mode.slice(1));
   });
@@ -1029,7 +997,7 @@ function toggleDrawer() {
   $('apiToggle').textContent = S.drawerOpen ? '⚙ API Key ▴' : '⚙ API Key ▾';
 }
 function saveKey() {
-  const k = $('claudeKey').value.trim();
+  const k = $('geminiKey').value.trim();
   const g = $('gClientId').value.trim();
   const s = $('sheetId').value.trim();
   if (k) sessionStorage.setItem('lp_key', k);
@@ -1039,12 +1007,12 @@ function saveKey() {
   setTimeout(toggleDrawer, 350);
 }
 function clearKey() {
-  $('claudeKey').value = ''; sessionStorage.removeItem('lp_key');
+  $('geminiKey').value = ''; sessionStorage.removeItem('lp_key');
   syncStatus(); toast('Key cleared', 'ok');
 }
 function syncStatus() {
   const k = sessionStorage.getItem('lp_key') || '';
-  const live = k.startsWith('sk-ant');
+  const live = k.startsWith('AIza');
   $('pip').className = 'pip' + (live ? ' live' : '');
   $('apiToggle').classList.toggle('live', live);
   $('callout').classList.toggle('show', !live);
@@ -1088,29 +1056,35 @@ function googleAuth() {
 }
 
 /* ════════════════════════════════════════════
-   CLAUDE API CALL
+   GEMINI API CALL
 ════════════════════════════════════════════ */
-function getKey() { return sessionStorage.getItem('lp_key') || $('claudeKey').value.trim(); }
+function getKey() { return sessionStorage.getItem('lp_key') || $('geminiKey').value.trim(); }
 
-async function callClaude(userPrompt, systemPrompt = '', maxTokens = 4096) {
+async function callGemini(userPrompt, systemPrompt = '', maxTokens = 4096) {
   const key = getKey();
   if (!key) throw new Error('No API key — open ⚙ API Key and save yours first.');
-  if (!key.startsWith('sk-ant')) throw new Error('Invalid key format. Should start with sk-ant-');
+  if (!key.startsWith('AIza')) throw new Error('Invalid key format. Should start with AIza');
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${key}`;
+
+  const payload = {
+    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+    generationConfig: {
+      maxOutputTokens: maxTokens,
+      responseMimeType: "application/json"
+    }
+  };
+
+  if (systemPrompt) {
+    payload.systemInstruction = {
+      parts: [{ text: systemPrompt }]
+    };
+  }
+
+  const res = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: maxTokens,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }]
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
   });
 
   if (!res.ok) {
@@ -1120,7 +1094,10 @@ async function callClaude(userPrompt, systemPrompt = '', maxTokens = 4096) {
   }
 
   const json = await res.json();
-  return json.content[0].text;
+  if (!json.candidates || json.candidates.length === 0) {
+    throw new Error("No response generated.");
+  }
+  return json.candidates[0].content.parts[0].text;
 }
 
 function parseJSON(raw) {
@@ -1145,7 +1122,7 @@ async function fire() {
 
   if (!val) { showErr('Enter a historical figure first.'); return; }
   if (!getKey()) {
-    showErr('Add your Claude API key — click ⚙ API Key top-right.');
+    showErr('Add your Gemini API key — click ⚙ API Key top-right.');
     if (!S.drawerOpen) toggleDrawer();
     return;
   }
@@ -1163,7 +1140,7 @@ async function fire() {
     : `Generate 5 wildly creative, high-pressure pairings across different high-viral categories.`;
 
   try {
-    const raw = await callClaude(
+    const raw = await callGemini(
 `You are an elite YouTube content strategist.
 CRITICAL RULE: Place the legend in HIGH-VIRAL ENVIRONMENTS (places with energy, money, pressure, or chaos).
 CRITICAL FORMAT RULE — SECOND-PERSON IMMERSION: All hooks and titles use "YOU" framing — the viewer IS the legend.
@@ -1209,7 +1186,7 @@ function renderPairings(pairs) {
 ════════════════════════════════════════════ */
 function fireDirect(legend, titleText) {
   if (!getKey()) {
-    showErr('Add your Claude API key — click ⚙ API Key top-right.');
+    showErr('Add your Gemini API key — click ⚙ API Key top-right.');
     if (!S.drawerOpen) toggleDrawer(); return;
   }
   
@@ -1293,7 +1270,7 @@ SHORT FORM STRUCTURE (Day 1, Day 3, Day 7) & LONG FORM STRUCTURE (Day 1, 3, 5, 7
 }`;
 
   try {
-    const raw = await callClaude(prompt, system, 8000);
+    const raw = await callGemini(prompt, system, 8000);
     S.data = parseJSON(raw);
     renderOutput(p, S.data);
     addHistory(p, S.data);
